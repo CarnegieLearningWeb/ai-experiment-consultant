@@ -1,37 +1,98 @@
 import { api } from './api.js';
 
-const WELCOME = {
-  role: 'assistant',
-  content:
-    "Hi — I'm a prototype AI consultant for planning A/B experiments with UpGrade. " +
-    "The real chat backend isn't wired up yet (milestone M2). For now, anything you " +
-    "send gets echoed back so you can sanity-check the UI.",
-};
-
-export function initChatApp({ messagesEl, formEl, inputEl, fileInputEl, newChatBtn }) {
+export function initChatApp({
+  messagesEl,
+  emptyStateEl,
+  starterPromptsEl,
+  formEl,
+  inputEl,
+  fileInputEl,
+  sendBtn,
+  attachmentTrayEl,
+  newChatBtn,
+}) {
   const state = {
-    messages: [WELCOME],
+    messages: [],
     pendingAttachment: null,
+    isSending: false,
   };
 
-  function render() {
+  function renderMessages() {
     messagesEl.innerHTML = '';
     for (const msg of state.messages) {
       const li = document.createElement('li');
       li.className = `msg msg--${msg.role}`;
+
       const bubble = document.createElement('div');
       bubble.className = 'msg__bubble';
       bubble.textContent = msg.content;
       li.appendChild(bubble);
+
       if (msg.attachment) {
         const meta = document.createElement('div');
         meta.className = 'msg__attachment';
-        meta.textContent = `attachment: ${msg.attachment.name}`;
+        meta.textContent = `📎 ${msg.attachment.name}`;
         li.appendChild(meta);
       }
+
       messagesEl.appendChild(li);
     }
-    messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
+
+  function renderEmptyState() {
+    const isEmpty = state.messages.length === 0;
+    emptyStateEl.hidden = !isEmpty;
+    messagesEl.hidden = isEmpty;
+  }
+
+  function renderAttachmentTray() {
+    attachmentTrayEl.innerHTML = '';
+    if (!state.pendingAttachment) {
+      attachmentTrayEl.hidden = true;
+      return;
+    }
+    attachmentTrayEl.hidden = false;
+
+    const chip = document.createElement('div');
+    chip.className = 'attachment-chip';
+
+    const label = document.createElement('span');
+    label.className = 'attachment-chip__name';
+    label.textContent = state.pendingAttachment.name;
+    chip.appendChild(label);
+
+    const removeBtn = document.createElement('button');
+    removeBtn.type = 'button';
+    removeBtn.className = 'attachment-chip__remove';
+    removeBtn.setAttribute('aria-label', `Remove attachment ${state.pendingAttachment.name}`);
+    removeBtn.textContent = '×';
+    removeBtn.addEventListener('click', () => {
+      state.pendingAttachment = null;
+      fileInputEl.value = '';
+      renderAttachmentTray();
+      updateSendDisabled();
+      inputEl.focus();
+    });
+    chip.appendChild(removeBtn);
+
+    attachmentTrayEl.appendChild(chip);
+  }
+
+  function updateSendDisabled() {
+    const hasText = inputEl.value.trim().length > 0;
+    const hasAttachment = state.pendingAttachment !== null;
+    sendBtn.disabled = state.isSending || (!hasText && !hasAttachment);
+  }
+
+  function render() {
+    renderMessages();
+    renderEmptyState();
+    renderAttachmentTray();
+    updateSendDisabled();
+    // Scroll to bottom only when there are messages (avoids jumping the empty state).
+    if (state.messages.length) {
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
   }
 
   function autosize() {
@@ -41,11 +102,18 @@ export function initChatApp({ messagesEl, formEl, inputEl, fileInputEl, newChatB
 
   async function handleSubmit(event) {
     event.preventDefault();
+    if (state.isSending) return;
     const text = inputEl.value.trim();
     if (!text && !state.pendingAttachment) return;
 
     const userMsg = { role: 'user', content: text || '(attachment only)' };
-    if (state.pendingAttachment) userMsg.attachment = state.pendingAttachment;
+    if (state.pendingAttachment) {
+      userMsg.attachment = {
+        name: state.pendingAttachment.name,
+        size: state.pendingAttachment.size,
+        type: state.pendingAttachment.type,
+      };
+    }
     state.messages.push(userMsg);
 
     inputEl.value = '';
@@ -54,25 +122,36 @@ export function initChatApp({ messagesEl, formEl, inputEl, fileInputEl, newChatB
     autosize();
     render();
 
-    // TODO(chat): replace this echo with a real api.chat(...) call in M2.
+    // TODO(chat) M2: replace this echo with a real api.chat(messages) call.
+    state.isSending = true;
+    updateSendDisabled();
+    await Promise.resolve(); // yield so the user message paints before the echo
     state.messages.push({
       role: 'assistant',
       content:
         `echo: ${text || '(no text)'}` +
         (userMsg.attachment ? ` [+attachment: ${userMsg.attachment.name}]` : ''),
     });
+    state.isSending = false;
     render();
+    inputEl.focus();
   }
 
   function handleFileChange(event) {
     const file = event.target.files?.[0];
-    if (!file) {
+    if (file) {
+      // TODO(uploads) M3: immediately POST to /uploads and store the returned id.
+      state.pendingAttachment = {
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        file,
+      };
+    } else {
       state.pendingAttachment = null;
-      return;
     }
-    state.pendingAttachment = { name: file.name, size: file.size, type: file.type };
-    render();
-    // TODO(uploads): in M3, immediately POST to /uploads and store the returned id.
+    renderAttachmentTray();
+    updateSendDisabled();
   }
 
   function handleKeydown(event) {
@@ -83,8 +162,9 @@ export function initChatApp({ messagesEl, formEl, inputEl, fileInputEl, newChatB
   }
 
   function handleNewChat() {
-    state.messages = [WELCOME];
+    state.messages = [];
     state.pendingAttachment = null;
+    state.isSending = false;
     inputEl.value = '';
     fileInputEl.value = '';
     autosize();
@@ -92,11 +172,24 @@ export function initChatApp({ messagesEl, formEl, inputEl, fileInputEl, newChatB
     inputEl.focus();
   }
 
+  function handleStarterPromptClick(event) {
+    const target = event.target.closest('[data-prompt]');
+    if (!target) return;
+    inputEl.value = target.dataset.prompt;
+    autosize();
+    updateSendDisabled();
+    inputEl.focus();
+  }
+
   formEl.addEventListener('submit', handleSubmit);
   fileInputEl.addEventListener('change', handleFileChange);
   inputEl.addEventListener('keydown', handleKeydown);
-  inputEl.addEventListener('input', autosize);
+  inputEl.addEventListener('input', () => {
+    autosize();
+    updateSendDisabled();
+  });
   newChatBtn.addEventListener('click', handleNewChat);
+  starterPromptsEl.addEventListener('click', handleStarterPromptClick);
 
   // Verify the API is reachable. Not blocking; informational only.
   api

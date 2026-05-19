@@ -16,11 +16,32 @@
         </div>
       </header>
 
-      <main class="chat" aria-live="polite">
-        <ol id="messages" class="messages"></ol>
+      <main class="chat">
+        <div id="empty-state" class="empty-state" hidden>
+          <h1 class="empty-state__title">UpGrade Consultant</h1>
+          <p class="empty-state__lead">
+            I help you turn a vague idea about your learning app into a structured A/B
+            experiment you can run with UpGrade. Try one of these to get started, or
+            describe your app in your own words.
+          </p>
+          <ul class="empty-state__prompts" id="starter-prompts">
+            <li><button type="button" class="prompt-chip" data-prompt="I want to test whether adding a hint button improves problem completion in my math app.">Test a hint button on a math problem</button></li>
+            <li><button type="button" class="prompt-chip" data-prompt="I&rsquo;m building a reading app for middle-schoolers. Help me think through what to experiment on first.">Help me pick an experiment for my reading app</button></li>
+            <li><button type="button" class="prompt-chip" data-prompt="What kinds of experiments work well with UpGrade? Give me one example.">Explain UpGrade with an example</button></li>
+          </ul>
+        </div>
+        <ol
+          id="messages"
+          class="messages"
+          role="log"
+          aria-live="polite"
+          aria-relevant="additions"
+          aria-label="Conversation"
+        ></ol>
       </main>
 
       <footer class="composer">
+        <div id="attachment-tray" class="attachment-tray" hidden></div>
         <form id="composer-form" class="composer__form">
           <label class="composer__file-btn" title="Attach image">
             <input id="file-input" type="file" accept="image/png,image/jpeg,image/webp" hidden />
@@ -34,11 +55,10 @@
             placeholder="Tell me about your learning app, or paste a question…"
             aria-label="Message"
           ></textarea>
-          <button id="send-btn" type="submit" class="btn btn--primary">Send</button>
+          <button id="send-btn" type="submit" class="btn btn--primary" disabled>Send</button>
         </form>
         <p class="composer__hint">
-          Prototype build. Chat backend is not connected yet — see
-          <a href="https://github.com/" rel="noopener">docs/tasks.md</a> milestone M2.
+          Prototype build. Chat backend is not connected yet — milestone M2 wires this up.
         </p>
       </footer>
     </div>

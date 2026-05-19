@@ -17,17 +17,19 @@ Goal: a clean repo that another Claude Code session can pick up and run.
 - [x] `.env.example`, `.gitignore`, `.nvmrc`
 - [x] `npm install && npm run dev` runs both servers and the placeholder UI loads
 
-## M1 — Static chat shell
+## M1 — Static chat shell ✅
 
 Goal: a usable chat UI with no AI behind it. Echoes user messages locally; backend `/chat` is still a 501 stub.
 
-- [ ] Header (app name, "New Chat" button)
-- [ ] Message list (user right-aligned, assistant left-aligned)
-- [ ] Composer: textarea + file picker + send. Enter submits, Shift+Enter for newline.
-- [ ] Frontend state: messages array, pending-upload list
-- [ ] "New Chat" clears state
-- [ ] Pass an accessibility sniff: focus management on send, aria-live on message list
-- [ ] Tiny CSS pass; readable on desktop, doesn't crash on mobile
+- [x] Header (app name, "New Chat" button)
+- [x] Message list (user right-aligned, assistant left-aligned)
+- [x] Composer: textarea + file picker + send. Enter submits, Shift+Enter for newline.
+- [x] Frontend state: messages array, pending-attachment slot
+- [x] "New Chat" clears state
+- [x] Pass an accessibility sniff: `role="log"` + `aria-live="polite"` on messages, focus returns to input after send, removable attachment chip with `aria-label`
+- [x] Empty-state landing with three starter prompts (click to populate the composer)
+- [x] Send button disabled when there's nothing to send or while an in-flight echo is pending (sets up the M2 loading affordance)
+- [x] Tiny CSS pass; readable on desktop, mobile media query at ≤600px uses `100dvh` and tightens padding
 
 ## M2 — Real `/chat` powered by Anthropic
 
