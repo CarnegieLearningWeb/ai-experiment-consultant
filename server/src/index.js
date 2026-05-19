@@ -1,5 +1,8 @@
 import { createApp } from './app.js';
 import { config } from './config.js';
+import { initUploadsDir } from './lib/uploads.js';
+
+initUploadsDir();
 
 const app = createApp();
 

@@ -1,5 +1,26 @@
 import { api } from './api.js';
 
+function renderMessageAttachments(msg, li) {
+  if (!msg.attachments?.length) return;
+  const wrap = document.createElement('div');
+  wrap.className = 'msg__attachments';
+  for (const a of msg.attachments) {
+    if (a.previewUrl) {
+      const img = document.createElement('img');
+      img.className = 'msg__thumb';
+      img.src = a.previewUrl;
+      img.alt = a.filename || 'attachment';
+      wrap.appendChild(img);
+    } else {
+      const chip = document.createElement('div');
+      chip.className = 'msg__attachment';
+      chip.textContent = `📎 ${a.filename || a.id}`;
+      wrap.appendChild(chip);
+    }
+  }
+  li.appendChild(wrap);
+}
+
 export function initChatApp({
   messagesEl,
   emptyStateEl,
@@ -24,6 +45,8 @@ export function initChatApp({
       li.className = `msg msg--${msg.role}`;
       if (msg.pending) li.classList.add('msg--pending');
 
+      renderMessageAttachments(msg, li);
+
       const bubble = document.createElement('div');
       bubble.className = 'msg__bubble';
       if (msg.role === 'assistant' && msg.pending && !msg.content) {
@@ -36,13 +59,6 @@ export function initChatApp({
       }
       li.appendChild(bubble);
 
-      if (msg.attachment) {
-        const meta = document.createElement('div');
-        meta.className = 'msg__attachment';
-        meta.textContent = `📎 ${msg.attachment.name}`;
-        li.appendChild(meta);
-      }
-
       messagesEl.appendChild(li);
     }
   }
@@ -53,6 +69,16 @@ export function initChatApp({
     messagesEl.hidden = isEmpty;
   }
 
+  function clearPendingAttachment() {
+    if (state.pendingAttachment?.previewUrl) {
+      URL.revokeObjectURL(state.pendingAttachment.previewUrl);
+    }
+    state.pendingAttachment = null;
+    fileInputEl.value = '';
+    renderAttachmentTray();
+    updateSendDisabled();
+  }
+
   function renderAttachmentTray() {
     attachmentTrayEl.innerHTML = '';
     if (!state.pendingAttachment) {
@@ -60,25 +86,35 @@ export function initChatApp({
       return;
     }
     attachmentTrayEl.hidden = false;
+    const pa = state.pendingAttachment;
 
     const chip = document.createElement('div');
     chip.className = 'attachment-chip';
+    if (pa.status === 'uploading') chip.classList.add('attachment-chip--uploading');
+    if (pa.status === 'error') chip.classList.add('attachment-chip--error');
+
+    if (pa.previewUrl) {
+      const img = document.createElement('img');
+      img.className = 'attachment-chip__thumb';
+      img.src = pa.previewUrl;
+      img.alt = '';
+      chip.appendChild(img);
+    }
 
     const label = document.createElement('span');
     label.className = 'attachment-chip__name';
-    label.textContent = state.pendingAttachment.name;
+    if (pa.status === 'uploading') label.textContent = `Uploading ${pa.filename}…`;
+    else if (pa.status === 'error') label.textContent = pa.errorMessage || 'Upload failed';
+    else label.textContent = pa.filename;
     chip.appendChild(label);
 
     const removeBtn = document.createElement('button');
     removeBtn.type = 'button';
     removeBtn.className = 'attachment-chip__remove';
-    removeBtn.setAttribute('aria-label', `Remove attachment ${state.pendingAttachment.name}`);
+    removeBtn.setAttribute('aria-label', `Remove ${pa.filename}`);
     removeBtn.textContent = '×';
     removeBtn.addEventListener('click', () => {
-      state.pendingAttachment = null;
-      fileInputEl.value = '';
-      renderAttachmentTray();
-      updateSendDisabled();
+      clearPendingAttachment();
       inputEl.focus();
     });
     chip.appendChild(removeBtn);
@@ -88,8 +124,10 @@ export function initChatApp({
 
   function updateSendDisabled() {
     const hasText = inputEl.value.trim().length > 0;
-    const hasAttachment = state.pendingAttachment !== null;
-    sendBtn.disabled = state.isSending || (!hasText && !hasAttachment);
+    const pa = state.pendingAttachment;
+    const hasReadyAttachment = pa?.status === 'ready';
+    const isUploading = pa?.status === 'uploading';
+    sendBtn.disabled = state.isSending || isUploading || (!hasText && !hasReadyAttachment);
   }
 
   // The `.chat` <main> is the scrollable container, not the <ol>; scroll it.
@@ -116,19 +154,26 @@ export function initChatApp({
     event.preventDefault();
     if (state.isSending) return;
     const text = inputEl.value.trim();
-    if (!text && !state.pendingAttachment) return;
+    const pa = state.pendingAttachment;
+    const hasReadyAttachment = pa?.status === 'ready';
+    if (!text && !hasReadyAttachment) return;
 
-    const userMsg = { role: 'user', content: text || '(attachment only)' };
-    if (state.pendingAttachment) {
-      userMsg.attachment = {
-        name: state.pendingAttachment.name,
-        size: state.pendingAttachment.size,
-        type: state.pendingAttachment.type,
-      };
+    const userMsg = { role: 'user', content: text };
+    if (hasReadyAttachment) {
+      userMsg.attachments = [
+        {
+          id: pa.id,
+          mimeType: pa.mimeType,
+          filename: pa.filename,
+          previewUrl: pa.previewUrl, // ownership transfers to the message; do not revoke
+        },
+      ];
     }
     state.messages.push(userMsg);
 
     inputEl.value = '';
+    // Detach pendingAttachment without revoking the blob URL — the message
+    // owns it now and will display the thumbnail.
     state.pendingAttachment = null;
     fileInputEl.value = '';
     autosize();
@@ -140,7 +185,13 @@ export function initChatApp({
 
     const apiMessages = state.messages
       .filter((m) => m !== assistantMsg)
-      .map((m) => ({ role: m.role, content: m.content }));
+      .map((m) => {
+        const out = { role: m.role, content: m.content };
+        if (m.attachments?.length) {
+          out.attachments = m.attachments.map((a) => ({ id: a.id }));
+        }
+        return out;
+      });
 
     try {
       await api.streamChat(apiMessages, {
@@ -168,21 +219,50 @@ export function initChatApp({
     }
   }
 
-  function handleFileChange(event) {
+  async function handleFileChange(event) {
     const file = event.target.files?.[0];
-    if (file) {
-      // TODO(uploads) M3: immediately POST to /uploads and store the returned id.
-      state.pendingAttachment = {
-        name: file.name,
-        size: file.size,
-        type: file.type,
-        file,
-      };
-    } else {
-      state.pendingAttachment = null;
+    if (!file) {
+      clearPendingAttachment();
+      return;
     }
+
+    // Detach any prior pending attachment first.
+    if (state.pendingAttachment?.previewUrl) {
+      URL.revokeObjectURL(state.pendingAttachment.previewUrl);
+    }
+
+    const previewUrl = file.type.startsWith('image/') ? URL.createObjectURL(file) : null;
+    const slot = {
+      status: 'uploading',
+      filename: file.name,
+      mimeType: file.type,
+      size: file.size,
+      previewUrl,
+      id: null,
+      errorMessage: null,
+    };
+    state.pendingAttachment = slot;
     renderAttachmentTray();
     updateSendDisabled();
+
+    try {
+      const meta = await api.upload(file);
+      // Race guard: user may have cancelled or picked a different file.
+      if (state.pendingAttachment !== slot) return;
+      slot.status = 'ready';
+      slot.id = meta.id;
+      slot.mimeType = meta.mimeType;
+      slot.size = meta.size;
+    } catch (err) {
+      if (state.pendingAttachment !== slot) return;
+      slot.status = 'error';
+      slot.errorMessage = err.message || 'Upload failed';
+    } finally {
+      if (state.pendingAttachment === slot) {
+        renderAttachmentTray();
+        updateSendDisabled();
+      }
+    }
   }
 
   function handleKeydown(event) {

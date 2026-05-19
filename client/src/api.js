@@ -86,13 +86,15 @@ export async function streamChat(messages, { onEvent, signal } = {}) {
   }
 }
 
+async function uploadFile(file) {
+  const fd = new FormData();
+  fd.append('file', file);
+  return request('/uploads', { method: 'POST', body: fd });
+}
+
 export const api = {
   health: () => request('/health'),
-  upload: (file) => {
-    const fd = new FormData();
-    fd.append('file', file);
-    return request('/uploads', { method: 'POST', body: fd });
-  },
+  upload: uploadFile,
   simulation: (design, cohortSize) =>
     request('/simulation', { method: 'POST', body: { design, cohortSize } }),
   report: (state) => request('/report', { method: 'POST', body: { state } }),

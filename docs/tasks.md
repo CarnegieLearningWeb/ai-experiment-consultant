@@ -51,19 +51,20 @@ Goal: the consultant actually responds. Six-phase awareness lives in the system 
 - [x] Defaults: `claude-opus-4-7` with `thinking: {type: "adaptive"}` (model self-moderates depth), `max_tokens: 64000` (safe ceiling for streaming, plenty of headroom for full reports)
 - [ ] Streaming — already done as part of M2 (was previously deferred to M2.5)
 
-## M3 — File upload (images first, PDF later)
+## M3 — File upload (images first, PDF later) ✅
 
 Goal: user can attach a screenshot to a chat turn.
 
-- [ ] `POST /api/v1/ai-consultant/uploads` accepting `multipart/form-data` (multer); returns `{ id, mimeType, size, filename }`
-- [ ] Server stores files under `server/uploads/<id>.<ext>` (gitignored)
-- [ ] Allowlist is a single config table keyed by MIME type → `{ extension, anthropicBlockType }`. Initial entries: `image/png`, `image/jpeg`, `image/webp`. Adding `application/pdf` later is a one-line addition.
-- [ ] Size cap of 8 MB (configurable via `MAX_UPLOAD_BYTES`)
-- [ ] Frontend: file-picker → POST `/uploads` → store the returned id; render a thumbnail in the attachment tray; clear on send/cancel
-- [ ] `/chat` accepts `attachments: [{id}]` alongside the user message; server resolves the id, base64-encodes the file, and includes it in the Anthropic request as the right content block (`image` block for images; PDF deferred)
-- [ ] Inline thumbnails in past chat turns
-- [ ] Reject upload if MIME type not in allowlist with a clear error
-- [ ] Optional but worth doing: garbage-collect uploads older than the server process lifetime — for v1 just clear `server/uploads/` on boot
+- [x] `POST /api/v1/ai-consultant/uploads` accepting `multipart/form-data` (multer); returns `{ id, mimeType, size, filename }`
+- [x] Server stores files under `server/uploads/<id>.<ext>` (gitignored)
+- [x] Allowlist is a single config table in [server/src/lib/uploads.js](../server/src/lib/uploads.js) keyed by MIME type → `{ ext, kind }`. Initial entries: `image/png`, `image/jpeg`, `image/webp`. Adding `application/pdf` later is a one-line addition + a `document` content-block branch in `chat.js` (link in code).
+- [x] Size cap of 8 MB (configurable via `MAX_UPLOAD_BYTES`)
+- [x] Frontend: file-picker → POST `/uploads` → store the returned id; render an upload-state chip (uploading → ready → error) with a removable thumbnail
+- [x] `/chat` accepts `attachments: [{id}]` alongside the user message; server resolves the id, base64-encodes the file, and includes it in the Anthropic request as an `image` content block
+- [x] Inline thumbnails in past chat turns (via blob URL — survives the page session but not a reload, since there's no persistence in v1)
+- [x] Reject upload if MIME type not in allowlist with a structured 415 error
+- [x] Garbage-collect: wipe `server/uploads/` on server boot (in-memory registry resets on restart too, so this keeps disk and registry in sync)
+- [x] Verified end-to-end: uploaded a 1024×1024 PNG, attached to a chat turn, Claude correctly identified the image content
 
 ## M4 — Simulation / preflight
 
