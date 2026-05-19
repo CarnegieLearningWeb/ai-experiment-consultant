@@ -1,4 +1,11 @@
-import 'dotenv/config';
+import { config as dotenvConfig } from 'dotenv';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
+
+// .env lives at the repo root, not in server/. Load it explicitly so it works
+// regardless of cwd (workspace dev, `node src/index.js` from server/, etc.).
+const __dirname = dirname(fileURLToPath(import.meta.url));
+dotenvConfig({ path: join(__dirname, '..', '..', '.env') });
 
 const nodeEnv = process.env.NODE_ENV || 'development';
 

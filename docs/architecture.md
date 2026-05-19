@@ -81,7 +81,7 @@ See [.env.example](../.env.example). Required:
 - **In-memory state.** No DB. Conversation context is sent from the client each turn (the source of truth lives in the browser). The server stays stateless except for short-lived upload references.
 - **Uploads:** stored under `server/uploads/` (gitignored) keyed by a server-generated id. Returned to the client as `{ id, mimeType, size }`. The id is referenced by subsequent `/chat` calls. Cleanup is post-MVP; for now, files live for the lifetime of the process.
 - **Error envelope:** errors return `{ error: { code, message } }` with HTTP status. Code strings are stable for client-side handling.
-- **No streaming yet.** `/chat` returns the full assistant turn in one response. Streaming (SSE) is a candidate for M2.5 if response latency feels bad in the demo.
+- **Streaming via NDJSON.** `/chat` streams the assistant response as newline-delimited JSON events: `{type:"delta",text}` per chunk, then a final `{type:"done",stopReason,usage}` (or `{type:"error",code,message}` on failure). SSE would also work but POST bodies aren't usable with the browser's `EventSource`, and NDJSON parses trivially from `fetch().body.getReader()` in vanilla JS.
 
 ## Frontend design
 
@@ -91,17 +91,19 @@ See [.env.example](../.env.example). Required:
 - **Markdown rendering:** report output uses a markdown-to-HTML library added in M5 (likely `marked`). Until then, report output is rendered in a `<pre>` block.
 - **Composer:** textarea + file picker + send button. Enter submits, Shift+Enter inserts newline.
 
-## AI behavior (planned)
+## AI behavior
 
 The `/chat` endpoint constructs an Anthropic request with:
 
-- A system prompt that establishes the consultant role, the six-phase flow,
-  and the supported-experiment-shape constraints from [upgrade-knowledge/](upgrade-knowledge/).
-- Conversation history sent by the client.
-- Curated UpGrade context loaded from [upgrade-knowledge/](upgrade-knowledge/) — kept narrow on purpose so the model doesn't propose unsupported designs.
-- Structured-output hints when extracting fields (app description, hypothesis, experiment design, etc.).
+- A system prompt assembled by [server/src/lib/prompt.js](../server/src/lib/prompt.js) that inlines the consultant role, the six-phase flow, and the contents of [upgrade-knowledge/concepts.md](upgrade-knowledge/concepts.md) + [client-integration.md](upgrade-knowledge/client-integration.md). Kept narrow on purpose so the model doesn't propose unsupported designs.
+- Conversation history sent by the client (the server is stateless; the browser is the source of truth).
+- Defaults: `claude-opus-4-7`, `thinking: {type: "adaptive"}` (model decides depth per turn), `max_tokens: 64000` (safe ceiling for streaming).
+- Prompt caching: `cache_control: {type: "ephemeral"}` on the system block. The system prompt is over the 4096-token minimum for Opus 4.7, so cache hits kick in starting on the second turn. Verified `cache_read_input_tokens: 4050` on follow-up turns.
+- Override the model via `ANTHROPIC_MODEL` env var if needed (e.g. for cost experiments with Sonnet 4.6).
 
-Implementation pattern not finalized; see [tasks.md](tasks.md) M2.
+Stream consumption uses `client.messages.create({ stream: true })` rather than the higher-level `client.messages.stream()` helper — the helper's async iterator wraps the underlying stream in an EventEmitter and aborts via `return()` semantics that interact badly with Express's request lifecycle. The plain `Stream` returned by `create({stream:true})` is a clean async iterator.
+
+Structured-output hints (for extracting app description, hypothesis, etc. into typed fields) are not yet implemented — the report generator (M5) will decide whether to extract via the conversation transcript or via dedicated structured-output calls.
 
 ## Simulation flow (planned)
 
@@ -123,4 +125,4 @@ Outlined in [spec.md](spec.md) §22. Implementation details to be confirmed duri
 - No CI yet.
 - No Docker yet. The host already runs Node.
 - No persistent storage. v1 is one-shot per session.
-- No streaming responses in M1 — revisit if latency feels bad.
+- No persistence in v1; conversation state lives in the browser.

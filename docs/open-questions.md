@@ -21,7 +21,7 @@ relevant milestone. Update as we get clarity. Closed items move out of this file
 
 ## AI behavior (M2)
 
-- **Streaming or full responses?** Streaming improves perceived latency. Vanilla JS + SSE is workable. Provisional: ship M2 with full responses, add streaming in M2.5 if it feels slow.
+- ~~**Streaming or full responses?**~~ Resolved: streaming, via NDJSON over `fetch().body.getReader()`. SSE would also work but doesn't accept POST bodies from the browser. Final reports could take a long time without streaming, so it ships in M2.
 - **Related-paper lookup.** Spec calls for a curated paper-search MCP/source rather than open web search. No source identified yet. Probably deferred past MVP unless someone surfaces a usable option.
 - **Where structured state lives.** Provisional plan: derived on each turn from the conversation by the model (returned in a structured tool call). Reconsider if extraction is unreliable.
 - **Prompt cache strategy.** System prompt + `upgrade-knowledge` content is stable per session — cache it. Conversation history is appended per turn — don't.

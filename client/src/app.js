@@ -22,10 +22,18 @@ export function initChatApp({
     for (const msg of state.messages) {
       const li = document.createElement('li');
       li.className = `msg msg--${msg.role}`;
+      if (msg.pending) li.classList.add('msg--pending');
 
       const bubble = document.createElement('div');
       bubble.className = 'msg__bubble';
-      bubble.textContent = msg.content;
+      if (msg.role === 'assistant' && msg.pending && !msg.content) {
+        bubble.innerHTML =
+          '<span class="thinking-dot"></span>' +
+          '<span class="thinking-dot"></span>' +
+          '<span class="thinking-dot"></span>';
+      } else {
+        bubble.textContent = msg.content;
+      }
       li.appendChild(bubble);
 
       if (msg.attachment) {
@@ -84,15 +92,19 @@ export function initChatApp({
     sendBtn.disabled = state.isSending || (!hasText && !hasAttachment);
   }
 
+  // The `.chat` <main> is the scrollable container, not the <ol>; scroll it.
+  const scrollEl = messagesEl.parentElement;
+
+  function scrollToBottom() {
+    if (scrollEl) scrollEl.scrollTop = scrollEl.scrollHeight;
+  }
+
   function render() {
     renderMessages();
     renderEmptyState();
     renderAttachmentTray();
     updateSendDisabled();
-    // Scroll to bottom only when there are messages (avoids jumping the empty state).
-    if (state.messages.length) {
-      messagesEl.scrollTop = messagesEl.scrollHeight;
-    }
+    if (state.messages.length) scrollToBottom();
   }
 
   function autosize() {
@@ -120,21 +132,40 @@ export function initChatApp({
     state.pendingAttachment = null;
     fileInputEl.value = '';
     autosize();
+
+    const assistantMsg = { role: 'assistant', content: '', pending: true };
+    state.messages.push(assistantMsg);
+    state.isSending = true;
     render();
 
-    // TODO(chat) M2: replace this echo with a real api.chat(messages) call.
-    state.isSending = true;
-    updateSendDisabled();
-    await Promise.resolve(); // yield so the user message paints before the echo
-    state.messages.push({
-      role: 'assistant',
-      content:
-        `echo: ${text || '(no text)'}` +
-        (userMsg.attachment ? ` [+attachment: ${userMsg.attachment.name}]` : ''),
-    });
-    state.isSending = false;
-    render();
-    inputEl.focus();
+    const apiMessages = state.messages
+      .filter((m) => m !== assistantMsg)
+      .map((m) => ({ role: m.role, content: m.content }));
+
+    try {
+      await api.streamChat(apiMessages, {
+        onEvent: (evt) => {
+          if (evt.type === 'delta') {
+            assistantMsg.content += evt.text;
+            renderMessages();
+            scrollToBottom();
+          } else if (evt.type === 'error') {
+            assistantMsg.content =
+              (assistantMsg.content || '') +
+              `\n\n_⚠️ ${evt.message || 'Stream error'}_`;
+          }
+        },
+      });
+    } catch (err) {
+      assistantMsg.content =
+        (assistantMsg.content || '') +
+        `\n\n_⚠️ ${err.message || 'Request failed'}_`;
+    } finally {
+      assistantMsg.pending = false;
+      state.isSending = false;
+      render();
+      inputEl.focus();
+    }
   }
 
   function handleFileChange(event) {
