@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <title>UpGrade Consultant</title>
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body>
+    <div id="app">
+      <header class="app-header">
+        <div class="app-header__title">UpGrade Consultant</div>
+        <div class="app-header__actions">
+          <button id="new-chat" type="button" class="btn btn--ghost">New Chat</button>
+        </div>
+      </header>
+
+      <main class="chat" aria-live="polite">
+        <ol id="messages" class="messages"></ol>
+      </main>
+
+      <footer class="composer">
+        <form id="composer-form" class="composer__form">
+          <label class="composer__file-btn" title="Attach image">
+            <input id="file-input" type="file" accept="image/png,image/jpeg,image/webp" hidden />
+            <span aria-hidden="true">+</span>
+            <span class="sr-only">Attach image</span>
+          </label>
+          <textarea
+            id="composer-input"
+            class="composer__input"
+            rows="1"
+            placeholder="Tell me about your learning app, or paste a question…"
+            aria-label="Message"
+          ></textarea>
+          <button id="send-btn" type="submit" class="btn btn--primary">Send</button>
+        </form>
+        <p class="composer__hint">
+          Prototype build. Chat backend is not connected yet — see
+          <a href="https://github.com/" rel="noopener">docs/tasks.md</a> milestone M2.
+        </p>
+      </footer>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

@@ -3,3 +3,9 @@ node_modules/
 dist/
 .claude/
 .env
+.env.local
+*.log
+.vite/
+coverage/
+uploads/
+upgrade-service-account-key.json
