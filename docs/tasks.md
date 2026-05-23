@@ -66,9 +66,20 @@ Goal: user can attach a screenshot to a chat turn.
 - [x] Garbage-collect: wipe `server/uploads/` on server boot (in-memory registry resets on restart too, so this keeps disk and registry in sync)
 - [x] Verified end-to-end: uploaded a 1024×1024 PNG, attached to a chat turn, Claude correctly identified the image content
 
-## M4 — Simulation / preflight (via AI tool call)
+## M4 — Simulation / preflight (via AI tool call) ✅
 
-Goal: when the user agrees to run a simulation, the AI calls a `run_simulation` tool. The tool orchestrates the documented UpGrade flow, streams progress back to the chat UI, returns enrollment + metric results to the AI, and the AI weaves those results into its next response. API shapes are documented in [upgrade-knowledge/simulation-api.md](upgrade-knowledge/simulation-api.md).
+Goal: when the user agrees to run a simulation, the AI calls a `run_simulation` tool. The tool orchestrates the documented UpGrade flow, streams progress back to the chat UI, returns enrollment + metric results to the AI, and the AI weaves those results into its next response. API shapes documented in [upgrade-knowledge/simulation-api.md](upgrade-knowledge/simulation-api.md).
+
+Verified end-to-end on 2026-05-23: 30-participant simulation against the live demo backend, AI generated structured input + synthetic specs, all 7 lifecycle steps fired in order, cleanup confirmed (no leftover-warning logs), AI formatted the markdown result + disclaimer + follow-up offer correctly. Plain chat path still works (no regression).
+
+**Implementation details captured in code:**
+- Tool-use loop: [server/src/routes/chat.js](../server/src/routes/chat.js). Empty thinking blocks (Opus 4.7 `display: "omitted"` default) are filtered before re-sending to Anthropic.
+- Tool registry: [server/src/lib/tools.js](../server/src/lib/tools.js) — one entry per tool. Add a new tool by adding a file under `tools/` and one entry to the REGISTRY.
+- run_simulation: [server/src/lib/tools/run-simulation.js](../server/src/lib/tools/run-simulation.js). 20 concurrent participant calls, ~800ms-throttled progress events, `aiconsult-sim-<runId>-...` naming, try/finally cleanup.
+- UpGrade client: [server/src/lib/upgrade.js](../server/src/lib/upgrade.js). Cached Google service-account token. Bearer flow implemented (server tested with demo backend's auth currently off, will keep working when re-enabled). `displayNameForMetric` derives `"completionRate (Percent = COMPLETED)"` from structured query.
+- Service-account key path now resolves relative to repo root regardless of process cwd ([server/src/config.js](../server/src/config.js)).
+- Client tool widget: rendered above the assistant bubble; shows progress lines as they stream in, ✓/⚠ on completion. The cohort counter ("Running N/M…") updates in place via the `replaceKey` field on `tool_progress` events.
+- Debug logging in [server/src/lib/log.js](../server/src/lib/log.js), toggled by `DEBUG_LOGGING` env var (defaults on in dev). Categories: `[tool]`, `[upgrade]`, `[sim]`, `[chat]`, `[warn]`. Warnings always print. The `assignUser` silent-failure path (HTTP 200 with empty `assignedCondition`) explicitly logs, and the simulation summary line at the end of each run reports `enrollment + counters` so future enrollment shortfalls are diagnosable from the logs.
 
 ### Tool-use loop in `/chat` (new architectural piece)
 

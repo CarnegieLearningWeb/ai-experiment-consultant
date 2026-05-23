@@ -21,6 +21,44 @@ function renderMessageAttachments(msg, li) {
   li.appendChild(wrap);
 }
 
+function renderMessageToolRuns(msg, li) {
+  if (!msg.toolRuns?.length) return;
+  const wrap = document.createElement('div');
+  wrap.className = 'tool-runs';
+  for (const run of msg.toolRuns) {
+    const card = document.createElement('div');
+    card.className = `tool-run tool-run--${run.status}`;
+
+    const header = document.createElement('div');
+    header.className = 'tool-run__header';
+    const TOOL_RUN_ICONS = { error: '⚠', done: '✓' };
+    const iconChar = TOOL_RUN_ICONS[run.status] || '🔧';
+    header.innerHTML = `<span class="tool-run__icon">${iconChar}</span> <span class="tool-run__title">${run.tool}</span>`;
+    card.appendChild(header);
+
+    if (run.progress.length) {
+      const list = document.createElement('ul');
+      list.className = 'tool-run__progress';
+      for (const p of run.progress) {
+        const item = document.createElement('li');
+        item.textContent = p;
+        list.appendChild(item);
+      }
+      card.appendChild(list);
+    }
+
+    if (run.error) {
+      const err = document.createElement('div');
+      err.className = 'tool-run__error';
+      err.textContent = run.error;
+      card.appendChild(err);
+    }
+
+    wrap.appendChild(card);
+  }
+  li.appendChild(wrap);
+}
+
 export function initChatApp({
   messagesEl,
   emptyStateEl,
@@ -46,18 +84,24 @@ export function initChatApp({
       if (msg.pending) li.classList.add('msg--pending');
 
       renderMessageAttachments(msg, li);
+      renderMessageToolRuns(msg, li);
 
-      const bubble = document.createElement('div');
-      bubble.className = 'msg__bubble';
-      if (msg.role === 'assistant' && msg.pending && !msg.content) {
-        bubble.innerHTML =
-          '<span class="thinking-dot"></span>' +
-          '<span class="thinking-dot"></span>' +
-          '<span class="thinking-dot"></span>';
-      } else {
-        bubble.textContent = msg.content;
+      const hasContent = msg.content && msg.content.length > 0;
+      const hasToolRun = (msg.toolRuns || []).length > 0;
+      const showBubble = hasContent || !hasToolRun;
+      if (showBubble) {
+        const bubble = document.createElement('div');
+        bubble.className = 'msg__bubble';
+        if (msg.role === 'assistant' && msg.pending && !hasContent) {
+          bubble.innerHTML =
+            '<span class="thinking-dot"></span>' +
+            '<span class="thinking-dot"></span>' +
+            '<span class="thinking-dot"></span>';
+        } else {
+          bubble.textContent = msg.content;
+        }
+        li.appendChild(bubble);
       }
-      li.appendChild(bubble);
 
       messagesEl.appendChild(li);
     }
@@ -193,18 +237,75 @@ export function initChatApp({
         return out;
       });
 
+    if (!assistantMsg.toolRuns) assistantMsg.toolRuns = [];
+
+    const upsertRun = (toolUseId) => {
+      let run = assistantMsg.toolRuns.find((r) => r.toolUseId === toolUseId);
+      if (run) return run;
+      run = {
+        toolUseId,
+        tool: '',
+        status: 'running',
+        progress: [],
+        replaceKeys: new Map(),
+        error: null,
+      };
+      assistantMsg.toolRuns.push(run);
+      return run;
+    };
+
+    const pushProgress = (run, message, replaceKey) => {
+      if (!message) return;
+      if (replaceKey) {
+        const existingIdx = run.replaceKeys.get(replaceKey);
+        if (existingIdx !== undefined) {
+          run.progress[existingIdx] = message;
+        } else {
+          run.replaceKeys.set(replaceKey, run.progress.length);
+          run.progress.push(message);
+        }
+        return;
+      }
+      run.progress.push(message);
+    };
+
+    const applyEvent = (evt) => {
+      if (evt.type === 'delta') {
+        assistantMsg.content += evt.text;
+        return;
+      }
+      if (evt.type === 'tool_start') {
+        const run = upsertRun(evt.toolUseId);
+        run.tool = evt.tool;
+        run.status = 'running';
+        run.progress.push('started');
+        return;
+      }
+      if (evt.type === 'tool_progress') {
+        const run = upsertRun(evt.toolUseId);
+        run.tool = evt.tool;
+        pushProgress(run, evt.message, evt.replaceKey);
+        return;
+      }
+      if (evt.type === 'tool_end') {
+        const run = upsertRun(evt.toolUseId);
+        run.tool = evt.tool;
+        run.status = evt.ok ? 'done' : 'error';
+        if (evt.error) run.error = evt.error;
+        return;
+      }
+      if (evt.type === 'error') {
+        assistantMsg.content =
+          (assistantMsg.content || '') + `\n\n_⚠️ ${evt.message || 'Stream error'}_`;
+      }
+    };
+
     try {
       await api.streamChat(apiMessages, {
         onEvent: (evt) => {
-          if (evt.type === 'delta') {
-            assistantMsg.content += evt.text;
-            renderMessages();
-            scrollToBottom();
-          } else if (evt.type === 'error') {
-            assistantMsg.content =
-              (assistantMsg.content || '') +
-              `\n\n_⚠️ ${evt.message || 'Stream error'}_`;
-          }
+          applyEvent(evt);
+          renderMessages();
+          scrollToBottom();
         },
       });
     } catch (err) {

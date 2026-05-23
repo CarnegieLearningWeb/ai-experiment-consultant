@@ -235,6 +235,76 @@ body {
   background: var(--assistant-bubble);
 }
 
+.tool-runs {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 6px;
+  width: 100%;
+}
+
+.tool-run {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--assistant-bubble);
+  padding: 8px 12px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.tool-run--running {
+  border-color: var(--accent);
+}
+
+.tool-run--error {
+  border-color: #d9534f;
+}
+
+.tool-run__header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+  color: var(--fg);
+}
+
+.tool-run__title {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+}
+
+.tool-run__progress {
+  list-style: none;
+  margin: 6px 0 0;
+  padding: 0 0 0 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tool-run__progress li {
+  position: relative;
+}
+
+.tool-run__progress li::before {
+  content: '•';
+  position: absolute;
+  left: -14px;
+  color: var(--muted);
+}
+
+.tool-run--running .tool-run__progress li:last-child {
+  color: var(--fg);
+}
+
+.tool-run__error {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px dashed var(--border);
+  color: #d9534f;
+  font-size: 12px;
+}
+
 .thinking-dot {
   display: inline-block;
   width: 6px;
