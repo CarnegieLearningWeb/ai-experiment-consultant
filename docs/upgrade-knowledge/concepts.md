@@ -9,9 +9,9 @@ Mirrors [spec.md](../spec.md) §30 with stronger constraints.
 - **Decision Point.** A specific location in the client app where UpGrade decides which condition a participant sees. Identified by `(site, target)`.
   - **Site.** Broader location category (page, function, interaction area).
   - **Target.** Specific element within the site (e.g. a problem ID, a hint button, a content area).
-- **Condition.** A treatment variant. MVP uses two: `control` and one variant (e.g. `hint_button`).
+- **Condition.** A treatment variant (e.g. `control`, `hint_button`). MVP supports 2–3 conditions per experiment. The name `default` is reserved by UpGrade and **must never** be used as a condition name.
 - **Assignment.** UpGrade's process of mapping a participant to a condition at the decision point.
-- **Metric.** A measurable outcome (e.g. completion rate, time on task) used to evaluate the experiment.
+- **Metric.** A measurable outcome (e.g. completion rate, time on task) used to evaluate the experiment. Each metric has a **key** (machine identifier like `completionRate`), a **datatype** (`categorical` or `continuous`), and — for categorical metrics — a list of **allowedValues** (up to 3). A metric on an experiment is referenced through a **query** that applies a statistic to the metric (see "Metric naming convention" below).
 - **Participants — Include All.** MVP defaults all participants into the eligible group; no include/exclude filters.
 - **Experiment Status.** Operational phase: `Inactive`, `Running`, `Paused`, `Completed`.
 
@@ -19,12 +19,49 @@ Mirrors [spec.md](../spec.md) §30 with stronger constraints.
 
 The consultant must keep proposed designs inside this box:
 
-- Between-subject, individual-level assignment.
+- Between-subject, individual-level assignment (implicit — do not surface to the user).
 - Exactly one decision point.
-- Exactly two conditions: `control` plus one named variant.
-- Simple condition weights, default 50 / 50.
+- **2 to 3 conditions.** At least one of them is conventionally named `control`, but the user may rename it. The name `default` is reserved by UpGrade and must never be used.
+- **Weights default to equal across conditions** (50/50 for two, ~33.3/33.3/33.4 for three). The user may adjust but the sum should be 100.
 - `Include All` participants.
-- A small number of simple metrics — typically one binary completion-style metric and one mean numeric metric. (Up to ~3 metrics is fine.)
+- **1 to 3 simple metrics.** Each metric is either categorical or continuous (see "Metric naming convention" below). Categorical metrics support up to 3 `allowedValues`.
+
+## Metric naming convention
+
+When the consultant presents metrics to the user, name them in the format **`${metricKey} (${statistic})`**. This carries both the underlying metric and the way it's measured in a single human-readable string, and it matches the convention used in the UpGrade UI.
+
+**For continuous metrics** the statistic is just the operation name:
+
+| Display | UpGrade `operationType` |
+|---|---|
+| `Sum` | `sum` |
+| `Min` | `min` |
+| `Max` | `max` |
+| `Count` | `count` |
+| `Mean` | `avg` |
+| `Mode` | `mode` |
+| `Median` | `median` |
+| `Standard Deviation` | `stddev` |
+
+Examples: `timeOnTask (Mean)`, `attempts (Sum)`.
+
+**For categorical metrics** the statistic combines an operation, a comparison, and a value:
+
+| Display operation | UpGrade `operationType` |
+|---|---|
+| `Count` | `count` |
+| `Percent` | `percentage` |
+
+| Display compare | UpGrade `compareFn` |
+|---|---|
+| `=` | `=` |
+| `!=` | `<>` |
+
+`compareValue` must be one of the metric's `allowedValues`. Examples: `completionRate (Percent = COMPLETED)`, `outcome (Count != FAILED)`.
+
+**Important:** the consultant only surfaces the single `compareValue` being measured (e.g. "Percent = COMPLETED"). It does **not** need to recite every `allowedValue` in the design. Mention the full allowed-values list only if the user asks or if it's load-bearing for the conversation (e.g. they want to switch which value gets the comparison).
+
+The `repeatedMeasure` field on UpGrade queries is server-side concern, always `"MOST RECENT"` — the consultant never surfaces this and never picks something else.
 
 ## Example design (use as a shape reference, not a fixed template)
 
@@ -37,13 +74,15 @@ Decision Point:
   Site:       problem_page
   Target:     problem_123_hint_support
 Conditions:
-  control:    50%
-  hint_button:50%
-Participants: Include All
+  control:     50%
+  hint_button: 50%
+Participants:  Include All
 Metrics:
   completionRate (Percent = COMPLETED)
-  timeOnTask     (Mean)
+  timeOnTask (Mean)
 ```
+
+> **App context note for the simulation phase only:** during the consulting flow the AI uses whatever app context name fits the user (e.g. `ExampleMathApp`). At simulation time, the server overrides this with the only context the UpGrade demo backend has configured (`add`). The user does not need to know about this swap — the consultant should keep speaking the user's app context name.
 
 ## Not supported in MVP
 
@@ -67,15 +106,16 @@ Free for the user to set or change:
 
 - Name, description, app context.
 - Site, target (with consultant guidance on naming conventions).
-- Condition names (other than the `control` label, which stays fixed).
+- Condition names (~~other than the `control` label, which stays fixed~~ Even the `control` condition name can be changed when appropriate or asked by the user. Also, using "default" as condition name is not allowed when creating an experiment. We should prompt the AI to not use "default" for a condition name).
 - Metric names (subject to keeping them simple).
 
 Intentionally fixed in MVP:
 
+- Single Decision Point
 - Participants = Include All.
-- Assignment design = individual-level, between-subject.
-- Condition count = 2.
-- Weight default = 50 / 50 (user may adjust, but consultant should default to this).
+- Assignment design = individual-level, between-subject. (this will be implicit)
+- ~~Condition count = 2.~~ Let's support up to 3 conditions and 3 metrics. At least 2 conditions and 1 metric is required.
+- Weight default = ~~50 / 50~~ weighted equally (user may adjust, but consultant should default to this).
 
 ## TODO
 

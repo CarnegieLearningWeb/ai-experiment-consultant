@@ -66,24 +66,132 @@ Goal: user can attach a screenshot to a chat turn.
 - [x] Garbage-collect: wipe `server/uploads/` on server boot (in-memory registry resets on restart too, so this keeps disk and registry in sync)
 - [x] Verified end-to-end: uploaded a 1024×1024 PNG, attached to a chat turn, Claude correctly identified the image content
 
-## M4 — Simulation / preflight
+## M4 — Simulation / preflight (via AI tool call)
 
-Goal: user can run a synthetic experiment against the demo UpGrade backend and see assignment + metric summaries.
+Goal: when the user agrees to run a simulation, the AI calls a `run_simulation` tool. The tool orchestrates the documented UpGrade flow, streams progress back to the chat UI, returns enrollment + metric results to the AI, and the AI weaves those results into its next response. API shapes are documented in [upgrade-knowledge/simulation-api.md](upgrade-knowledge/simulation-api.md).
 
-**Spike first** — verify against the live UpGrade demo backend before writing code:
+### Tool-use loop in `/chat` (new architectural piece)
 
-- [ ] Confirm endpoints for create / start / delete a temporary experiment (see `docs/open-questions.md`)
-- [ ] Confirm request/response shapes for `/v6/init`, `/v6/assign`, `/v6/mark`, `/v6/log`
-- [ ] Confirm how to retrieve enrollment + metric results
-- [ ] Update `docs/upgrade-knowledge/simulation-api.md` with verified shapes
+Adding tool calling to the chat endpoint is the load-bearing change in M4. It also unlocks M5 (the report generator will be a tool) and future tools (`search_related_papers`, etc.).
 
-Then build:
+- [ ] Replace the single-turn Anthropic call in [server/src/routes/chat.js](../server/src/routes/chat.js) with a recursive loop:
+  - call Anthropic with current `messages` + `tools`
+  - stream text deltas through to the client as today
+  - collect any `tool_use` blocks from the response
+  - if `stop_reason !== 'tool_use'`: emit `done` and return
+  - otherwise: append the assistant turn (with its `tool_use` blocks) to `messages`, execute each tool, append a `tool_result` user turn for each, loop
+- [ ] **Tools may execute in the same turn in any order; the AI can chain multiple tools before its final reply.** Accuracy + reliability over token cost, per the brief.
+- [ ] Tool registry in [server/src/lib/tools.js](../server/src/lib/tools.js): one file per tool definition + handler, declared with `{ name, description, input_schema, run }`. The chat loop dispatches to `run({ input, emit })` where `emit` lets the tool stream progress events to the client during execution.
+- [ ] Expand the NDJSON event vocabulary:
+  - `{type: "tool_start",    tool, toolUseId, input}`
+  - `{type: "tool_progress", tool, toolUseId, message}`  (free-form human-readable progress)
+  - `{type: "tool_end",      tool, toolUseId, ok, error?}`
+- [ ] **Safety cap:** abort if the same turn exceeds N consecutive tool-call rounds (e.g. N=8). Surface as an error event.
 
-- [ ] `POST /api/v1/ai-consultant/simulation` taking the approved experiment design + cohort size; orchestrating create → start → simulate N participants → fetch results → delete
-- [ ] Synthetic cohort generator with a configurable size (default TBD — see open-questions.md)
-- [ ] Synthetic metric distributions tied to the chosen condition so results "look reasonable" (with a comment that this is purely demo data)
-- [ ] Markdown summary of enrollment + metrics included in the assistant's chat reply
-- [ ] Explicit "synthetic / preflight only" labeling in both the chat and the eventual report
+### `run_simulation` tool
+
+- [ ] Tool input schema is structured (no fragile parsing of the metric display string):
+
+  ```json
+  {
+    "experiment": {
+      "name": "string", "description": "string",
+      "decisionPoint": { "site": "string", "target": "string" },
+      "conditions": [
+        { "code": "control",     "weight": 50 },
+        { "code": "hint_button", "weight": 50 }
+      ],
+      "metrics": [
+        {
+          "key": "completionRate",
+          "datatype": "categorical",
+          "allowedValues": ["COMPLETED", "NOT_COMPLETED"],
+          "query": { "operationType": "percentage", "compareFn": "=", "compareValue": "COMPLETED" }
+        },
+        { "key": "timeOnTask", "datatype": "continuous", "query": { "operationType": "avg" } }
+      ]
+    },
+    "cohortSize": 200,
+    "syntheticSpecs": {
+      "completionRate": {
+        "control":     { "COMPLETED": 0.5, "NOT_COMPLETED": 0.5 },
+        "hint_button": { "COMPLETED": 0.7, "NOT_COMPLETED": 0.3 }
+      },
+      "timeOnTask": {
+        "control":     { "min": 8,  "max": 12 },
+        "hint_button": { "min": 10, "max": 18 }
+      }
+    }
+  }
+  ```
+
+- [ ] `cohortSize`: default 200, range **10–1000**. Validate at the tool boundary.
+- [ ] `syntheticSpecs` are **implicit** — the AI generates them quietly based on its sense of how the intervention should behave (and any numeric hints the user dropped during consulting). The consultant does **not** surface these to the user unless the user asks. If the user asks ("can I see/change the values for simulation?"), the AI shares and lets them adjust.
+- [ ] Display name of each metric (e.g. `"completionRate (Percent = COMPLETED)"`) is **derived deterministically** from `key + query` in [server/src/lib/upgrade.js](../server/src/lib/upgrade.js). The AI never parses or reconstructs this string.
+
+### UpGrade client (`server/src/lib/upgrade.js`)
+
+- [ ] Install `google-auth-library`.
+- [ ] Token cache: read `UPGRADE_SERVICE_ACCOUNT_KEY_PATH`, mint a Google access token, cache until it's near expiry. Reuse [docs/upgrade-knowledge/upgrade-auth.js](upgrade-knowledge/upgrade-auth.js) as the pattern reference (it's CommonJS — port to ESM).
+- [ ] Thin wrappers for each endpoint in [simulation-api.md](upgrade-knowledge/simulation-api.md): management endpoints (`/metric/*`, `/experiments`, `/experiments/state`, `/stats/enrollment/detail`, `/query/analyse`) get a `Bearer` token; client endpoints (`/v6/*`) send only `User-Id`. Implement the bearer flow even though the demo backend currently has auth checking disabled — it's documented to come back.
+- [ ] Helpers: `experimentName({ runId })`, `userId({ runId, index })`, `repeatedMeasure: "MOST RECENT"` (always — never overrideable). Experiment name prefix: `aiconsult-sim-<runId>-<userExperimentName>`.
+
+### Orchestrator (in the `run_simulation` handler)
+
+The flow per [simulation-api.md](upgrade-knowledge/simulation-api.md):
+
+1. `POST /metric/save` (using `"add"` as the only context — override here, the AI is not aware)
+2. `POST /experiments` — generate UUID v4s for experiment / partition / condition / query ids in the payload; capture server-assigned ids from the response
+3. `POST /experiments/state` → `enrolling`
+4. **For each participant** (batched concurrent calls — see below):
+   - `POST /v6/init`
+   - `POST /v6/assign` → extract `data.find(...).assignedCondition?.[0]`
+   - `POST /v6/mark` — always called, even if assign failed or assignedCondition was null
+   - `POST /v6/log` with a single sampled value per metric drawn from `syntheticSpecs[metric][condition]`
+5. `POST /stats/enrollment/detail` + `POST /query/analyse`
+6. Cleanup in `finally`: `DELETE /experiments/:id` then `DELETE /metric/:key` for each metric. Log + continue if either fails — low risk per the doc.
+
+- [ ] **Concurrency: 20 concurrent participant batches** behind a `p-limit`-style semaphore. With 200 participants and ~200ms per request that's ~2s of wall time; with 1000 it's ~10s. If the demo backend protests we can dial back.
+- [ ] Per-participant failures: log + skip + count. Don't abort the whole cohort. Surface the failure count in the result summary.
+- [ ] Stream `tool_progress` events: "creating experiment…", "saving metrics…", "running 47/200…" (throttled to ~once per second so we don't spam the channel), "fetching results…", "cleaning up…".
+
+### Result formatting
+
+- [ ] After results land, return a structured object to the AI (the tool's return value):
+  ```json
+  {
+    "experimentId": "...",
+    "enrollment":  { "control": 47, "hint_button": 53 },
+    "queries": [
+      { "metric": "completionRate", "display": "Percent = COMPLETED", "byCondition": { "control": 50.0, "hint_button": 70.2 } },
+      { "metric": "timeOnTask",     "display": "Mean",                "byCondition": { "control": 10.4, "hint_button": 14.1 } }
+    ],
+    "failures": { "init": 0, "assign": 0, "mark": 0, "log": 0 },
+    "warnings": ["control got 0 participants — try a larger cohort"]
+  }
+  ```
+- [ ] The AI then formats this into a markdown summary in its reply (the table layout from simulation-api.md), adds interpretation, and includes the **synthetic-only disclaimer** ("these numbers do not predict real outcomes — the simulation is a preflight demonstration of how UpGrade collects and reports data"). The disclaimer is part of the system prompt so the AI does not forget it.
+- [ ] If a warning condition is hit (zero enrollment in a condition, all participant calls failed for a metric, etc.) the AI may offer a single retry. One retry per turn, then surface the result.
+
+### Client UI changes
+
+- [ ] Render `tool_start` / `tool_progress` / `tool_end` events as a small "thinking" widget inside the assistant bubble — e.g.:
+  ```
+  🔧 Running simulation…
+     • Created experiment
+     • Running 200 participants (47/200)
+     • Fetching results
+     ✓ Done
+  ```
+  Above (or before) the assistant's eventual text reply for that turn.
+- [ ] Errors during tool execution show in red inside the same widget; the AI still gets the error in its tool_result and can decide what to say.
+
+### Verification
+
+- [ ] End-to-end smoke test: run a 100-participant simulation against the live demo backend; confirm cleanup actually deletes both the experiment and the metrics.
+- [ ] Re-run with the same experiment name — should succeed (no leftover state).
+- [ ] Confirm the AI can chain tools: ask it to "summarize my plan and then run a small simulation" — verify the chat loop survives the back-to-back tool calls.
+- [ ] Confirm graceful failure: temporarily point `UPGRADE_API_URL` at a dead host and verify the tool surfaces a clear error rather than hanging.
 
 ## M5 — Report generation
 

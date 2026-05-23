@@ -8,15 +8,15 @@ relevant milestone. Update as we get clarity. Closed items move out of this file
 - **Create / start / delete temporary experiment.** `spec.md` §22 lists these as needed for simulation, but the endpoints aren't documented in our notes. Need to verify against the demo backend before writing simulation code.
   - Source to confirm against: https://upgrade-platform.gitbook.io/upgrade-documentation
   - Demo backend base: `https://upgrade-demo.carnegielearning.com/api`
-- ~~**Auth / API key.** Does the demo UpGrade backend require credentials for the create/start/delete endpoints?~~ Resolved: yes, via a Google service-account access token. Pattern is in [docs/upgrade-knowledge/upgrade-auth.js](upgrade-knowledge/upgrade-auth.js), key at `upgrade-service-account-key.json` (git-ignored), path env var `UPGRADE_SERVICE_ACCOUNT_KEY_PATH`. Still to confirm in M4: *which* `/v6/*` endpoints actually require the token.
-- **Cleanup safety.** What happens if simulation fails after creating an experiment but before deleting it? Need an idempotent cleanup strategy.
-- **`/v6/init`, `/v6/assign`, `/v6/mark`, `/v6/log` payload shapes.** Confirm exact request/response schemas; do not invent.
-- **App context / context name** for the simulation. Pick a stable identifier reserved for this tool so we don't collide with other demo users.
+- ~~**Auth / API key.** Does the demo UpGrade backend require credentials for the create/start/delete endpoints?~~ Resolved: yes, via a Google service-account access token. Pattern is in [docs/upgrade-knowledge/upgrade-auth.js](upgrade-knowledge/upgrade-auth.js), key at `upgrade-service-account-key.json` (git-ignored), path env var `UPGRADE_SERVICE_ACCOUNT_KEY_PATH`. ~~Still to confirm in M4: *which* `/v6/*` endpoints actually require the token.~~ Resolved: client API endpoints (starting with /v6/) don't require an access token.
+- **Cleanup safety.** What happens if simulation fails after creating an experiment but before deleting it? ~~Need an idempotent cleanup strategy.~~ Confirmed in simulation-api.md
+- **`/v6/init`, `/v6/assign`, `/v6/mark`, `/v6/log` payload shapes.** ~~Confirm exact request/response schemas; do not invent.~~ Confirmed in simulation-api.md
+- **App context / context name** for the simulation. ~~Pick a stable identifier reserved for this tool so we don't collide with other demo users.~~ Confirmed in simulation-api.md
 
 ## Simulation behavior (M4)
 
 - **Default cohort size.** Spec lists 100 / 200 / 500 / 1000. Smaller is faster and more demo-friendly; larger gives more stable splits. Provisional default: **200**. Revisit after we see how it behaves.
-- **How synthetic metric values are generated.** Distribution per condition? Should the variant always look "better" in synthetic data to make the demo land, or should it be honest noise? Provisional plan: light noise around realistic baselines, with a clear "this is synthetic" label, but document the choice once decided.
+- **How synthetic metric values are generated.** Distribution per condition? Should the variant always look "better" in synthetic data to make the demo land, or should it be honest noise? Provisional plan: light noise around realistic baselines, with a clear "this is synthetic" label, but document the choice once decided. An idea: What if we have the AI set the value range for continuous metric (e.g., timeOnTask), and set the random weights for categorical metric (e.g., completionRate)'s "allowedValues" for each condition, and log metrics using the random values within the predefined range and weights? Maybe we could have the AI to set the ranges/weights based on its realistic prediction? (what the AI thinks the results would be like in reality)
 - **Run simulation server-side or client-side?** Provisional plan: server-side. The server already needs `UPGRADE_API_URL` and can stream progress back to the client.
 
 ## AI behavior (M2)
