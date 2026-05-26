@@ -483,7 +483,7 @@ export async function runSimulation({ input, emit }) {
     });
     const warnings = buildWarnings({ enrollment, queries, counters, cohortSize });
 
-    log.sim('summary', { runId, cohortSize, enrollment, counters, warnings: warnings.length });
+    log.sim('summary', { runId, cohortSize, enrollment, queries, counters, warnings: warnings.length });
     if (warnings.length) {
       for (const w of warnings) log.warn('sim warning', { runId, msg: w });
     }

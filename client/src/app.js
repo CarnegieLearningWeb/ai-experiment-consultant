@@ -1,4 +1,23 @@
 import { api } from './api.js';
+import { marked } from 'marked';
+
+marked.setOptions({ gfm: true, breaks: true });
+
+function renderMarkdown(text) {
+  if (!text) return '';
+  // marked.parse may return a Promise if async options are enabled. We use
+  // sync options, so this is always a string — narrow the type for the linter.
+  const out = marked.parse(text);
+  return typeof out === 'string' ? out : '';
+}
+
+function escapeHtml(s) {
+  return String(s)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;');
+}
 
 function renderMessageAttachments(msg, li) {
   if (!msg.attachments?.length) return;
@@ -69,12 +88,38 @@ export function initChatApp({
   sendBtn,
   attachmentTrayEl,
   newChatBtn,
+  artifactPanelEl,
+  artifactTitleEl,
+  artifactBodyEl,
+  artifactCopyBtn,
+  artifactDownloadBtn,
+  artifactCloseBtn,
 }) {
   const state = {
     messages: [],
     pendingAttachment: null,
     isSending: false,
+    artifacts: new Map(), // artifactId -> { id, title, content, kind }
+    openArtifactId: null,
   };
+
+  function renderMessageArtifacts(msg, li) {
+    if (!msg.artifactIds?.length) return;
+    const wrap = document.createElement('div');
+    wrap.className = 'artifact-chips';
+    for (const id of msg.artifactIds) {
+      const a = state.artifacts.get(id);
+      if (!a) continue;
+      const chip = document.createElement('button');
+      chip.type = 'button';
+      chip.className = 'artifact-chip';
+      chip.title = 'Open in panel';
+      chip.innerHTML = `<span class="artifact-chip__icon" aria-hidden="true">📄</span><span>${escapeHtml(a.title || 'Report')}</span>`;
+      chip.addEventListener('click', () => openArtifact(id));
+      wrap.appendChild(chip);
+    }
+    li.appendChild(wrap);
+  }
 
   function renderMessages() {
     messagesEl.innerHTML = '';
@@ -88,7 +133,8 @@ export function initChatApp({
 
       const hasContent = msg.content && msg.content.length > 0;
       const hasToolRun = (msg.toolRuns || []).length > 0;
-      const showBubble = hasContent || !hasToolRun;
+      const hasArtifacts = (msg.artifactIds || []).length > 0;
+      const showBubble = hasContent || (!hasToolRun && !hasArtifacts);
       if (showBubble) {
         const bubble = document.createElement('div');
         bubble.className = 'msg__bubble';
@@ -97,11 +143,19 @@ export function initChatApp({
             '<span class="thinking-dot"></span>' +
             '<span class="thinking-dot"></span>' +
             '<span class="thinking-dot"></span>';
+        } else if (msg.role === 'assistant' && hasContent) {
+          // Render markdown for assistant turns. User turns stay as plain text
+          // (we never want a user-pasted "<script>" to execute, and they're
+          // typing prose, not markdown).
+          bubble.classList.add('msg__bubble--md');
+          bubble.innerHTML = renderMarkdown(msg.content);
         } else {
           bubble.textContent = msg.content;
         }
         li.appendChild(bubble);
       }
+
+      renderMessageArtifacts(msg, li);
 
       messagesEl.appendChild(li);
     }
@@ -173,6 +227,63 @@ export function initChatApp({
     const isUploading = pa?.status === 'uploading';
     sendBtn.disabled = state.isSending || isUploading || (!hasText && !hasReadyAttachment);
   }
+
+  function renderArtifactPanel() {
+    if (!state.openArtifactId) {
+      artifactPanelEl.hidden = true;
+      return;
+    }
+    const a = state.artifacts.get(state.openArtifactId);
+    if (!a) {
+      artifactPanelEl.hidden = true;
+      return;
+    }
+    artifactPanelEl.hidden = false;
+    artifactTitleEl.textContent = a.title || 'Report';
+    artifactBodyEl.innerHTML = renderMarkdown(a.content);
+  }
+
+  function openArtifact(id) {
+    if (!state.artifacts.has(id)) return;
+    state.openArtifactId = id;
+    renderArtifactPanel();
+  }
+
+  function closeArtifact() {
+    state.openArtifactId = null;
+    renderArtifactPanel();
+  }
+
+  function downloadCurrentArtifact() {
+    const a = state.artifacts.get(state.openArtifactId);
+    if (!a) return;
+    const blob = new Blob([a.content], { type: 'text/markdown;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const fname = (a.title || 'report').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'report';
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${fname}.md`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  async function copyCurrentArtifact() {
+    const a = state.artifacts.get(state.openArtifactId);
+    if (!a) return;
+    try {
+      await navigator.clipboard.writeText(a.content);
+      artifactCopyBtn.textContent = 'Copied!';
+      setTimeout(() => { artifactCopyBtn.textContent = 'Copy'; }, 1500);
+    } catch (err) {
+      console.warn('clipboard copy failed:', err);
+    }
+  }
+
+  artifactCloseBtn?.addEventListener('click', closeArtifact);
+  artifactCopyBtn?.addEventListener('click', copyCurrentArtifact);
+  artifactDownloadBtn?.addEventListener('click', downloadCurrentArtifact);
 
   // The `.chat` <main> is the scrollable container, not the <ol>; scroll it.
   const scrollEl = messagesEl.parentElement;
@@ -292,6 +403,22 @@ export function initChatApp({
         run.tool = evt.tool;
         run.status = evt.ok ? 'done' : 'error';
         if (evt.error) run.error = evt.error;
+        return;
+      }
+      if (evt.type === 'artifact') {
+        state.artifacts.set(evt.artifactId, {
+          id: evt.artifactId,
+          kind: evt.kind,
+          title: evt.title,
+          content: evt.content,
+        });
+        if (!assistantMsg.artifactIds) assistantMsg.artifactIds = [];
+        if (!assistantMsg.artifactIds.includes(evt.artifactId)) {
+          assistantMsg.artifactIds.push(evt.artifactId);
+        }
+        // Auto-open the new artifact.
+        state.openArtifactId = evt.artifactId;
+        renderArtifactPanel();
         return;
       }
       if (evt.type === 'error') {

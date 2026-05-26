@@ -204,16 +204,60 @@ The flow per [simulation-api.md](upgrade-knowledge/simulation-api.md):
 - [ ] Confirm the AI can chain tools: ask it to "summarize my plan and then run a small simulation" — verify the chat loop survives the back-to-back tool calls.
 - [ ] Confirm graceful failure: temporarily point `UPGRADE_API_URL` at a dead host and verify the tool surfaces a clear error rather than hanging.
 
-## M5 — Report generation
+## M5 — Report generation (AI tool + side-panel artifact) ✅
 
-Goal: user can ask for a final markdown report and copy it.
+Goal: user can ask for the final markdown experiment plan, see it rendered in a Claude-style side panel, and copy or download it. AI writes only the dynamic prose; the server composes the full report by interleaving AI prose with deterministic templates that get the structured experiment data substituted in.
 
-- [ ] `POST /api/v1/ai-consultant/report` builds the report from current structured state
-- [ ] Hybrid generation: deterministic templates for fixed sections (setup guide, client integration guide), AI generation for dynamic sections (app description, hypothesis, experiment design, simulation interpretation, TODOs)
-- [ ] Report sections from `docs/spec.md` §28
-- [ ] **Markdown rendering** — add `marked` (or similar) and render assistant turns + report output as HTML. The consultant already produces markdown today and it shows as plaintext; M5 fixes that since the report needs it anyway.
-- [ ] Copy-to-clipboard button on the report
-- [ ] Confirmation step: AI lists included sections and asks whether the user wants to exclude anything before generation
+Verified end-to-end on 2026-05-23: AI built structured input from a synthetic test prompt, `generate_report` composed a 12-section markdown report in ~1ms, emitted the `artifact` event, AI replied with the one-sentence acknowledgement. Section ordering is dynamic — sections drop out cleanly when omitted via the `include` toggles or when an optional field (simulation) isn't provided.
+
+### Design summary
+
+- **One tool: `generate_report`.** The AI calls it once after the user approves which sections to include. Input is structured: AI-written prose for the dynamic sections + the same `experiment` shape used by `run_simulation` + an optional `simulationResult` blob. The tool returns `{markdown, title}`.
+- **No streaming the report into the chat.** The AI's chat reply after the tool returns is a one-sentence acknowledgement ("Your report is ready in the panel on the right…"); the report itself opens in a side panel.
+- **Side-panel artifact UI.** New NDJSON event `{type: "artifact", artifactId, kind: "markdown", title, content}` triggers a slide-in panel on the right. Header has copy + download + close. Reopen via a chip inside the assistant turn that produced it.
+- **Implicit structured state.** No `record_field` tool. The AI rebuilds the structured shape on demand from conversation history when it calls `generate_report` — fine for MVP per the user's call.
+
+### Templates
+
+Live in `server/src/lib/report-templates/`. All are `.md` files with `{{placeholder}}` markers; the report composer substitutes from the structured experiment. **Placeholder text in setup-guide and notes-and-limitations is reasonable filler — replace later.**
+
+- [ ] `setup-guide.md` — generic UpGrade onboarding (account setup, where to find docs). Substitutes `{{app_context}}`. Placeholder text.
+- [ ] `experiment-creation-guide.md` — step-by-step "create this experiment in the UpGrade UI". Substitutes the full design: `{{name}}`, `{{description}}`, `{{app_context}}`, `{{decision_point_block}}`, `{{conditions_block}}`, `{{metrics_block}}`.
+- [ ] `client-integration-guide.md` — JS/TS code snippet tailored to the experiment. Substitutes `{{app_context}}`, `{{site}}`, `{{target}}`, `{{conditions_branch_code}}` (an `if/else if` ladder over the condition codes with `// TODO: render variant for X` markers — the report intentionally does NOT include the actual variant-rendering code). Ends with the "review with your developers" caveat.
+- [ ] `notes-and-limitations.md` — fixed disclaimer about MVP scope, synthetic simulation, no real-experiment promises. Placeholder text.
+
+### Composer
+
+- [ ] `server/src/lib/report.js`: `composeReport(input)` returns the full markdown. Loads `.md` templates at module init. Helpers: `renderDecisionPoint(dp)`, `renderConditionsBlock(conditions)`, `renderMetricsBlock(metrics)`, `renderConditionsBranchCode(conditions)`, `renderSimulationBlock(simulationResult)`. Section order matches spec §28.
+
+### Tool
+
+- [ ] `server/src/lib/tools/generate-report.js`: `generate_report` tool. Input schema captures AI prose + experiment + optional simulation result + `include` toggles for each section. The tool does not call Anthropic — it just composes. Returns `{markdown, title}` to the AI and emits the `artifact` event via the new emit-side hook.
+- [ ] Register in `server/src/lib/tools.js`.
+
+### Chat route
+
+- [ ] `chat.js` recognizes the artifact emission from the tool runner. Simplest approach: the tool may emit `{type: "artifact", artifactId, kind, title, content}` via `emit()`, same channel as `tool_progress`. No code in `chat.js` changes beyond pass-through.
+
+### System prompt
+
+- [ ] `prompt.js` `## Tools` adds `generate_report` guidance: when to call, structured input shape, confirmation-before-generation step ("I'm about to generate the report including sections X, Y, Z — anything to exclude?"), one-sentence post-tool reply ("Report ready in the panel"). The AI never writes the markdown body itself.
+
+### Client
+
+- [ ] Install `marked` (or `markdown-it`) in `client/`.
+- [ ] New side-panel module: slides in from the right when an `artifact` event arrives. ~50% width on wide screens, overlay with 480px min on narrow.
+- [ ] Header: title + copy-to-clipboard + download-as-`.md` + close.
+- [ ] Render the markdown via `marked` into the panel body. Sanitize via `marked`'s default behavior (no raw HTML in our generated reports anyway, but be defensive).
+- [ ] Add a small "📄 Report" chip inside the producing assistant bubble that reopens the panel for that specific artifact. Multiple reports per session = multiple chips.
+- [ ] Render markdown for assistant **chat** turns too while we're at it — the consultant already emits markdown and it shows as plaintext today.
+
+### Verification
+
+- [ ] End-to-end: walk through a short consulting flow, request the report, verify the AI calls `generate_report` with structured input, panel opens with rendered markdown, copy + download both work.
+- [ ] Verify section substitution: change condition names, decision point, app context — confirm they appear correctly in setup, experiment-creation, and client-integration sections.
+- [ ] Verify "exclude" flow: ask the AI to leave out the simulation summary, confirm it's omitted from the rendered report.
+- [ ] Verify reopen chip works after panel is closed.
 
 ## M6 — Demo polish (ChatGPT/Claude-style UI)
 

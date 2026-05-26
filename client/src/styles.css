@@ -471,6 +471,321 @@ body {
   color: var(--accent);
 }
 
+/* ============================================================================
+   Artifact panel — slide-in side panel for generated reports.
+   ============================================================================ */
+
+.artifact-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(50vw, 720px);
+  min-width: 480px;
+  background: var(--bg);
+  border-left: 1px solid var(--border);
+  display: grid;
+  grid-template-rows: auto 1fr;
+  box-shadow: -8px 0 24px rgba(0, 0, 0, 0.08);
+  z-index: 50;
+  animation: artifact-slide-in 180ms ease-out;
+}
+
+.artifact-panel[hidden] {
+  display: none;
+}
+
+@keyframes artifact-slide-in {
+  from {
+    transform: translateX(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.artifact-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+}
+
+.artifact-panel__title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.artifact-panel__actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.artifact-panel__body {
+  overflow-y: auto;
+  padding: 24px 32px 48px;
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+.artifact-panel__body h1,
+.artifact-panel__body h2,
+.artifact-panel__body h3,
+.artifact-panel__body h4 {
+  letter-spacing: -0.01em;
+  margin-top: 1.6em;
+  margin-bottom: 0.6em;
+  line-height: 1.3;
+}
+
+.artifact-panel__body h1 {
+  font-size: 24px;
+  margin-top: 0;
+}
+
+.artifact-panel__body h2 {
+  font-size: 19px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 6px;
+}
+
+.artifact-panel__body h3 {
+  font-size: 16px;
+}
+
+.artifact-panel__body h4 {
+  font-size: 14px;
+}
+
+.artifact-panel__body p {
+  margin: 0.8em 0;
+}
+
+.artifact-panel__body ul,
+.artifact-panel__body ol {
+  padding-left: 22px;
+  margin: 0.6em 0;
+}
+
+.artifact-panel__body li {
+  margin: 0.25em 0;
+}
+
+.artifact-panel__body code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.88em;
+  background: var(--assistant-bubble);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 5px;
+}
+
+.artifact-panel__body pre {
+  background: var(--assistant-bubble);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  overflow-x: auto;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.artifact-panel__body pre code {
+  background: transparent;
+  border: 0;
+  padding: 0;
+}
+
+.artifact-panel__body blockquote {
+  margin: 1em 0;
+  padding: 6px 14px;
+  border-left: 3px solid var(--border);
+  color: var(--muted);
+  background: var(--assistant-bubble);
+  border-radius: 0 6px 6px 0;
+}
+
+.artifact-panel__body table {
+  border-collapse: collapse;
+  margin: 0.8em 0;
+  width: 100%;
+  font-size: 14px;
+}
+
+.artifact-panel__body th,
+.artifact-panel__body td {
+  border: 1px solid var(--border);
+  padding: 6px 10px;
+  text-align: left;
+}
+
+.artifact-panel__body th {
+  background: var(--assistant-bubble);
+  font-weight: 600;
+}
+
+/* Markdown rendering inside assistant chat bubbles.
+   The base .msg__bubble uses `white-space: pre-wrap` so plain-text replies
+   keep their newlines. Once we render markdown into innerHTML, the literal
+   newlines that marked emits between block elements (e.g. between </li> and
+   the next <li>) would show up as visible whitespace gaps. Switch to
+   `normal` so block layout controls spacing, not source whitespace. */
+.msg__bubble--md {
+  white-space: normal;
+}
+
+.msg__bubble--md > :first-child {
+  margin-top: 0;
+}
+
+.msg__bubble--md > :last-child {
+  margin-bottom: 0;
+}
+
+.msg__bubble--md p {
+  margin: 0 0 16px;
+}
+
+.msg__bubble--md p:last-child {
+  margin-bottom: 0;
+}
+
+.msg__bubble--md ul,
+.msg__bubble--md ol {
+  margin: 0 0 16px;
+  padding-left: 20px;
+}
+
+/* Nested lists tuck close to their parent <li> — the parent's li
+   margin-bottom controls the gap between top-level items, so a nested
+   list shouldn't add its own. Without this, items that contain a
+   sub-list get a 16px gap after their sub-list ends while flat items
+   only get the 4px li margin, which looks inconsistent. */
+.msg__bubble--md li > ul,
+.msg__bubble--md li > ol {
+  margin: 0;
+}
+
+.msg__bubble--md li {
+  margin-bottom: 4px;
+}
+
+/* Loose-list <li>s wrap content in <p>. Defeat the <p>'s own margin so
+   the rhythm is controlled by the li, not the paragraph. */
+.msg__bubble--md li > p {
+  margin: 0;
+}
+
+/* Chat bubble headings step down through a compressed range — the bubble is
+   conversational, not a document, so we want hierarchy without shouting. */
+.msg__bubble--md h1,
+.msg__bubble--md h2,
+.msg__bubble--md h3,
+.msg__bubble--md h4,
+.msg__bubble--md h5,
+.msg__bubble--md h6 {
+  margin: 12px 0 4px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.msg__bubble--md h1 { font-size: 18px; }
+.msg__bubble--md h2 { font-size: 17px; }
+.msg__bubble--md h3 { font-size: 16px; }
+.msg__bubble--md h4 { font-size: 15px; }  /* same as body, just bold */
+.msg__bubble--md h5,
+.msg__bubble--md h6 {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.msg__bubble--md code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.88em;
+  background: rgba(0, 0, 0, 0.06);
+  border-radius: 3px;
+  padding: 1px 4px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .msg__bubble--md code {
+    background: rgba(255, 255, 255, 0.08);
+  }
+}
+
+.msg__bubble--md pre {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 10px;
+  overflow-x: auto;
+  font-size: 12px;
+}
+
+.msg__bubble--md table {
+  border-collapse: collapse;
+  margin: 0.5em 0;
+  font-size: 13px;
+}
+
+.msg__bubble--md th,
+.msg__bubble--md td {
+  border: 1px solid var(--border);
+  padding: 4px 8px;
+}
+
+/* Artifact reopen chip inside the assistant bubble. */
+.artifact-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.artifact-chip {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--assistant-bubble);
+  color: var(--fg);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.artifact-chip:hover,
+.artifact-chip:focus-visible {
+  border-color: var(--accent);
+  outline: none;
+}
+
+.artifact-chip__icon {
+  font-size: 14px;
+}
+
+@media (max-width: 900px) {
+  .artifact-panel {
+    width: 100vw;
+    min-width: 0;
+    border-left: 0;
+  }
+}
+
 @media (max-width: 600px) {
   #app {
     height: 100dvh;

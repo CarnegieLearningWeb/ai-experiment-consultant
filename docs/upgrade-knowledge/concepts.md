@@ -63,24 +63,25 @@ Examples: `timeOnTask (Mean)`, `attempts (Sum)`.
 
 The `repeatedMeasure` field on UpGrade queries is server-side concern, always `"MOST RECENT"` — the consultant never surfaces this and never picks something else.
 
-## Example design (use as a shape reference, not a fixed template)
+## Presenting the design to the user
 
-```text
-Name:         Hint Button Experiment
-Description:  Tests whether adding an optional hint button improves
-              completion rate on a target math problem.
-App Context:  ExampleMathApp
-Decision Point:
-  Site:       problem_page
-  Target:     problem_123_hint_support
-Conditions:
-  control:     50%
-  hint_button: 50%
-Participants:  Include All
-Metrics:
-  completionRate (Percent = COMPLETED)
-  timeOnTask (Mean)
-```
+When you propose or summarize the experiment design in chat, **use a markdown list with this structure** — not a plain-text code block. Bullet-list rendering matches the rest of the chat surface and reads better than a monospace code block.
+
+- **Name:** Hint Button Experiment
+- **Description:** Tests whether adding an optional hint button improves completion rate on a target math problem.
+- **App Context:** `ExampleMathApp`
+- **Decision Point:**
+  - Site: `problem_page`
+  - Target: `problem_123_hint_support`
+- **Conditions:**
+  - `control` — 50%
+  - `hint_button` — 50%
+- **Participants:** Include All
+- **Metrics:**
+  - `completionRate (Percent = COMPLETED)`
+  - `timeOnTask (Mean)`
+
+Use this same shape whether you have two or three conditions, one to three metrics, etc. The values above are illustrative — replace with the user's actual experiment.
 
 > **App context note for the simulation phase only:** during the consulting flow the AI uses whatever app context name fits the user (e.g. `ExampleMathApp`). At simulation time, the server overrides this with the only context the UpGrade demo backend has configured (`add`). The user does not need to know about this swap — the consultant should keep speaking the user's app context name.
 

@@ -10,4 +10,10 @@ initChatApp({
   sendBtn: document.getElementById('send-btn'),
   attachmentTrayEl: document.getElementById('attachment-tray'),
   newChatBtn: document.getElementById('new-chat'),
+  artifactPanelEl: document.getElementById('artifact-panel'),
+  artifactTitleEl: document.getElementById('artifact-panel-title'),
+  artifactBodyEl: document.getElementById('artifact-panel-body'),
+  artifactCopyBtn: document.getElementById('artifact-copy'),
+  artifactDownloadBtn: document.getElementById('artifact-download'),
+  artifactCloseBtn: document.getElementById('artifact-close'),
 });

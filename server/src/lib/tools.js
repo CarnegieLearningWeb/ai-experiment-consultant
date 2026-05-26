@@ -1,4 +1,5 @@
 import { runSimulation, RUN_SIMULATION_SCHEMA } from './tools/run-simulation.js';
+import { generateReport, GENERATE_REPORT_SCHEMA } from './tools/generate-report.js';
 
 // A tool definition:
 //   {
@@ -28,6 +29,20 @@ const REGISTRY = {
       'how assignment, enrollment, and metric logging would behave in UpGrade.',
     input_schema: RUN_SIMULATION_SCHEMA,
     run: runSimulation,
+  },
+  generate_report: {
+    name: 'generate_report',
+    description:
+      'Compose the final markdown experiment-plan report and open it in the side panel ' +
+      'on the right. The server composes the report by combining your dynamic prose ' +
+      '(app description, hypothesis, etc.) with deterministic templates for the setup / ' +
+      'experiment-creation / client-integration / notes sections. You do NOT need to write ' +
+      "the full report — pass the structured pieces and the templates fill in the rest. " +
+      'After the tool returns, reply with one short sentence acknowledging the panel is ' +
+      "ready (don't repeat the report content in chat). Call this tool only after the user " +
+      'has approved the sections to include.',
+    input_schema: GENERATE_REPORT_SCHEMA,
+    run: generateReport,
   },
 };
 
