@@ -125,12 +125,17 @@ ChatGPT / Claude.ai web UI.
 
 - [ ] **Layout:** use the full page width (current 820px max-width is too narrow for a demo).
 - [ ] **Assistant turns:** no bubble — render as flush body text aligned to the conversation column. User turns keep a subtle bubble for visual separation.
-- [ ] **Composer:** redesign as a single rounded panel hugging the bottom of the viewport (textarea + attach icon + send arrow icon, like Claude.ai). Move the "prototype build" hint into a small footer below the composer or into the empty-state copy.
 - [ ] **Reading width inside the conversation column** — assistant text shouldn't go edge-to-edge on wide screens.
+- [ ] **Composer:** redesign as a single rounded panel hugging the bottom of the viewport (textarea + attach icon + send arrow icon, like ChatGPT UI). Move the "prototype build" hint into a small footer below the composer or into the empty-state copy.
+- [ ] Identify places that it would be better (closer to ChatGPT/Claude-style UI) to use icon instead of text button.
 - [ ] **Typography pass** — pick a real body font, lock heading scale, tighten line-height for assistant prose.
-- [ ] First-load empty state with example prompts (already done in M1 — re-evaluate copy and visuals).
-- [ ] Persistent banner that this is a planning prototype, not a live experiment runner.
+- [ ] ~~First-load empty state with example prompts (already done in M1 — re-evaluate copy and visuals).~~ This might need to change. The idea is to display a fixed initial message from the AI (which doesn't need to be an actual response from the AI). See "14. Phase 1: Learning App Description" from docs/spec.md for reference. Previous Claude Code implemented like this, but I don't think example prompt options are really useful. Also, this app will later have a login page where the user can see the app intro before getting to the chat UI. Let me know if you disagree that making this change will be better UX.
+- [ ] Make the inline thumbnails in past turns clickable. When clicked, the thumbnail image should expand (possibly to its original size), displayed in the center with dimmed background and "X" button at the top right corner (just like how it works in ChatGPT / Claude.ai web UI).
+- [ ] Support uploading other non-image file formats (e.g., pdf, txt, csv) supported by Anthropic API. Reference links: https://platform.claude.com/docs/en/build-with-claude/files, https://platform.claude.com/docs/en/build-with-claude/pdf-support
+- [ ] Persistent banner that this is a planning prototype, not a live experiment runner (Previous Claude added this task but I'm not sure what this means - please clarify before doing this task if you know what this means).
+- [ ] Suggest other potential UI/UX improvements if there's any.
 - [ ] Demo script + walkthrough notes in [docs/setup.md](setup.md).
+- [ ] Check if we really need server/.env.example file. If it's unused and not needed, remove the file.
 
 ## M7 — Deployment
 
