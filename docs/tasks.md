@@ -134,10 +134,10 @@ ChatGPT / Claude.ai web UI.
 - [ ] Support uploading other non-image file formats (e.g., pdf, txt, csv) supported by Anthropic API. Reference links: https://platform.claude.com/docs/en/build-with-claude/files, https://platform.claude.com/docs/en/build-with-claude/pdf-support
 - [ ] Persistent banner that this is a planning prototype, not a live experiment runner (Previous Claude added this task but I'm not sure what this means - please clarify before doing this task if you know what this means).
 - [ ] Suggest other potential UI/UX improvements if there's any.
-- [ ] Demo script + walkthrough notes in [docs/setup.md](setup.md).
+- [ ] Demo script + walkthrough notes in [docs/setup.md](setup.md) - I'm not sure what this is for. Previous Claude Code added this task. Please verify what this is for and if this is really needed.
 - [ ] Check if we really need server/.env.example file. If it's unused and not needed, remove the file.
 
-## M7 — Deployment
+## M7 — Deployment (clarification needed)
 
 Goal: the prototype is reachable at `/ai-consultant` on the existing demo host.
 
@@ -146,7 +146,7 @@ Goal: the prototype is reachable at `/ai-consultant` on the existing demo host.
 - [ ] Reverse proxy config sketch for routing `/ai-consultant` → static build, `/api/v1/ai-consultant/*` → Express
 - [ ] Smoke test the deployed URL
 
-## M8 — Paper
+## M8 — Paper (clarification needed)
 
 Goal: the 4-page PELE 2026 WIP/Demo paper. (Not a code milestone, but tracked so it stays visible.)
 
@@ -155,7 +155,7 @@ Goal: the 4-page PELE 2026 WIP/Demo paper. (Not a code milestone, but tracked so
 - [ ] Internal review
 - [ ] Submit
 
-## Deferred (post-MVP)
+## Deferred (post-MVP) (clarification needed)
 
 - Persistent project history
 - Related-paper retrieval (needs a curated source first)
