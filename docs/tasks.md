@@ -123,19 +123,46 @@ blocks ([concepts.md](upgrade-knowledge/concepts.md) updated accordingly).
 Goal: presentable for the PELE 2026 workshop demo. Target visual language:
 ChatGPT / Claude.ai web UI.
 
-- [ ] **Layout:** use the full page width (current 820px max-width is too narrow for a demo).
-- [ ] **Assistant turns:** no bubble — render as flush body text aligned to the conversation column. User turns keep a subtle bubble for visual separation.
-- [ ] **Reading width inside the conversation column** — assistant text shouldn't go edge-to-edge on wide screens.
-- [ ] **Composer:** redesign as a single rounded panel hugging the bottom of the viewport (textarea + attach icon + send arrow icon, like ChatGPT UI). Move the "prototype build" hint into a small footer below the composer or into the empty-state copy.
-- [ ] Identify places that it would be better (closer to ChatGPT/Claude-style UI) to use icon instead of text button.
-- [ ] **Typography pass** — pick a real body font, lock heading scale, tighten line-height for assistant prose.
-- [ ] ~~First-load empty state with example prompts (already done in M1 — re-evaluate copy and visuals).~~ This might need to change. The idea is to display a fixed initial message from the AI (which doesn't need to be an actual response from the AI). See "14. Phase 1: Learning App Description" from docs/spec.md for reference. Previous Claude Code implemented like this, but I don't think example prompt options are really useful. Also, this app will later have a login page where the user can see the app intro before getting to the chat UI. Let me know if you disagree that making this change will be better UX.
-- [ ] Make the inline thumbnails in past turns clickable. When clicked, the thumbnail image should expand (possibly to its original size), displayed in the center with dimmed background and "X" button at the top right corner (just like how it works in ChatGPT / Claude.ai web UI).
-- [ ] Support uploading other non-image file formats (e.g., pdf, txt, csv) supported by Anthropic API. Reference links: https://platform.claude.com/docs/en/build-with-claude/files, https://platform.claude.com/docs/en/build-with-claude/pdf-support
-- [ ] Persistent banner that this is a planning prototype, not a live experiment runner (Previous Claude added this task but I'm not sure what this means - please clarify before doing this task if you know what this means).
-- [ ] Suggest other potential UI/UX improvements if there's any.
-- [ ] Demo script + walkthrough notes in [docs/setup.md](setup.md) - I'm not sure what this is for. Previous Claude Code added this task. Please verify what this is for and if this is really needed.
-- [ ] Check if we really need server/.env.example file. If it's unused and not needed, remove the file.
+### Layout & conversation column
+
+- [ ] **Full page width:** drop the 820px `#app` max-width — let the page use the full viewport. Constrain the conversation column separately for readability (next item).
+- [ ] **Assistant turns without a bubble:** render assistant prose as flush body text aligned to the conversation column. User turns keep a subtle bubble for separation.
+- [ ] **Conversation reading width:** cap the conversation column width so assistant prose doesn't run edge-to-edge on wide screens.
+
+### Composer
+
+- [ ] Redesign as a single rounded panel hugging the bottom of the viewport: textarea + attach icon (left) + send arrow icon (right), ChatGPT-style.
+- [ ] Drop the current "Prototype build…" hint from the UI entirely — the AI already mentions the synthetic-data caveat after a simulation, and a standalone disclaimer banner adds noise without value.
+
+### Typography & iconography
+
+- [ ] **Typography pass:** pick a body font, lock the heading scale, tighten line-height for assistant prose.
+- [ ] **Icons where text reads worse:** identify places to swap a text button for an icon (likely candidates: New Chat, Send, artifact panel Copy / Download / Close).
+
+### Empty state / first-load
+
+- [ ] Replace the current empty-state copy with a **fixed initial AI greeting** (see [spec.md](spec.md) §14) plus two starter prompt chips below it:
+  - "I don't have an app yet"
+  - "Walk me through with an example"
+
+  Both are escape hatches for users who can't or don't want to describe their own app. The greeting needs to be included in the `messages` payload on the user's first send so the model doesn't re-introduce itself in its real response.
+
+### Attachments
+
+- [ ] **Lightbox thumbnails:** make inline thumbnails in past turns clickable. Click expands the image (toward original size) centered with a dimmed backdrop and an "X" close button in the top-right (Escape also closes), matching ChatGPT / Claude.
+- [ ] **More upload formats:** extend [`ALLOWED_UPLOADS`](../server/src/lib/uploads.js) with PDF / txt / CSV (and any other Anthropic-supported formats useful for the consulting flow). Add a `document` content-block branch in [`toAnthropicMessage`](../server/src/routes/chat.js). PDFs are the highest-value addition; skip any individual format that turns out fiddly to wire up. Refs: <https://platform.claude.com/docs/en/build-with-claude/files>, <https://platform.claude.com/docs/en/build-with-claude/pdf-support>.
+
+### Polish (nice-to-haves)
+
+- [ ] **Artifact panel keyboard support** — Escape closes the panel; focus management on open/close.
+- [ ] **Smarter auto-scroll** — don't fight the user when they've scrolled up mid-stream.
+- [ ] Other ChatGPT/Claude-style refinements surfaced during implementation.
+
+A Stop button while streaming was considered and dropped — aborting cleanly mid-tool-call (e.g. while `run_simulation` is mid-flight against UpGrade) isn't worth the reliability risk for a demo. The Send button already disables while a request is in flight, which is enough.
+
+### Housekeeping
+
+- [ ] Remove [`server/.env.example`](../server/.env.example) — verified as a documentation mirror of the root `.env.example`; nothing loads from it.
 
 ## M7 — Deployment (clarification needed)
 
@@ -154,6 +181,12 @@ Goal: the 4-page PELE 2026 WIP/Demo paper. (Not a code milestone, but tracked so
 - [ ] First draft
 - [ ] Internal review
 - [ ] Submit
+
+## M9 — Workshop demo prep
+
+Goal: ready to present the demo at the PELE 2026 workshop. Address closer to the workshop date.
+
+- [ ] Demo script + walkthrough notes in [docs/setup.md](setup.md)'s "Demo walkthrough" section — sample inputs, the path through the six phases, and what to highlight for the audience.
 
 ## Deferred (post-MVP) (clarification needed)
 
