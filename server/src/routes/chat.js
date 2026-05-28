@@ -92,7 +92,7 @@ function toAnthropicMessage(m) {
 // One Anthropic round — streams text deltas, collects tool_use blocks.
 // ============================================================================
 
-function handleBlockStart(state, event) {
+function handleBlockStart(state, event, ctx) {
   const cb = event.content_block;
   const block = { ...cb };
   if (cb.type === 'text') block.text = '';
@@ -100,6 +100,17 @@ function handleBlockStart(state, event) {
   else if (cb.type === 'tool_use') {
     block.input = {};
     state.toolJsonBuf.set(event.index, '');
+    // Surface the tool-use block to the client the moment the model commits
+    // to it, before its (potentially large) JSON input has finished
+    // streaming. The client renders the tool-runs card on tool_intent and
+    // the eventual tool_start becomes a no-op for the same toolUseId — so
+    // the user doesn't see a frozen gap during input streaming for tools
+    // with big payloads (generate_report's report body in particular).
+    ctx?.write?.({
+      type: 'tool_intent',
+      tool: cb.name,
+      toolUseId: cb.id,
+    });
   }
   state.blocks[event.index] = block;
 }

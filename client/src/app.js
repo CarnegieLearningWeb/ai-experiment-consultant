@@ -620,9 +620,13 @@ export function initChatApp({
 
     const handleToolEvent = (evt) => {
       const seg = findOrCreateToolSegment(evt.toolUseId, evt.tool);
-      if (evt.type === 'tool_start') {
-        seg.status = 'running';
-        seg.progress.push('started');
+      // tool_intent fires when the model begins emitting the tool_use block
+      // (input JSON still streaming). tool_start fires when the server
+      // actually begins executing. Whichever lands first opens the card;
+      // the other is an idempotent no-op for the same toolUseId.
+      if (evt.type === 'tool_intent' || evt.type === 'tool_start') {
+        if (seg.status !== 'done' && seg.status !== 'error') seg.status = 'running';
+        if (!seg.progress.length) seg.progress.push('started');
         return;
       }
       if (evt.type === 'tool_progress') {
@@ -656,7 +660,12 @@ export function initChatApp({
         if (last?.type === 'text') last.completed = true;
         return;
       }
-      if (evt.type === 'tool_start' || evt.type === 'tool_progress' || evt.type === 'tool_end') {
+      if (
+        evt.type === 'tool_intent' ||
+        evt.type === 'tool_start' ||
+        evt.type === 'tool_progress' ||
+        evt.type === 'tool_end'
+      ) {
         return handleToolEvent(evt);
       }
       if (evt.type === 'artifact') return handleArtifactEvent(evt);
