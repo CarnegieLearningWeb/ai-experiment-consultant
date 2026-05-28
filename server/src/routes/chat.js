@@ -118,9 +118,20 @@ function handleBlockDelta(state, event, ctx) {
   }
 }
 
-function handleBlockStop(state, event) {
+function handleBlockStop(state, event, ctx) {
   const block = state.blocks[event.index];
-  if (block?.type !== 'tool_use') return;
+  if (!block) return;
+  if (block.type === 'text') {
+    // Signal that this text block is finished so the client can stop
+    // suppressing the "still working" indicator. The client uses this to tell
+    // "text actively streaming" apart from "text block done, waiting for the
+    // next thing" (typically a tool_use that hasn't surfaced as tool_start
+    // yet). Without it, the user sees a frozen moment between the last delta
+    // and tool_start.
+    ctx?.write?.({ type: 'text_stop' });
+    return;
+  }
+  if (block.type !== 'tool_use') return;
   const raw = state.toolJsonBuf.get(event.index) || '';
   try {
     block.input = raw ? JSON.parse(raw) : {};

@@ -22,7 +22,25 @@ const CHECK_ICON_SVG = `<svg width="16" height="16" viewBox="0 0 24 24" fill="no
 </svg>`;
 
 function makeSeedMessage() {
-  return { role: 'assistant', content: SEED_GREETING, isSeed: true };
+  return {
+    role: 'assistant',
+    isSeed: true,
+    segments: [{ type: 'text', content: SEED_GREETING }],
+  };
+}
+
+// Derive the plain-text content of a message for the Anthropic payload. User
+// messages carry a `content` string; assistant messages carry ordered
+// `segments` where each text segment contributes its content (tool segments
+// are skipped — the AI's tool interactions don't replay into subsequent turns).
+function messageContent(msg) {
+  if (msg.segments) {
+    return msg.segments
+      .filter((s) => s.type === 'text')
+      .map((s) => s.content)
+      .join('');
+  }
+  return msg.content || '';
 }
 
 function renderMarkdown(text) {
@@ -132,42 +150,58 @@ export function initChatApp({
     li.appendChild(wrap);
   }
 
-  function renderMessageToolRuns(msg, li) {
-    if (!msg.toolRuns?.length) return;
+  const TOOL_RUN_ICONS = { error: '⚠', done: '✓' };
+
+  function buildToolSegment(segment) {
     const wrap = document.createElement('div');
     wrap.className = 'tool-runs';
-    for (const run of msg.toolRuns) {
-      const card = document.createElement('div');
-      card.className = `tool-run tool-run--${run.status}`;
 
-      const header = document.createElement('div');
-      header.className = 'tool-run__header';
-      const TOOL_RUN_ICONS = { error: '⚠', done: '✓' };
-      const iconChar = TOOL_RUN_ICONS[run.status] || '🔧';
-      header.innerHTML = `<span class="tool-run__icon">${iconChar}</span> <span class="tool-run__title">${run.tool}</span>`;
-      card.appendChild(header);
+    const card = document.createElement('div');
+    card.className = `tool-run tool-run--${segment.status}`;
 
-      if (run.progress.length) {
-        const list = document.createElement('ul');
-        list.className = 'tool-run__progress';
-        for (const p of run.progress) {
-          const item = document.createElement('li');
-          item.textContent = p;
-          list.appendChild(item);
-        }
-        card.appendChild(list);
+    const header = document.createElement('div');
+    header.className = 'tool-run__header';
+    const iconChar = TOOL_RUN_ICONS[segment.status] || '🔧';
+    header.innerHTML = `<span class="tool-run__icon">${iconChar}</span> <span class="tool-run__title">${segment.tool}</span>`;
+    card.appendChild(header);
+
+    if (segment.progress.length) {
+      const list = document.createElement('ul');
+      list.className = 'tool-run__progress';
+      for (const p of segment.progress) {
+        const item = document.createElement('li');
+        item.textContent = p;
+        list.appendChild(item);
       }
-
-      if (run.error) {
-        const err = document.createElement('div');
-        err.className = 'tool-run__error';
-        err.textContent = run.error;
-        card.appendChild(err);
-      }
-
-      wrap.appendChild(card);
+      card.appendChild(list);
     }
-    li.appendChild(wrap);
+
+    if (segment.error) {
+      const err = document.createElement('div');
+      err.className = 'tool-run__error';
+      err.textContent = segment.error;
+      card.appendChild(err);
+    }
+
+    wrap.appendChild(card);
+    return wrap;
+  }
+
+  function buildTextSegment(segment) {
+    const bubble = document.createElement('div');
+    bubble.className = 'msg__bubble msg__bubble--md';
+    bubble.innerHTML = renderMarkdown(segment.content);
+    return bubble;
+  }
+
+  function buildPendingTail() {
+    const tail = document.createElement('div');
+    tail.className = 'msg__bubble msg__pending-tail';
+    tail.innerHTML =
+      '<span class="thinking-dot"></span>' +
+      '<span class="thinking-dot"></span>' +
+      '<span class="thinking-dot"></span>';
+    return tail;
   }
 
   function renderMessageArtifacts(msg, li) {
@@ -188,21 +222,36 @@ export function initChatApp({
     li.appendChild(wrap);
   }
 
-  function buildBubble(msg, hasContent) {
+  function buildUserBubble(msg, li) {
+    if (!msg.content) return;
     const bubble = document.createElement('div');
     bubble.className = 'msg__bubble';
-    if (msg.role === 'assistant' && msg.pending && !hasContent) {
-      bubble.innerHTML =
-        '<span class="thinking-dot"></span>' +
-        '<span class="thinking-dot"></span>' +
-        '<span class="thinking-dot"></span>';
-    } else if (msg.role === 'assistant' && hasContent) {
-      bubble.classList.add('msg__bubble--md');
-      bubble.innerHTML = renderMarkdown(msg.content);
-    } else {
-      bubble.textContent = msg.content;
+    bubble.textContent = msg.content;
+    li.appendChild(bubble);
+  }
+
+  function buildAssistantBody(msg, li) {
+    const segments = msg.segments || [];
+    for (const segment of segments) {
+      if (segment.type === 'text' && segment.content) {
+        li.appendChild(buildTextSegment(segment));
+      } else if (segment.type === 'tool') {
+        li.appendChild(buildToolSegment(segment));
+      }
     }
-    return bubble;
+    // Tail thinking-dots show in the "gap" states only: before the first
+    // delta, between a text block ending and the next thing (typically
+    // tool_start), and between tool_end and the next round's first delta.
+    // We hide them while text is actively streaming (the text itself is the
+    // indicator) and while a tool is running (the tool-runs card is). The
+    // server emits a `text_stop` event when a text content block ends so we
+    // can tell "delta paused for a tick" apart from "text block fully done".
+    if (!msg.pending) return;
+    const last = segments.at(-1);
+    const activelyStreaming =
+      (last?.type === 'text' && !last.completed) ||
+      (last?.type === 'tool' && last.status === 'running');
+    if (!activelyStreaming) li.appendChild(buildPendingTail());
   }
 
   function buildMessageLi(msg) {
@@ -215,13 +264,11 @@ export function initChatApp({
     }
 
     renderMessageAttachments(msg, li);
-    renderMessageToolRuns(msg, li);
 
-    const hasContent = msg.content && msg.content.length > 0;
-    const hasToolRun = (msg.toolRuns || []).length > 0;
-    const hasArtifacts = (msg.artifactIds || []).length > 0;
-    if (hasContent || (!hasToolRun && !hasArtifacts)) {
-      li.appendChild(buildBubble(msg, hasContent));
+    if (msg.role === 'user') {
+      buildUserBubble(msg, li);
+    } else {
+      buildAssistantBody(msg, li);
     }
 
     renderMessageArtifacts(msg, li);
@@ -498,7 +545,7 @@ export function initChatApp({
     fileInputEl.value = '';
     autosize();
 
-    const assistantMsg = { role: 'assistant', content: '', pending: true };
+    const assistantMsg = { role: 'assistant', segments: [], pending: true };
     state.messages.push(assistantMsg);
     state.isSending = true;
     // A fresh send pins the user back to the bottom.
@@ -512,88 +559,109 @@ export function initChatApp({
       .slice(0, -1)
       .filter((m) => !m.isSeed)
       .map((m) => {
-        const out = { role: m.role, content: m.content };
+        const out = { role: m.role, content: messageContent(m) };
         if (m.attachments?.length) {
           out.attachments = m.attachments.map((a) => ({ id: a.id }));
         }
         return out;
       });
 
-    if (!assistantMsg.toolRuns) assistantMsg.toolRuns = [];
-
-    const upsertRun = (toolUseId) => {
-      let run = assistantMsg.toolRuns.find((r) => r.toolUseId === toolUseId);
-      if (run) return run;
-      run = {
+    // Tool segments and text segments are interleaved in `segments` in the
+    // order Anthropic emits them, so the renderer naturally shows the tool
+    // card between the two text rounds that bracket the tool call.
+    const findOrCreateToolSegment = (toolUseId, toolName) => {
+      let seg = assistantMsg.segments.find(
+        (s) => s.type === 'tool' && s.toolUseId === toolUseId,
+      );
+      if (seg) {
+        if (toolName) seg.tool = toolName;
+        return seg;
+      }
+      seg = {
+        type: 'tool',
         toolUseId,
-        tool: '',
+        tool: toolName || '',
         status: 'running',
         progress: [],
         replaceKeys: new Map(),
         error: null,
       };
-      assistantMsg.toolRuns.push(run);
-      return run;
+      assistantMsg.segments.push(seg);
+      return seg;
     };
 
-    const pushProgress = (run, message, replaceKey) => {
+    const pushProgress = (seg, message, replaceKey) => {
       if (!message) return;
       if (replaceKey) {
-        const existingIdx = run.replaceKeys.get(replaceKey);
+        const existingIdx = seg.replaceKeys.get(replaceKey);
         if (existingIdx === undefined) {
-          run.replaceKeys.set(replaceKey, run.progress.length);
-          run.progress.push(message);
+          seg.replaceKeys.set(replaceKey, seg.progress.length);
+          seg.progress.push(message);
         } else {
-          run.progress[existingIdx] = message;
+          seg.progress[existingIdx] = message;
         }
         return;
       }
-      run.progress.push(message);
+      seg.progress.push(message);
     };
 
-    const applyEvent = (evt) => {
-      if (evt.type === 'delta') {
-        assistantMsg.content += evt.text;
+    const appendTextDelta = (text) => {
+      const last = assistantMsg.segments.at(-1);
+      // Only fold deltas into the last text segment while that block is still
+      // streaming. If the previous text was already closed (text_stop fired,
+      // or the last segment is a tool), start a new text segment so the
+      // boundaries line up with Anthropic's content blocks.
+      if (last?.type === 'text' && !last.completed) {
+        last.content += text;
         return;
       }
+      assistantMsg.segments.push({ type: 'text', content: text });
+    };
+
+    const handleToolEvent = (evt) => {
+      const seg = findOrCreateToolSegment(evt.toolUseId, evt.tool);
       if (evt.type === 'tool_start') {
-        const run = upsertRun(evt.toolUseId);
-        run.tool = evt.tool;
-        run.status = 'running';
-        run.progress.push('started');
+        seg.status = 'running';
+        seg.progress.push('started');
         return;
       }
       if (evt.type === 'tool_progress') {
-        const run = upsertRun(evt.toolUseId);
-        run.tool = evt.tool;
-        pushProgress(run, evt.message, evt.replaceKey);
+        pushProgress(seg, evt.message, evt.replaceKey);
         return;
       }
-      if (evt.type === 'tool_end') {
-        const run = upsertRun(evt.toolUseId);
-        run.tool = evt.tool;
-        run.status = evt.ok ? 'done' : 'error';
-        if (evt.error) run.error = evt.error;
+      // tool_end
+      seg.status = evt.ok ? 'done' : 'error';
+      if (evt.error) seg.error = evt.error;
+    };
+
+    const handleArtifactEvent = (evt) => {
+      state.artifacts.set(evt.artifactId, {
+        id: evt.artifactId,
+        kind: evt.kind,
+        title: evt.title,
+        content: evt.content,
+      });
+      if (!assistantMsg.artifactIds) assistantMsg.artifactIds = [];
+      if (!assistantMsg.artifactIds.includes(evt.artifactId)) {
+        assistantMsg.artifactIds.push(evt.artifactId);
+      }
+      state.openArtifactId = evt.artifactId;
+      renderArtifactPanel();
+    };
+
+    const applyEvent = (evt) => {
+      if (evt.type === 'delta') return appendTextDelta(evt.text);
+      if (evt.type === 'text_stop') {
+        const last = assistantMsg.segments.at(-1);
+        if (last?.type === 'text') last.completed = true;
         return;
       }
-      if (evt.type === 'artifact') {
-        state.artifacts.set(evt.artifactId, {
-          id: evt.artifactId,
-          kind: evt.kind,
-          title: evt.title,
-          content: evt.content,
-        });
-        if (!assistantMsg.artifactIds) assistantMsg.artifactIds = [];
-        if (!assistantMsg.artifactIds.includes(evt.artifactId)) {
-          assistantMsg.artifactIds.push(evt.artifactId);
-        }
-        state.openArtifactId = evt.artifactId;
-        renderArtifactPanel();
-        return;
+      if (evt.type === 'tool_start' || evt.type === 'tool_progress' || evt.type === 'tool_end') {
+        return handleToolEvent(evt);
       }
+      if (evt.type === 'artifact') return handleArtifactEvent(evt);
       if (evt.type === 'error') {
-        assistantMsg.content =
-          (assistantMsg.content || '') + `\n\n_⚠️ ${evt.message || 'Stream error'}_`;
+        appendTextDelta(`\n\n_⚠️ ${evt.message || 'Stream error'}_`);
       }
     };
 
@@ -606,9 +674,7 @@ export function initChatApp({
         },
       });
     } catch (err) {
-      assistantMsg.content =
-        (assistantMsg.content || '') +
-        `\n\n_⚠️ ${err.message || 'Request failed'}_`;
+      appendTextDelta(`\n\n_⚠️ ${err.message || 'Request failed'}_`);
     } finally {
       assistantMsg.pending = false;
       state.isSending = false;

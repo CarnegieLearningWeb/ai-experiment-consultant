@@ -252,8 +252,16 @@ body {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  margin-bottom: 10px;
   width: 100%;
+}
+
+/* Assistant messages can interleave text segments and tool-runs in any order
+   (round-1 text → tool → round-2 text, etc.). Space adjacent segments
+   uniformly so the tool card visually belongs between its surrounding text. */
+.msg--assistant > .msg__bubble + .msg__bubble,
+.msg--assistant > .msg__bubble + .tool-runs,
+.msg--assistant > .tool-runs + .msg__bubble {
+  margin-top: 10px;
 }
 
 .tool-run {
