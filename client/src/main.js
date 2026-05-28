@@ -2,8 +2,7 @@ import { initChatApp } from './app.js';
 
 initChatApp({
   messagesEl: document.getElementById('messages'),
-  emptyStateEl: document.getElementById('empty-state'),
-  starterPromptsEl: document.getElementById('starter-prompts'),
+  starterChipsEl: document.getElementById('starter-chips'),
   formEl: document.getElementById('composer-form'),
   inputEl: document.getElementById('composer-input'),
   fileInputEl: document.getElementById('file-input'),
@@ -16,4 +15,7 @@ initChatApp({
   artifactCopyBtn: document.getElementById('artifact-copy'),
   artifactDownloadBtn: document.getElementById('artifact-download'),
   artifactCloseBtn: document.getElementById('artifact-close'),
+  lightboxEl: document.getElementById('lightbox'),
+  lightboxImgEl: document.getElementById('lightbox-img'),
+  lightboxCloseBtn: document.getElementById('lightbox-close'),
 });

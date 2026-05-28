@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { getAnthropicClient, DEFAULT_MODEL } from '../lib/anthropic.js';
 import { SYSTEM_PROMPT } from '../lib/prompt.js';
-import { ALLOWED_UPLOADS, readUploadBytes } from '../lib/uploads.js';
+import { ALLOWED_UPLOADS, TEXT_INLINE_MAX_BYTES, readUploadBytes } from '../lib/uploads.js';
 import { getTool, getToolDefinitionsForAnthropic } from '../lib/tools.js';
 import { log } from '../lib/log.js';
 
@@ -42,39 +42,48 @@ function validateMessages(messages) {
 // Wire-shape → Anthropic message conversion (attachments → image blocks).
 // ============================================================================
 
+function attachmentToBlock(a) {
+  const meta = readUploadBytes(a.id);
+  if (!meta) {
+    return {
+      type: 'text',
+      text: `[attachment ${a.id} unavailable — server was restarted or upload expired]`,
+    };
+  }
+  const spec = ALLOWED_UPLOADS[meta.mimeType];
+  if (spec?.kind === 'image' || spec?.kind === 'pdf') {
+    return {
+      type: spec.kind === 'image' ? 'image' : 'document',
+      source: {
+        type: 'base64',
+        media_type: meta.mimeType,
+        data: meta.bytes.toString('base64'),
+      },
+    };
+  }
+  if (spec?.kind === 'text') {
+    const truncated = meta.bytes.length > TEXT_INLINE_MAX_BYTES;
+    const slice = truncated ? meta.bytes.subarray(0, TEXT_INLINE_MAX_BYTES) : meta.bytes;
+    const note = truncated
+      ? ` (truncated to ${Math.floor(TEXT_INLINE_MAX_BYTES / 1024)} KB of ${Math.floor(meta.bytes.length / 1024)} KB)`
+      : '';
+    return {
+      type: 'text',
+      text: `[Attached file: ${meta.filename} (${meta.mimeType})${note}]\n\n${slice.toString('utf8')}`,
+    };
+  }
+  return {
+    type: 'text',
+    text: `[attachment "${meta.filename}" of type ${meta.mimeType} is not yet supported in chat]`,
+  };
+}
+
 function toAnthropicMessage(m) {
   const attachments = m.attachments || [];
   if (attachments.length === 0) {
     return { role: m.role, content: m.content };
   }
-
-  const blocks = [];
-  for (const a of attachments) {
-    const meta = readUploadBytes(a.id);
-    if (!meta) {
-      blocks.push({
-        type: 'text',
-        text: `[attachment ${a.id} unavailable — server was restarted or upload expired]`,
-      });
-      continue;
-    }
-    const spec = ALLOWED_UPLOADS[meta.mimeType];
-    if (spec?.kind === 'image') {
-      blocks.push({
-        type: 'image',
-        source: {
-          type: 'base64',
-          media_type: meta.mimeType,
-          data: meta.bytes.toString('base64'),
-        },
-      });
-    } else {
-      blocks.push({
-        type: 'text',
-        text: `[attachment "${meta.filename}" of type ${meta.mimeType} is not yet supported in chat]`,
-      });
-    }
-  }
+  const blocks = attachments.map(attachmentToBlock);
   if (m.content) blocks.push({ type: 'text', text: m.content });
   return { role: m.role, content: blocks };
 }
