@@ -9,7 +9,10 @@
   --accent: #2b6cb0;
   --accent-fg: #ffffff;
   --user-bubble: #efebe4;
-  --danger: #c44b3f;
+  --warning: #92400e;
+  --warning-bg: #fde68a;
+  --danger: #9b2419;
+  --danger-bg: #fbcfca;
   --shadow-soft: 0 1px 2px rgba(20, 18, 14, 0.04), 0 8px 24px rgba(20, 18, 14, 0.05);
 
   --font-body: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
@@ -33,7 +36,10 @@
     --accent: #6fa8e0;
     --accent-fg: #0b0b0a;
     --user-bubble: #2c2a26;
-    --danger: #e07a6f;
+    --warning: #fcd34d;
+    --warning-bg: #422006;
+    --danger: #fca5a5;
+    --danger-bg: #4a1208;
     --shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.35);
   }
 }
@@ -506,13 +512,6 @@ body {
   outline: none;
 }
 
-.attachment-warning {
-  flex-basis: 100%;
-  font-size: 12px;
-  color: var(--danger);
-  padding: 2px 4px;
-}
-
 .composer {
   display: flex;
   align-items: flex-end;
@@ -951,6 +950,103 @@ body {
 .lightbox__close:focus-visible {
   background: rgba(0, 0, 0, 0.75);
   outline: none;
+}
+
+/* ============================================================================
+   Toasts — transient global notifications (limit warnings, network errors).
+   Stacked at the top of the viewport, each auto-dismissing after a few
+   seconds. The container is pointer-events:none so it never blocks clicks
+   on the underlying UI; individual toasts re-enable it for the close button.
+   ============================================================================ */
+
+.toast-container {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 100;
+  pointer-events: none;
+  max-width: calc(100vw - 32px);
+  align-items: center;
+}
+
+.toast {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--surface);
+  color: var(--fg);
+  border: 1px solid var(--border-strong);
+  border-radius: 10px;
+  padding: 10px 8px 10px 14px;
+  box-shadow: var(--shadow-soft);
+  font-size: 14px;
+  line-height: 1.4;
+  pointer-events: auto;
+  animation: toast-in 180ms ease-out;
+  max-width: 480px;
+}
+
+.toast--warning {
+  background: var(--warning-bg);
+  border-color: var(--warning);
+  color: var(--warning);
+}
+
+.toast--error {
+  background: var(--danger-bg);
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.toast__message {
+  flex: 1;
+}
+
+.toast__close {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  /* Inherit from the parent toast so the × matches the toast tone
+     (muted on info, amber on warning, red on error). */
+  color: currentColor;
+  opacity: 0.7;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.toast__close:hover,
+.toast__close:focus-visible {
+  opacity: 1;
+  /* A translucent tint of the current toast color — works on both light
+     and dark backgrounds without per-mode overrides. */
+  background: color-mix(in srgb, currentColor 14%, transparent);
+  outline: none;
+}
+
+.toast--leaving {
+  animation: toast-out 160ms ease-in forwards;
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes toast-out {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(-10px); }
 }
 
 /* ============================================================================

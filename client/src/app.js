@@ -1,5 +1,6 @@
 import { api } from './api.js';
 import { marked } from 'marked';
+import { showToast } from './toast.js';
 
 marked.setOptions({ gfm: true, breaks: true });
 
@@ -18,7 +19,6 @@ const STARTER_CHIPS = [
 //   * 5 chips fit in the composer tray without wrapping noisily;
 //   * matches the practical limit on similar consumer chat UIs.
 const MAX_PENDING_FILES = 5;
-const ATTACHMENT_WARNING_MS = 4000;
 
 const COPY_ICON_SVG = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
   <rect x="8" y="8" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.6"/>
@@ -87,7 +87,6 @@ export function initChatApp({
   const state = {
     messages: [makeSeedMessage()],
     pendingAttachments: [],
-    attachmentWarning: null,
     isSending: false,
     artifacts: new Map(),
     openArtifactId: null,
@@ -101,8 +100,6 @@ export function initChatApp({
 
   // Track the pending "Copy → Check" timeout so rapid clicks don't stack.
   let copyResetTimeout = null;
-  // Auto-dismiss timer for the attachment warning line.
-  let attachmentWarningTimeout = null;
 
   // ===========================================================================
   // Lightbox (native <dialog>)
@@ -365,17 +362,6 @@ export function initChatApp({
     fileInputEl.value = '';
   }
 
-  function showAttachmentWarning(message) {
-    state.attachmentWarning = message;
-    if (attachmentWarningTimeout) clearTimeout(attachmentWarningTimeout);
-    attachmentWarningTimeout = setTimeout(() => {
-      state.attachmentWarning = null;
-      attachmentWarningTimeout = null;
-      renderAttachmentTray();
-    }, ATTACHMENT_WARNING_MS);
-    renderAttachmentTray();
-  }
-
   function buildAttachmentChip(pa) {
     const chip = document.createElement('div');
     chip.className = 'attachment-chip';
@@ -413,21 +399,13 @@ export function initChatApp({
 
   function renderAttachmentTray() {
     attachmentTrayEl.innerHTML = '';
-    const hasChips = state.pendingAttachments.length > 0;
-    if (!hasChips && !state.attachmentWarning) {
+    if (state.pendingAttachments.length === 0) {
       attachmentTrayEl.hidden = true;
       return;
     }
     attachmentTrayEl.hidden = false;
     for (const pa of state.pendingAttachments) {
       attachmentTrayEl.appendChild(buildAttachmentChip(pa));
-    }
-    if (state.attachmentWarning) {
-      const warn = document.createElement('div');
-      warn.className = 'attachment-warning';
-      warn.setAttribute('role', 'status');
-      warn.textContent = state.attachmentWarning;
-      attachmentTrayEl.appendChild(warn);
     }
   }
 
@@ -792,16 +770,18 @@ export function initChatApp({
 
     const remaining = MAX_PENDING_FILES - state.pendingAttachments.length;
     if (remaining <= 0) {
-      showAttachmentWarning(
+      showToast(
         `You can attach up to ${MAX_PENDING_FILES} files per message. Remove one to add more.`,
+        { kind: 'warning' },
       );
       return;
     }
     const toUpload = picked.slice(0, remaining);
     if (picked.length > remaining) {
       const skipped = picked.length - remaining;
-      showAttachmentWarning(
+      showToast(
         `Only ${MAX_PENDING_FILES} files per message — skipped ${skipped} ${skipped === 1 ? 'file' : 'files'}.`,
+        { kind: 'warning' },
       );
     }
     for (const file of toUpload) {
@@ -819,11 +799,6 @@ export function initChatApp({
   function handleNewChat() {
     state.messages = [makeSeedMessage()];
     clearPendingAttachments();
-    if (attachmentWarningTimeout) {
-      clearTimeout(attachmentWarningTimeout);
-      attachmentWarningTimeout = null;
-    }
-    state.attachmentWarning = null;
     state.isSending = false;
     state.isPinnedToBottom = true;
     // Replay the seed + chip fade-ups so New Chat feels just like first load.
