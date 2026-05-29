@@ -12,6 +12,14 @@ const STARTER_CHIPS = [
   'Walk me through with an example',
 ];
 
+// Cap on pending uploads per message. Picked at 5 because:
+//   * each image counts as ~1.5K tokens, PDFs more, so 5 is a comfortable
+//     ceiling against the model's context budget for ongoing conversation;
+//   * 5 chips fit in the composer tray without wrapping noisily;
+//   * matches the practical limit on similar consumer chat UIs.
+const MAX_PENDING_FILES = 5;
+const ATTACHMENT_WARNING_MS = 4000;
+
 const COPY_ICON_SVG = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
   <rect x="8" y="8" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.6"/>
   <path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" stroke="currentColor" stroke-width="1.6"/>
@@ -78,7 +86,8 @@ export function initChatApp({
 }) {
   const state = {
     messages: [makeSeedMessage()],
-    pendingAttachment: null,
+    pendingAttachments: [],
+    attachmentWarning: null,
     isSending: false,
     artifacts: new Map(),
     openArtifactId: null,
@@ -92,6 +101,8 @@ export function initChatApp({
 
   // Track the pending "Copy → Check" timeout so rapid clicks don't stack.
   let copyResetTimeout = null;
+  // Auto-dismiss timer for the attachment warning line.
+  let attachmentWarningTimeout = null;
 
   // ===========================================================================
   // Lightbox (native <dialog>)
@@ -321,6 +332,12 @@ export function initChatApp({
       state.messages.length === 1 && state.messages[0].isSeed;
     starterChipsEl.hidden = !showChips;
     if (showChips && !state.chipsAnimated) {
+      // The chips div is the same DOM node across renders, so just toggling
+      // the class back on after a New Chat doesn't always retrigger the CSS
+      // animation. Drop the class first, force a reflow by reading a layout
+      // property, then re-add — this makes the fade-up replay reliably.
+      starterChipsEl.classList.remove('starter-chips--anim');
+      starterChipsEl.getBoundingClientRect();
       starterChipsEl.classList.add('starter-chips--anim');
       state.chipsAnimated = true;
     } else if (!showChips) {
@@ -332,25 +349,34 @@ export function initChatApp({
   // Attachment tray
   // ===========================================================================
 
-  function clearPendingAttachment() {
-    if (state.pendingAttachment?.previewUrl) {
-      URL.revokeObjectURL(state.pendingAttachment.previewUrl);
-    }
-    state.pendingAttachment = null;
-    fileInputEl.value = '';
+  function removeAttachment(pa) {
+    if (pa.previewUrl) URL.revokeObjectURL(pa.previewUrl);
+    const idx = state.pendingAttachments.indexOf(pa);
+    if (idx !== -1) state.pendingAttachments.splice(idx, 1);
     renderAttachmentTray();
     updateSendDisabled();
   }
 
-  function renderAttachmentTray() {
-    attachmentTrayEl.innerHTML = '';
-    if (!state.pendingAttachment) {
-      attachmentTrayEl.hidden = true;
-      return;
+  function clearPendingAttachments() {
+    for (const pa of state.pendingAttachments) {
+      if (pa.previewUrl) URL.revokeObjectURL(pa.previewUrl);
     }
-    attachmentTrayEl.hidden = false;
-    const pa = state.pendingAttachment;
+    state.pendingAttachments = [];
+    fileInputEl.value = '';
+  }
 
+  function showAttachmentWarning(message) {
+    state.attachmentWarning = message;
+    if (attachmentWarningTimeout) clearTimeout(attachmentWarningTimeout);
+    attachmentWarningTimeout = setTimeout(() => {
+      state.attachmentWarning = null;
+      attachmentWarningTimeout = null;
+      renderAttachmentTray();
+    }, ATTACHMENT_WARNING_MS);
+    renderAttachmentTray();
+  }
+
+  function buildAttachmentChip(pa) {
     const chip = document.createElement('div');
     chip.className = 'attachment-chip';
     if (pa.status === 'uploading') chip.classList.add('attachment-chip--uploading');
@@ -377,19 +403,38 @@ export function initChatApp({
     removeBtn.setAttribute('aria-label', `Remove ${pa.filename}`);
     removeBtn.textContent = '×';
     removeBtn.addEventListener('click', () => {
-      clearPendingAttachment();
+      removeAttachment(pa);
       inputEl.focus();
     });
     chip.appendChild(removeBtn);
 
-    attachmentTrayEl.appendChild(chip);
+    return chip;
+  }
+
+  function renderAttachmentTray() {
+    attachmentTrayEl.innerHTML = '';
+    const hasChips = state.pendingAttachments.length > 0;
+    if (!hasChips && !state.attachmentWarning) {
+      attachmentTrayEl.hidden = true;
+      return;
+    }
+    attachmentTrayEl.hidden = false;
+    for (const pa of state.pendingAttachments) {
+      attachmentTrayEl.appendChild(buildAttachmentChip(pa));
+    }
+    if (state.attachmentWarning) {
+      const warn = document.createElement('div');
+      warn.className = 'attachment-warning';
+      warn.setAttribute('role', 'status');
+      warn.textContent = state.attachmentWarning;
+      attachmentTrayEl.appendChild(warn);
+    }
   }
 
   function updateSendDisabled() {
     const hasText = inputEl.value.trim().length > 0;
-    const pa = state.pendingAttachment;
-    const hasReadyAttachment = pa?.status === 'ready';
-    const isUploading = pa?.status === 'uploading';
+    const hasReadyAttachment = state.pendingAttachments.some((pa) => pa.status === 'ready');
+    const isUploading = state.pendingAttachments.some((pa) => pa.status === 'uploading');
     sendBtn.disabled = state.isSending || isUploading || (!hasText && !hasReadyAttachment);
   }
 
@@ -523,25 +568,31 @@ export function initChatApp({
     event.preventDefault();
     if (state.isSending) return;
     const text = inputEl.value.trim();
-    const pa = state.pendingAttachment;
-    const hasReadyAttachment = pa?.status === 'ready';
-    if (!text && !hasReadyAttachment) return;
+    const readyAttachments = state.pendingAttachments.filter((p) => p.status === 'ready');
+    if (!text && readyAttachments.length === 0) return;
 
     const userMsg = { role: 'user', content: text };
-    if (hasReadyAttachment) {
-      userMsg.attachments = [
-        {
-          id: pa.id,
-          mimeType: pa.mimeType,
-          filename: pa.filename,
-          previewUrl: pa.previewUrl,
-        },
-      ];
+    if (readyAttachments.length > 0) {
+      // Blob URL ownership transfers from pendingAttachments to the user
+      // message; do not revoke them here (the past-turn thumbnail + lightbox
+      // need them for the rest of the session).
+      userMsg.attachments = readyAttachments.map((p) => ({
+        id: p.id,
+        mimeType: p.mimeType,
+        filename: p.filename,
+        previewUrl: p.previewUrl,
+      }));
     }
     state.messages.push(userMsg);
 
     inputEl.value = '';
-    state.pendingAttachment = null;
+    // Detach the ready attachments without revoking their blob URLs (now
+    // owned by the user message). Drop any non-ready remnants — e.g. an
+    // upload still in flight or one that failed — and revoke their previews.
+    for (const p of state.pendingAttachments) {
+      if (p.status !== 'ready' && p.previewUrl) URL.revokeObjectURL(p.previewUrl);
+    }
+    state.pendingAttachments = [];
     fileInputEl.value = '';
     autosize();
 
@@ -696,17 +747,7 @@ export function initChatApp({
   // File upload
   // ===========================================================================
 
-  async function handleFileChange(event) {
-    const file = event.target.files?.[0];
-    if (!file) {
-      clearPendingAttachment();
-      return;
-    }
-
-    if (state.pendingAttachment?.previewUrl) {
-      URL.revokeObjectURL(state.pendingAttachment.previewUrl);
-    }
-
+  async function uploadOneAttachment(file) {
     const previewUrl = file.type.startsWith('image/') ? URL.createObjectURL(file) : null;
     const slot = {
       status: 'uploading',
@@ -717,26 +758,54 @@ export function initChatApp({
       id: null,
       errorMessage: null,
     };
-    state.pendingAttachment = slot;
+    state.pendingAttachments.push(slot);
     renderAttachmentTray();
     updateSendDisabled();
 
     try {
       const meta = await api.upload(file);
-      if (state.pendingAttachment !== slot) return;
+      // The user may have removed this attachment while the upload was in
+      // flight — bail without mutating a slot that's no longer in the tray.
+      if (!state.pendingAttachments.includes(slot)) return;
       slot.status = 'ready';
       slot.id = meta.id;
       slot.mimeType = meta.mimeType;
       slot.size = meta.size;
     } catch (err) {
-      if (state.pendingAttachment !== slot) return;
+      if (!state.pendingAttachments.includes(slot)) return;
       slot.status = 'error';
       slot.errorMessage = err.message || 'Upload failed';
     } finally {
-      if (state.pendingAttachment === slot) {
+      if (state.pendingAttachments.includes(slot)) {
         renderAttachmentTray();
         updateSendDisabled();
       }
+    }
+  }
+
+  function handleFileChange(event) {
+    const picked = Array.from(event.target.files || []);
+    // Reset the input immediately so the same file can be re-picked (browsers
+    // suppress a change event when the same value is reassigned).
+    fileInputEl.value = '';
+    if (picked.length === 0) return;
+
+    const remaining = MAX_PENDING_FILES - state.pendingAttachments.length;
+    if (remaining <= 0) {
+      showAttachmentWarning(
+        `You can attach up to ${MAX_PENDING_FILES} files per message. Remove one to add more.`,
+      );
+      return;
+    }
+    const toUpload = picked.slice(0, remaining);
+    if (picked.length > remaining) {
+      const skipped = picked.length - remaining;
+      showAttachmentWarning(
+        `Only ${MAX_PENDING_FILES} files per message — skipped ${skipped} ${skipped === 1 ? 'file' : 'files'}.`,
+      );
+    }
+    for (const file of toUpload) {
+      uploadOneAttachment(file);
     }
   }
 
@@ -749,14 +818,18 @@ export function initChatApp({
 
   function handleNewChat() {
     state.messages = [makeSeedMessage()];
-    state.pendingAttachment = null;
+    clearPendingAttachments();
+    if (attachmentWarningTimeout) {
+      clearTimeout(attachmentWarningTimeout);
+      attachmentWarningTimeout = null;
+    }
+    state.attachmentWarning = null;
     state.isSending = false;
     state.isPinnedToBottom = true;
     // Replay the seed + chip fade-ups so New Chat feels just like first load.
     state.seedAnimated = false;
     state.chipsAnimated = false;
     inputEl.value = '';
-    fileInputEl.value = '';
     autosize();
     render();
     inputEl.focus();

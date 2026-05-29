@@ -506,6 +506,13 @@ body {
   outline: none;
 }
 
+.attachment-warning {
+  flex-basis: 100%;
+  font-size: 12px;
+  color: var(--danger);
+  padding: 2px 4px;
+}
+
 .composer {
   display: flex;
   align-items: flex-end;
