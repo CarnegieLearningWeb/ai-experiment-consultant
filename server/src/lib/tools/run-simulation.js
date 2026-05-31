@@ -185,6 +185,12 @@ async function runWithConcurrency({ count, concurrency, work }) {
 // ============================================================================
 
 function buildExperimentPayload({ runId, experiment }) {
+  // Append the runId to every identifier UpGrade uses to route participants
+  // and metric values (site, target, metric.key) so concurrent simulations
+  // don't collide on the same decision point or metric namespace. The
+  // `queries[].name` field is left unscoped — it's a human-readable label
+  // we also use in the AI/user-facing result tables and report.
+  const scopedKey = (k) => `${k}-${runId}`;
   const partitionId = uuidv4();
   const conditions = experiment.conditions.map((c, i) => ({
     id: uuidv4(),
@@ -204,13 +210,15 @@ function buildExperimentPayload({ runId, experiment }) {
     return {
       name: displayNameForMetric(m),
       query,
-      metric: { key: m.key },
+      metric: { key: scopedKey(m.key) },
       repeatedMeasure: REPEATED_MEASURE,
     };
   });
 
   const payload = {
-    name: `aiconsult-sim-${runId}-${experiment.name}`.slice(0, 254),
+    // Truncate experiment.name (AI-provided) to leave room for the runId
+    // suffix without losing it to the overall length cap.
+    name: `${experiment.name.slice(0, 245)}-${runId}`,
     description: experiment.description,
     context: [DEMO_APP_CONTEXT],
     type: 'Simple',
@@ -223,8 +231,8 @@ function buildExperimentPayload({ runId, experiment }) {
     partitions: [
       {
         id: partitionId,
-        site: experiment.decisionPoint.site,
-        target: experiment.decisionPoint.target,
+        site: scopedKey(experiment.decisionPoint.site),
+        target: scopedKey(experiment.decisionPoint.target),
         description: '',
         order: 1,
         excludeIfReached: false,
@@ -253,16 +261,17 @@ function buildExperimentPayload({ runId, experiment }) {
   return payload;
 }
 
-function buildMetricUnit(metrics) {
+function buildMetricUnit(metrics, runId) {
   return metrics.map((m) => {
+    const key = `${m.key}-${runId}`;
     if (m.datatype === 'categorical') {
       return {
-        metric: m.key,
+        metric: key,
         datatype: 'categorical',
         allowedValues: m.allowedValues || [],
       };
     }
-    return { metric: m.key, datatype: 'continuous' };
+    return { metric: key, datatype: 'continuous' };
   });
 }
 
@@ -271,7 +280,13 @@ function buildMetricUnit(metrics) {
 // ============================================================================
 
 async function simulateParticipant({ runId, index, decisionPoint, metrics, syntheticSpecs, counters }) {
-  const userId = `aiconsult-sim-${runId}-${index}`;
+  const userId = `user-${runId}-${index}`;
+  // The experiment is registered under runId-scoped site/target/metric keys
+  // (see buildExperimentPayload). Use the same scoped values when talking to
+  // UpGrade so the participant lands in this simulation's experiment instead
+  // of leaking into another one sharing the same decision point.
+  const scopedSite = `${decisionPoint.site}-${runId}`;
+  const scopedTarget = `${decisionPoint.target}-${runId}`;
 
   try {
     await initUser(userId);
@@ -285,8 +300,8 @@ async function simulateParticipant({ runId, index, decisionPoint, metrics, synth
   try {
     assignedCondition = await assignUser({
       userId,
-      site: decisionPoint.site,
-      target: decisionPoint.target,
+      site: scopedSite,
+      target: scopedTarget,
     });
   } catch (err) {
     counters.assignFailed += 1;
@@ -301,8 +316,8 @@ async function simulateParticipant({ runId, index, decisionPoint, metrics, synth
   try {
     await markDecisionPoint({
       userId,
-      site: decisionPoint.site,
-      target: decisionPoint.target,
+      site: scopedSite,
+      target: scopedTarget,
       conditionCode,
     });
   } catch (err) {
@@ -314,13 +329,20 @@ async function simulateParticipant({ runId, index, decisionPoint, metrics, synth
   // nowhere to anchor the sampled values otherwise.
   let loggedAttrs = null;
   if (conditionCode) {
-    loggedAttrs = sampleAttributes({ metrics, syntheticSpecs, conditionCode });
+    // sampleAttributes uses the original metric keys (matching the spec
+    // shape the AI built). Translate keys to the runId-scoped form before
+    // sending to UpGrade so the values land under this simulation's
+    // metric namespace.
+    const sampledAttrs = sampleAttributes({ metrics, syntheticSpecs, conditionCode });
+    const scopedAttrs = Object.fromEntries(
+      Object.entries(sampledAttrs).map(([k, v]) => [`${k}-${runId}`, v]),
+    );
     try {
-      await logMetrics({ userId, attributes: loggedAttrs });
+      await logMetrics({ userId, attributes: scopedAttrs });
+      loggedAttrs = sampledAttrs;
     } catch (err) {
       counters.logFailed += 1;
       log.warn('log failed', { user: userId, condition: conditionCode, err: err?.message });
-      loggedAttrs = null;
     }
   }
 
@@ -409,7 +431,7 @@ export async function runSimulation({ input, emit }) {
 
   log.sim('start', { runId, cohortSize, conditions: experiment.conditions.length, metrics: experiment.metrics.length });
   emit({ type: 'tool_progress', message: 'Saving temporary metrics…' });
-  const metricUnit = buildMetricUnit(experiment.metrics);
+  const metricUnit = buildMetricUnit(experiment.metrics, runId);
   try {
     await saveMetrics({ metricUnit });
   } catch (err) {
@@ -516,10 +538,11 @@ export async function runSimulation({ input, emit }) {
       }
     }
     for (const m of experiment.metrics || []) {
+      const scopedMetricKey = `${m.key}-${runId}`;
       try {
-        await deleteMetric(m.key);
+        await deleteMetric(scopedMetricKey);
       } catch (err) {
-        console.warn(`[simulation] delete metric ${m.key} failed: ${err.message}`);
+        console.warn(`[simulation] delete metric ${scopedMetricKey} failed: ${err.message}`);
       }
     }
   }
