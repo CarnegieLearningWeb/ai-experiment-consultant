@@ -427,10 +427,18 @@ export async function runSimulation({ input, emit }) {
     const created = await createExperiment(payload);
     experimentId = created.id;
     for (const c of created.conditions || []) conditionIdToCode.set(c.id, c.conditionCode);
-    // Map server-assigned query ids back to our metric definitions by name match.
-    for (const q of created.queries || []) {
-      const m = experiment.metrics.find((mm) => displayNameForMetric(mm) === q.name);
-      if (m) queryIdToMetric.set(q.id, m);
+    // Map server-assigned query ids back to our metric definitions by name
+    // match. Iterate `experiment.metrics` (request order) rather than
+    // `created.queries` (server response order) so the Map's insertion order
+    // — and therefore the queryIds list we send to /query/analyse, and the
+    // result-array order surfaced to the AI — always matches the order the
+    // metrics were discussed in the conversation. A historical UpGrade bug
+    // tied to queryIds ordering has since been fixed upstream; this keeps
+    // our output deterministic and reads naturally as "for each metric we
+    // requested, find its server-assigned id."
+    for (const m of experiment.metrics) {
+      const q = (created.queries || []).find((qq) => qq.name === displayNameForMetric(m));
+      if (q) queryIdToMetric.set(q.id, m);
     }
     log.sim('experiment created', { experimentId, conditions: Array.from(conditionIdToCode.values()), queries: queryIdToMetric.size });
 
