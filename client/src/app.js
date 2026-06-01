@@ -4,13 +4,13 @@ import { showToast } from './toast.js';
 
 marked.setOptions({ gfm: true, breaks: true });
 
-const SEED_GREETING = `Hi, I'm your AI consultant to help you run experiments on your learning app using UpGrade, an A/B testing platform for education software.
+const SEED_GREETING = `Hi, I'm your AI experiment consultant for learning apps. I can help you turn an idea, pain point, or screenshot into a concrete A/B test plan and implementation-ready report.
 
-Can you tell me about your learning app? What does it do and who is it for?`;
+To start, tell me about your learning app. What does it do, and who is it for?`;
 
 const STARTER_CHIPS = [
   "I don't have an app yet",
-  'Walk me through with an example',
+  'Use an example learning app',
 ];
 
 // Cap on pending uploads per message. Picked at 5 because:

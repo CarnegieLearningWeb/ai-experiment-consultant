@@ -582,6 +582,16 @@ body {
   cursor: not-allowed;
 }
 
+/* Permanent muted disclaimer below the composer — sets expectations about
+   what this tool is and isn't. Centered under the composer column. */
+.composer-footer {
+  margin: 8px 4px 0;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--muted);
+  text-align: center;
+}
+
 /* ============================================================================
    Markdown rendering inside assistant turns
    The assistant prose lives in .msg__bubble--md (no bubble background — flush
