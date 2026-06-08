@@ -50,25 +50,108 @@ function renderMetricsBlock(metrics) {
   return lines.join('\n');
 }
 
-function renderConditionsBranchCode(conditions) {
-  const blocks = conditions.map((c, i) => {
-    const prefix = i === 0 ? 'if' : 'else if';
-    return `${prefix} (assignment?.condition === '${c.code}') {\n  // TODO: render variant for '${c.code}'\n}`;
-  });
-  return blocks.join(' ');
+// `conditionHandlers: { ... }` object-literal contents used by the JS and TS
+// snippets in the client-integration guide. Each entry is indented to slot
+// into the surrounding template; trailing comma is intentional.
+function renderConditionHandlersBlock(conditions) {
+  return conditions
+    .map(
+      (c) =>
+        `    ${c.code}: () => {\n      // Apply the ${c.code} experience here.\n    },`,
+    )
+    .join('\n');
 }
 
-function renderMetricsLogBlock(metrics) {
-  if (!metrics.length) return '//   (no metrics defined)';
+// `await logMetrics(upClient, { ... })` attribute lines, one per metric. The
+// JS/TS snippets in the integration guide are identical at this layer.
+function renderClientMetricAttrsBlock(metrics) {
   return metrics
     .map((m) => {
-      if (m.datatype === 'categorical') {
-        const example = m.allowedValues?.[0] ?? 'VALUE';
-        return `//   - metric '${m.key}' (categorical): upgrade.logMetric({ metric: '${m.key}', value: '${example}' });`;
+      const call = `${m.key}: ${m.key}FromYourApp(),`;
+      if (m.datatype === 'categorical' && m.allowedValues?.length) {
+        const vals = m.allowedValues.map((v) => `"${v}"`).join(' or ');
+        return `  ${call} // ${vals}`;
       }
-      return `//   - metric '${m.key}' (continuous): upgrade.logMetric({ metric: '${m.key}', value: <number> });`;
+      return `  ${call}`;
     })
     .join('\n');
+}
+
+// Bullet list of condition codes for the experiment-creation guide.
+function renderConditionCodesList(conditions) {
+  return conditions.map((c) => `- \`${c.code}\``).join('\n');
+}
+
+// Multi-block format the creation guide uses under "Add the metrics". Each
+// block lists the dropdown values the user will pick in the UpGrade UI.
+// Display labels match the UpGrade frontend, not the operationType wire
+// values, so the user sees the same words in the guide as on the screen.
+const CREATION_GUIDE_OP_LABELS = {
+  sum: 'Sum',
+  min: 'Min',
+  max: 'Max',
+  count: 'Count',
+  avg: 'Mean',
+  mode: 'Mode',
+  median: 'Median',
+  stddev: 'Standard Deviation',
+  percentage: 'Percent',
+};
+
+const CREATION_GUIDE_COMPARE_LABELS = {
+  '=': 'Equal',
+  '<>': 'Not Equal',
+};
+
+function renderCreationGuideMetricsBlock(metrics) {
+  return metrics
+    .map((m) => {
+      const lines = [
+        `**Metric: \`${m.key}\`**`,
+        ``,
+        `- **Metric ID:** \`${m.key}\``,
+        `- **Aggregate Statistic:** ${CREATION_GUIDE_OP_LABELS[m.query.operationType] || m.query.operationType}`,
+      ];
+      if (m.datatype === 'categorical' && m.query.compareFn) {
+        const cmp = CREATION_GUIDE_COMPARE_LABELS[m.query.compareFn] || m.query.compareFn;
+        lines.push(
+          `- **Comparison:** ${cmp}`,
+          `- **Value:** \`${m.query.compareValue}\``,
+        );
+      }
+      lines.push(`- **Display Name:** \`${displayNameForMetric(m)}\``);
+      return lines.join('\n');
+    })
+    .join('\n\n');
+}
+
+// CONTEXT_METADATA env-var value. Single-line JSON — env files don't accept
+// pretty-printed JSON.
+function renderContextMetadataEnv(experiment) {
+  return JSON.stringify({
+    [experiment.appContext]: {
+      CONDITIONS: experiment.conditions.map((c) => c.code),
+      GROUP_TYPES: [],
+      EXP_POINTS: [experiment.decisionPoint.site],
+      EXP_IDS: [experiment.decisionPoint.target],
+    },
+  });
+}
+
+// METRICS env-var value. Mirrors the /metric/save metricUnit shape (minus the
+// runId scoping the simulation tool applies).
+function renderMetricsEnv(experiment) {
+  const metrics = experiment.metrics.map((m) => {
+    if (m.datatype === 'categorical') {
+      return {
+        metric: m.key,
+        datatype: 'categorical',
+        allowedValues: m.allowedValues || [],
+      };
+    }
+    return { metric: m.key, datatype: 'continuous' };
+  });
+  return JSON.stringify([{ metrics, contexts: [experiment.appContext] }]);
 }
 
 // ============================================================================
@@ -153,6 +236,8 @@ function composeNextSteps(items) {
 function composeSetupGuide(experiment) {
   return substitute(TEMPLATES.setupGuide, {
     app_context: experiment.appContext,
+    context_metadata: renderContextMetadataEnv(experiment),
+    metrics_env: renderMetricsEnv(experiment),
   });
 }
 
@@ -161,9 +246,10 @@ function composeExperimentCreationGuide(experiment) {
     name: experiment.name,
     description: experiment.description,
     app_context: experiment.appContext,
-    decision_point_block: renderDecisionPoint(experiment.decisionPoint),
-    conditions_block: renderConditionsBlock(experiment.conditions),
-    metrics_block: renderMetricsBlock(experiment.metrics),
+    site: experiment.decisionPoint.site,
+    target: experiment.decisionPoint.target,
+    conditions_codes_list: renderConditionCodesList(experiment.conditions),
+    creation_metrics_block: renderCreationGuideMetricsBlock(experiment.metrics),
   });
 }
 
@@ -172,8 +258,8 @@ function composeClientIntegrationGuide(experiment) {
     app_context: experiment.appContext,
     site: experiment.decisionPoint.site,
     target: experiment.decisionPoint.target,
-    conditions_branch_code: renderConditionsBranchCode(experiment.conditions),
-    metrics_log_block: renderMetricsLogBlock(experiment.metrics),
+    condition_handlers_block: renderConditionHandlersBlock(experiment.conditions),
+    metric_attrs_block: renderClientMetricAttrsBlock(experiment.metrics),
   });
 }
 

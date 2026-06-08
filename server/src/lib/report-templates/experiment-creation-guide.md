@@ -12,9 +12,9 @@ On the **Experiments** page, click **Add Experiment**.
 
 In the **Add Experiment** modal, enter the following values:
 
-- **Name:** `Hint Button Experiment`
-- **Description:** `Tests whether adding an optional hint button on the problem page improves completion rate without substantially increasing time on task.`
-- **App Context:** `example-math-app`
+- **Name:** `{{name}}`
+- **Description:** `{{description}}`
+- **App Context:** `{{app_context}}`
 
 Leave the remaining settings unchanged:
 
@@ -33,8 +33,8 @@ In the **Decision Points** section, click **Add Decision Point**.
 
 Enter the following values:
 
-- **Site:** `problem_page`
-- **Target:** `problem_123_hint_support`
+- **Site:** `{{site}}`
+- **Target:** `{{target}}`
 
 Leave **Exclude If Reached** unchecked.
 
@@ -52,8 +52,7 @@ For each condition:
 
 Conditions to add:
 
-- `control`
-- `hint_button`
+{{conditions_codes_list}}
 
 ### 4. Include participants
 
@@ -74,19 +73,7 @@ For each metric:
 3. Enter the listed values.
 4. Click **Create**.
 
-**Metric: `completionRate`**
-
-- **Metric ID:** `completionRate`
-- **Aggregate Statistic:** Percentage
-- **Comparison:** Equal
-- **Value:** `COMPLETED`
-- **Display Name:** `completionRate (Percent = COMPLETED)`
-
-**Metric: `timeOnTask`**
-
-- **Metric ID:** `timeOnTask`
-- **Aggregate Statistic:** Mean
-- **Display Name:** `timeOnTask (Mean)`
+{{creation_metrics_block}}
 
 ### 6. Start the experiment
 

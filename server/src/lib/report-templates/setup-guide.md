@@ -70,8 +70,8 @@ cp packages/backend/.env.docker.local.example packages/backend/.env.docker.local
 Open `packages/backend/.env.docker.local` and update the local app context and metric configuration:
 
 ```env
-CONTEXT_METADATA={"example-math-app":{"CONDITIONS":["control","hint_button"],"GROUP_TYPES":[],"EXP_POINTS":["problem_page"],"EXP_IDS":["problem_123_hint_support"]}}
-METRICS=[{"metrics":[{"metric":"completionRate","datatype":"categorical","allowedValues":["COMPLETED","NOT_COMPLETED"]},{"metric":"timeOnTask","datatype":"continuous"}],"contexts":["example-math-app"]}]
+CONTEXT_METADATA={{context_metadata}}
+METRICS={{metrics_env}}
 ```
 
 ### 5. Configure the frontend environment

@@ -75,16 +75,11 @@ Call the helper from the part of your app where the user reaches the decision po
 const { upClient, condition, markStatus } = await visitDecisionPoint({
   userId: userIdFromYourApp(),
   hostUrl: "http://localhost:3030",
-  appContext: "example-math-app",
-  site: "problem_page",
-  target: "problem_123_hint_support",
+  appContext: "{{app_context}}",
+  site: "{{site}}",
+  target: "{{target}}",
   conditionHandlers: {
-    control: () => {
-      // Apply the control experience here.
-    },
-    hint_button: () => {
-      // Apply the hint_button experience here.
-    },
+{{condition_handlers_block}}
   },
   defaultHandler: () => {
     // Apply the default experience when no condition is assigned or no matching condition handler is found.
@@ -96,8 +91,7 @@ When the metric outcomes are known, log them with the same UpGrade client instan
 
 ```js
 await logMetrics(upClient, {
-  completionRate: completionRateFromYourApp(), // "COMPLETED" or "NOT_COMPLETED"
-  timeOnTask: timeOnTaskFromYourApp(),
+{{metric_attrs_block}}
 });
 ```
 
@@ -205,16 +199,11 @@ Call the helper from the part of your app where the user reaches the decision po
 const { upClient, condition, markStatus } = await visitDecisionPoint({
   userId: userIdFromYourApp(),
   hostUrl: "http://localhost:3030",
-  appContext: "example-math-app",
-  site: "problem_page",
-  target: "problem_123_hint_support",
+  appContext: "{{app_context}}",
+  site: "{{site}}",
+  target: "{{target}}",
   conditionHandlers: {
-    control: () => {
-      // Apply the control experience here.
-    },
-    hint_button: () => {
-      // Apply the hint_button experience here.
-    },
+{{condition_handlers_block}}
   },
   defaultHandler: () => {
     // Apply the default experience when no condition is assigned or no matching condition handler is found.
@@ -226,8 +215,7 @@ When the metric outcomes are known, log them with the same UpGrade client instan
 
 ```ts
 await logMetrics(upClient, {
-  completionRate: completionRateFromYourApp(), // "COMPLETED" or "NOT_COMPLETED"
-  timeOnTask: timeOnTaskFromYourApp(),
+{{metric_attrs_block}}
 });
 ```
 
