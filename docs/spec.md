@@ -430,7 +430,7 @@ Name: Hint Button Experiment
 
 Description: Tests whether adding an optional hint button improves completion rate on a target math problem.
 
-App Context: ExampleMathApp
+App Context: example-math-app
 
 Decision Point:
 

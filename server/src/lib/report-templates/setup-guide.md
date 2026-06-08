@@ -1,10 +1,114 @@
-> **PLACEHOLDER:** Replace this section with your team's real UpGrade onboarding instructions (account access, environment configuration, where the docs live, who to ping for help). The text below is filler so the report has something to render today.
+Before creating this experiment in UpGrade, set up a local UpGrade environment where you can configure the experiment and test the client integration.
 
-Before you can run experiments with UpGrade, you'll need access to an UpGrade environment for `{{app_context}}`. The high-level steps are:
+This guide uses the Docker-based UpGrade setup for macOS or Linux. Docker starts the UpGrade backend API, frontend UI, and PostgreSQL database together.
 
-1. Make sure your app context (`{{app_context}}`) is registered in the UpGrade environment you intend to use. App contexts are configured at the deployment level — if it isn't already listed, work with whoever administers your UpGrade instance to add it.
-2. Confirm you have an UpGrade account with permission to create experiments and define metrics in this environment.
-3. Familiarize yourself with the [UpGrade documentation](https://upgrade-platform.gitbook.io/upgrade-documentation) — at a minimum, the sections on experiment configuration, decision points, conditions, and metrics.
-4. Make sure your client application's user identifier is something that won't collide between deployments (e.g. a stable per-user UUID, not a session id).
+### 1. Install Node.js and Yarn
 
-If you don't yet have an UpGrade environment available, ask your platform owner about provisioning one before you proceed.
+UpGrade uses Node.js `22.14.0` for development and build compatibility. The recommended way to install it is with `nvm`.
+
+```bash
+# Install nvm, if needed
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+
+# Load nvm into the current shell
+source ~/.zshrc     # or ~/.bashrc, depending on your shell
+
+# Install and use Node.js 22.14.0
+nvm install 22.14.0
+nvm use 22.14.0
+
+# Install Yarn
+npm install --global yarn
+
+# Verify
+node -v     # v22.14.0
+yarn node -v
+```
+
+### 2. Install Docker
+
+UpGrade's Docker environment requires Docker Engine and Docker Compose.
+
+On macOS, install Docker Desktop:
+
+1. Download Docker Desktop from https://www.docker.com/products/docker-desktop/
+2. Install the `.dmg` file and move **Docker.app** into Applications
+3. Open **Docker.app** before starting UpGrade
+
+On Ubuntu/Debian Linux, install Docker Engine and Docker Compose:
+
+```bash
+sudo apt-get update
+sudo apt-get install -y docker.io
+sudo apt-get install -y docker-compose-plugin
+sudo systemctl enable docker
+sudo systemctl start docker
+
+# Verify
+docker --version
+docker compose version
+```
+
+### 3. Clone and install UpGrade
+
+```bash
+git clone https://github.com/CarnegieLearningWeb/UpGrade.git
+cd UpGrade
+yarn
+```
+
+This installs all backend, types, and frontend dependencies in the correct order.
+
+### 4. Configure the backend environment
+
+Create the Docker local environment file:
+
+```bash
+cp packages/backend/.env.docker.local.example packages/backend/.env.docker.local
+```
+
+Open `packages/backend/.env.docker.local` and update the local app context and metric configuration:
+
+```env
+CONTEXT_METADATA={"example-math-app":{"CONDITIONS":["control","hint_button"],"GROUP_TYPES":[],"EXP_POINTS":["problem_page"],"EXP_IDS":["problem_123_hint_support"]}}
+METRICS=[{"metrics":[{"metric":"completionRate","datatype":"categorical","allowedValues":["COMPLETED","NOT_COMPLETED"]},{"metric":"timeOnTask","datatype":"continuous"}],"contexts":["example-math-app"]}]
+```
+
+### 5. Configure the frontend environment
+
+Create the local frontend environment file:
+
+```bash
+cp packages/frontend/projects/upgrade/src/environments/environment.local.example.ts packages/frontend/projects/upgrade/src/environments/environment.local.ts
+```
+
+### 6. Start UpGrade
+
+From the UpGrade repository root, start the backend API, frontend UI, and PostgreSQL database.
+
+The commands below use `docker-compose`. If your machine does not recognize `docker-compose`, replace it with `docker compose`.
+
+```bash
+docker-compose -f singleContainerApp-docker-compose.yml up -d
+```
+
+To view logs:
+
+```bash
+docker-compose -f singleContainerApp-docker-compose.yml logs -f
+```
+
+To stop UpGrade:
+
+```bash
+docker-compose -f singleContainerApp-docker-compose.yml down
+```
+
+### Local URLs
+
+After UpGrade starts, open:
+
+* Backend API: http://localhost:3030/api
+* Frontend UI: http://localhost:4200
+
+Use `http://localhost:3030` as the local UpGrade host URL in the client application.

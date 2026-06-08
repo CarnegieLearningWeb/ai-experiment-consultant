@@ -69,7 +69,7 @@ When you propose or summarize the experiment design in chat, **use a markdown li
 
 - **Name:** Hint Button Experiment
 - **Description:** Tests whether adding an optional hint button improves completion rate on a target math problem.
-- **App Context:** `ExampleMathApp`
+- **App Context:** `example-math-app`
 - **Decision Point:**
   - Site: `problem_page`
   - Target: `problem_123_hint_support`
@@ -83,7 +83,7 @@ When you propose or summarize the experiment design in chat, **use a markdown li
 
 Use this same shape whether you have two or three conditions, one to three metrics, etc. The values above are illustrative — replace with the user's actual experiment.
 
-> **App context note for the simulation phase only:** during the consulting flow the AI uses whatever app context name fits the user (e.g. `ExampleMathApp`). At simulation time, the server overrides this with the only context the UpGrade demo backend has configured (`add`). The user does not need to know about this swap — the consultant should keep speaking the user's app context name.
+> **App context note for the simulation phase only:** during the consulting flow the AI uses whatever app context name fits the user (e.g. `example-math-app`). At simulation time, the server overrides this with the only context the UpGrade demo backend has configured (`add`). The user does not need to know about this swap — the consultant should keep speaking the user's app context name.
 
 ## Not supported in MVP
 

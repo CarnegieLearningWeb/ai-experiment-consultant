@@ -18,7 +18,7 @@ Demo UpGrade backend base: `https://upgrade-demo.carnegielearning.com/api`
 6. Delete the temporary experiment (`/experiments/:id`).
 7. Delete the saved metrics (`/metric/:key`).
 
-Note: since available app contexts are defined as an environment variable in UpGrade, we cannot dynamically set it via API requests. Currently, the UpGrade demo app supports only one app context called "add", so we should use this in actual requests instead of the one that AI shared with the user (e.g., ExampleMathApp) in the consulting process before running the simulation.
+Note: since available app contexts are defined as an environment variable in UpGrade, we cannot dynamically set it via API requests. Currently, the UpGrade demo app supports only one app context called "add", so we should use this in actual requests instead of the one that AI shared with the user (e.g., example-math-app) in the consulting process before running the simulation.
 
 ## UpGrade backend endpoints (requires an access token)
 

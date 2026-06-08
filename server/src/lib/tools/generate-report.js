@@ -36,7 +36,7 @@ export const GENERATE_REPORT_SCHEMA = {
         appContext: {
           type: 'string',
           description:
-            "Use the app context name the user has been speaking in chat (e.g. 'ExampleMathApp'), NOT the server-side simulation override.",
+            "Use the app context name the user has been speaking in chat (e.g. 'example-math-app'), NOT the server-side simulation override.",
         },
         decisionPoint: {
           type: 'object',

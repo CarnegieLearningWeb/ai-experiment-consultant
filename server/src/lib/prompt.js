@@ -167,7 +167,7 @@ Composes the final markdown experiment-plan report and opens it in a side panel 
 - \`title\` — short title, e.g. "Hint Button Experiment Plan".
 - \`summary\` — one-paragraph executive summary.
 - \`appDescription\`, \`pageDescription\`, \`experimentIdea\`, \`hypothesis\` — dynamic prose paragraphs drawn from the conversation. Use what the user said, not invented details. If the user provided screenshots, describe what you saw in the relevant paragraph.
-- \`experiment\` — the same structured shape used by \`run_simulation\`: \`{name, description, appContext, decisionPoint, conditions, metrics}\`. **Use the app context name the user has been speaking in chat** (e.g. their app's name like "ExampleMathApp"), not the simulation backend's override.
+- \`experiment\` — the same structured shape used by \`run_simulation\`: \`{name, description, appContext, decisionPoint, conditions, metrics}\`. **Use the app context name the user has been speaking in chat** (e.g. their app's name like "example-math-app"), not the simulation backend's override.
 - \`simulationResult\` — only if a simulation was run earlier in this conversation. Pass the same structured result you got back from \`run_simulation\`.
 - \`simulationInterpretation\` — one paragraph of your interpretation of the simulation, if you ran one.
 - \`implementationTodos\` — array of TODO strings for the developer. Concrete actions, not aspirations.

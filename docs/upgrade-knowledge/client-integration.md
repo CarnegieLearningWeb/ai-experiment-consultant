@@ -35,7 +35,7 @@ Steps 4 and 5 are what feed UpGrade's enrollment numbers and metric results.
 // TODO(upgrade): replace with the real UpGrade client SDK init.
 const upgrade = new UpgradeClient({
   apiBaseUrl: 'https://upgrade-demo.carnegielearning.com/api',
-  context: 'ExampleMathApp',
+  context: 'example-math-app',
   userId: currentUser.id,
 });
 
