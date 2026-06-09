@@ -14,7 +14,8 @@ const TEMPLATES = {
   setupGuide: loadTemplate('setup-guide'),
   experimentCreationGuide: loadTemplate('experiment-creation-guide'),
   clientIntegrationGuide: loadTemplate('client-integration-guide'),
-  notesAndLimitations: loadTemplate('notes-and-limitations'),
+  recommendedImplementationOrder: loadTemplate('recommended-implementation-order'),
+  assumptionsAndNotes: loadTemplate('assumptions-and-notes'),
 };
 
 // ============================================================================
@@ -223,16 +224,6 @@ function composeSimulationSummary(sim) {
   return parts.join('\n');
 }
 
-function composeImplementationTodos(items) {
-  if (!items?.length) return null;
-  return items.map((t) => `- ${t}`).join('\n');
-}
-
-function composeNextSteps(items) {
-  if (!items?.length) return null;
-  return items.map((t) => `- ${t}`).join('\n');
-}
-
 function composeSetupGuide(experiment) {
   return substitute(TEMPLATES.setupGuide, {
     app_context: experiment.appContext,
@@ -280,9 +271,6 @@ export function composeReport(input) {
     experiment,
     simulationResult,
     simulationInterpretation,
-    implementationTodos,
-    notes,
-    nextSteps,
     include = {},
   } = input;
 
@@ -308,7 +296,9 @@ export function composeReport(input) {
     push('Simulation Result Summary', composeSimulationSummary(sim));
   }
 
-  push('Implementation TODO List', composeImplementationTodos(implementationTodos));
+  if (include.recommendedImplementationOrder !== false) {
+    push('Recommended Implementation Order', TEMPLATES.recommendedImplementationOrder);
+  }
 
   if (include.setupGuide !== false) {
     push('UpGrade Setup Guide', composeSetupGuide(experiment));
@@ -320,13 +310,9 @@ export function composeReport(input) {
     push('Client Integration Guide', composeClientIntegrationGuide(experiment));
   }
 
-  if (include.notesAndLimitations !== false) {
-    const baseNotes = TEMPLATES.notesAndLimitations;
-    const combined = notes ? `${baseNotes}\n\n${notes}` : baseNotes;
-    push('Notes, Assumptions, and Limitations', combined);
+  if (include.assumptionsAndNotes !== false) {
+    push('Assumptions and Notes', TEMPLATES.assumptionsAndNotes);
   }
-
-  push('Next Steps', composeNextSteps(nextSteps));
 
   // Render.
   const out = [`# ${title}`, ''];

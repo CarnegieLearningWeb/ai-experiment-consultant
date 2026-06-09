@@ -108,25 +108,10 @@ export const GENERATE_REPORT_SCHEMA = {
       description:
         'Optional. A short paragraph interpreting the simulation result (which condition looked better, what to read into it). Only used if simulationResult is also provided.',
     },
-    implementationTodos: {
-      type: 'array',
-      items: { type: 'string' },
-      description: 'Concrete TODO items for the developer who will implement the experiment.',
-    },
-    notes: {
-      type: 'string',
-      description:
-        'Optional. Extra notes / assumptions / limitations specific to this experiment. Appended to the fixed-template disclaimer.',
-    },
-    nextSteps: {
-      type: 'array',
-      items: { type: 'string' },
-      description: 'Short list of recommended next actions for the user.',
-    },
     include: {
       type: 'object',
       description:
-        "Optional section toggles. Defaults are all true. Set a section to false if the user explicitly asked to exclude it. Recognized keys: simulationResult, setupGuide, experimentCreationGuide, clientIntegrationGuide, notesAndLimitations.",
+        "Optional section toggles. Defaults are all true. Set a section to false if the user explicitly asked to exclude it. Recognized keys: simulationResult, recommendedImplementationOrder, setupGuide, experimentCreationGuide, clientIntegrationGuide, assumptionsAndNotes.",
       additionalProperties: { type: 'boolean' },
     },
   },

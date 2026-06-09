@@ -92,4 +92,4 @@ Use this tab to review:
 - **Enrollment Data:** how many participants were assigned to each condition
 - **Metrics Data:** collected values for the metrics configured in this experiment
 
-At first, these sections may show no data. Data will appear after the client app enrolls participants and logs metrics.
+If the client app has not been integrated yet, these sections may show no data. Data will appear after the client app enrolls participants and logs metrics.

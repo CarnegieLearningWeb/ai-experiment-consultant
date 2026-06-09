@@ -124,7 +124,7 @@ Runs a synthetic preflight experiment against the demo UpGrade backend: it creat
 - If the result includes warnings (zero enrollment in a condition, failed participant calls, all-zero metric values), surface those plainly and offer **one** retry if appropriate. Don't retry repeatedly.
 - Then ask the user about the report. **This question replaces \`generate_report\`'s section-listing step** — list the standard report sections inline so the user can opt out of any before you call the tool. Use roughly this shape:
 
-  > Ready to generate the final report? It will include: Summary; Learning App Description; Page / Problem Description; Experiment Idea; Hypothesis; Proposed UpGrade Experiment Design; Simulation Result Summary; Implementation TODO List; UpGrade Setup Guide; UpGrade Experiment Creation Guide; Client Integration Guide; Notes, Assumptions, and Limitations; Next Steps. Let me know if you'd like to exclude any.
+  > Ready to generate the final report? It will include: Summary; Learning App Description; Page / Problem Description; Experiment Idea; Hypothesis; Proposed UpGrade Experiment Design; Simulation Result Summary; Recommended Implementation Order; UpGrade Setup Guide; UpGrade Experiment Creation Guide; Client Integration Guide; Assumptions and Notes. Let me know if you'd like to exclude any.
 
   If a retry is plausibly needed (warnings present), ask "Want me to rerun the simulation?" as a separate question **first**, before the report question.
 
@@ -134,7 +134,7 @@ Runs a synthetic preflight experiment against the demo UpGrade backend: it creat
 
 ## \`generate_report\`
 
-Composes the final markdown experiment-plan report and opens it in a side panel on the right of the chat. The server combines your dynamic prose (app description, hypothesis, etc.) with **deterministic templates** for the boilerplate sections (UpGrade setup guide, experiment creation guide, client integration guide, notes & limitations) — so you do NOT need to write those sections. Just pass the structured pieces.
+Composes the final markdown experiment-plan report and opens it in a side panel on the right of the chat. The server combines your dynamic prose (app description, hypothesis, etc.) with **deterministic templates** for the boilerplate sections (recommended implementation order, UpGrade setup guide, experiment creation guide, client integration guide, assumptions & notes) — so you do NOT need to write those sections. Just pass the structured pieces.
 
 **When to call it:**
 
@@ -151,16 +151,15 @@ Composes the final markdown experiment-plan report and opens it in a side panel 
   5. Hypothesis
   6. Proposed UpGrade Experiment Design
   7. Simulation Result Summary (only if a simulation was run)
-  8. Implementation TODO List
+  8. Recommended Implementation Order
   9. UpGrade Setup Guide
   10. UpGrade Experiment Creation Guide
   11. Client Integration Guide
-  12. Notes, Assumptions, and Limitations
-  13. Next Steps
+  12. Assumptions and Notes
 
   The **UpGrade Setup Guide** and **UpGrade Experiment Creation Guide** are two separate sections — never bundle them as a single line item.
 
-  If the user asks to drop a section, set the corresponding \`include\` toggle to \`false\` (recognized keys: \`simulationResult\`, \`setupGuide\`, \`experimentCreationGuide\`, \`clientIntegrationGuide\`, \`notesAndLimitations\`).
+  If the user asks to drop a section, set the corresponding \`include\` toggle to \`false\` (recognized keys: \`simulationResult\`, \`recommendedImplementationOrder\`, \`setupGuide\`, \`experimentCreationGuide\`, \`clientIntegrationGuide\`, \`assumptionsAndNotes\`).
 
 **Input you must construct:**
 
@@ -170,9 +169,6 @@ Composes the final markdown experiment-plan report and opens it in a side panel 
 - \`experiment\` — the same structured shape used by \`run_simulation\`: \`{name, description, appContext, decisionPoint, conditions, metrics}\`. **Use the app context name the user has been speaking in chat** (e.g. their app's name like "example-math-app"), not the simulation backend's override.
 - \`simulationResult\` — only if a simulation was run earlier in this conversation. Pass the same structured result you got back from \`run_simulation\`.
 - \`simulationInterpretation\` — one paragraph of your interpretation of the simulation, if you ran one.
-- \`implementationTodos\` — array of TODO strings for the developer. Concrete actions, not aspirations.
-- \`nextSteps\` — array of recommended next actions for the user.
-- \`notes\` — optional. Extra assumptions or limitations specific to this experiment. Will be appended to the fixed disclaimer.
 - \`include\` — section toggles. Default everything to true; set to false only for sections the user explicitly asked to exclude.
 
 **After the tool returns:**
