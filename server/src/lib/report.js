@@ -268,11 +268,22 @@ export function composeReport(input) {
     pageDescription,
     experimentIdea,
     hypothesis,
-    experiment,
+    experiment: rawExperiment,
     simulationResult,
     simulationInterpretation,
     include = {},
   } = input;
+
+  // UpGrade rejects experiments whose app context contains uppercase letters.
+  // The system prompt tells the AI to propose lowercase kebab-case, but
+  // normalize here so the rendered design block, env vars, UI form values,
+  // and client-integration snippets are safe regardless of what the AI sent.
+  // (Simulation doesn't go through this path — it overrides to "add" on the
+  // server side, so the raw AI value never reaches UpGrade there.)
+  const experiment = {
+    ...rawExperiment,
+    appContext: String(rawExperiment.appContext || '').toLowerCase(),
+  };
 
   // Each entry: { num: 'auto-assigned', heading: string, body: string|null }
   // Sections with null body are skipped entirely.
