@@ -38,7 +38,7 @@ for scope.
 
 ```bash
 npm install
-cp .env.example .env        # add your ANTHROPIC_API_KEY
+cp .env.example .env        # then fill in your credentials
 npm run dev
 ```
 
