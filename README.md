@@ -1,4 +1,4 @@
-# upgrade-consultant
+# UpGrade Consultant
 
 An AI consultant that helps educational software teams turn an idea or pain
 point into a concrete, implementation-ready A/B experiment plan for
