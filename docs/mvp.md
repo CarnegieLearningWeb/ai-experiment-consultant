@@ -49,8 +49,9 @@ a final markdown experiment-plan report.
 If the user asks for factorial designs, within-subject designs, group assignment,
 payloads, exclude-if-reached, repeatable metrics, or multi-decision-point
 experiments, the consultant should explain the MVP limitation and propose a
-supported alternative. This constraint is also encoded in
-[upgrade-knowledge/](upgrade-knowledge/) so the prompt context reflects it.
+supported alternative. This constraint is also encoded in the consultant's
+prompt knowledge ([server/src/lib/prompt-knowledge/upgrade-concepts.md](../server/src/lib/prompt-knowledge/upgrade-concepts.md))
+so the prompt context reflects it.
 
 ## Phases (internal state, not user-facing UI)
 

@@ -49,7 +49,7 @@ upgrade-consultant/
 │   ├── tasks.md             Milestone checklist
 │   ├── setup.md             Local setup
 │   ├── open-questions.md    Open questions
-│   └── upgrade-knowledge/   Curated UpGrade context for the AI consultant
+│   └── simulation-api.md    UpGrade demo-backend API reference (dev)
 └── CLAUDE.md                Orientation for Claude Code sessions
 ```
 

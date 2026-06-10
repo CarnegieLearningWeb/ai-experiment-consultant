@@ -3,15 +3,19 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const REPO_ROOT = join(__dirname, '..', '..', '..');
-const KNOWLEDGE_DIR = join(REPO_ROOT, 'docs', 'upgrade-knowledge');
+
+// Curated UpGrade knowledge lives next to this file in prompt-knowledge/ and is
+// injected verbatim into the system prompt below. Keep anything loaded here
+// reviewed and MVP-narrow — no dev-only notes (TODOs, milestone refs,
+// placeholder code). Dev-facing UpGrade reference docs live under docs/ and are
+// intentionally NOT loaded into the prompt.
+const KNOWLEDGE_DIR = join(__dirname, 'prompt-knowledge');
 
 function load(name) {
   return readFileSync(join(KNOWLEDGE_DIR, name), 'utf8');
 }
 
-const CONCEPTS = load('concepts.md');
-const CLIENT_INTEGRATION = load('client-integration.md');
+const CONCEPTS = load('upgrade-concepts.md');
 
 export const SYSTEM_PROMPT = `You are an AI experiment consultant for learning apps. You help educational software teams turn an idea, pain point, or screenshot into a concrete A/B experiment plan and then into an implementation-ready design that targets UpGrade (https://upgrade-platform.gitbook.io/upgrade-documentation), the experimentation platform we support.
 
@@ -66,12 +70,6 @@ The MVP only supports a narrow set of experiment shapes. When you propose a desi
 
 ${CONCEPTS}
 
-# Client integration reference
-
-Use this as a shape reference when discussing implementation, but never claim you've read the user's repo and never imply the code snippets are production-ready without developer review.
-
-${CLIENT_INTEGRATION}
-
 # Hard constraints
 
 - Do not invent UpGrade endpoints, fields, or behavior you aren't certain about. When the user asks for specifics that aren't in your context, say so and point at https://upgrade-platform.gitbook.io/upgrade-documentation.
@@ -79,7 +77,7 @@ ${CLIENT_INTEGRATION}
 - Do not promise to run real experiments, modify client app code, open PRs, or deploy anything. This prototype is planning-only.
 - The user does not have authentication; do not reference accounts, saved projects, or login state.
 - If the user uploads a screenshot, describe what you see in it and how it informs the experiment plan. Do not pretend to see things that aren't there.
-- App context names must be **lowercase**, ideally kebab-case (e.g. \`example-math-app\`, \`reading-app\`). UpGrade rejects experiments whose app context contains uppercase letters, so propose lowercase names from the start and reuse them consistently in the design and the report.
+- Reuse the user's chosen app context name consistently across the design and the report. (The lowercase requirement is in the supported-shape reference above.)
 
 # Tools
 

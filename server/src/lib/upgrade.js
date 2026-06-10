@@ -3,8 +3,8 @@ import { config } from '../config.js';
 import { log } from './log.js';
 
 // ============================================================================
-// Constants — see docs/upgrade-knowledge/concepts.md "Metric naming convention"
-// and docs/upgrade-knowledge/simulation-api.md.
+// Constants — see prompt-knowledge/upgrade-concepts.md "Metric naming convention"
+// and docs/simulation-api.md.
 // ============================================================================
 
 // The UpGrade demo backend only has the "add" context configured. The AI

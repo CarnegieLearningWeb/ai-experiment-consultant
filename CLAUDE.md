@@ -13,7 +13,7 @@ See [docs/spec.md](docs/spec.md) for the full product vision.
 3. [docs/architecture.md](docs/architecture.md) — stack, layout, design patterns
 4. [docs/tasks.md](docs/tasks.md) — milestone checklist
 5. [docs/setup.md](docs/setup.md) — local setup
-6. [docs/upgrade-knowledge/](docs/upgrade-knowledge/) — curated UpGrade knowledge for the AI consultant (intentionally MVP-narrow)
+6. [docs/simulation-api.md](docs/simulation-api.md) — dev-facing UpGrade demo-backend API reference (NOT loaded into the AI prompt; the consultant's knowledge lives in [server/src/lib/prompt-knowledge/](server/src/lib/prompt-knowledge/))
 7. [docs/open-questions.md](docs/open-questions.md) — things still undecided
 
 ## Stack at a glance
@@ -32,7 +32,7 @@ See [docs/tasks.md](docs/tasks.md) for the milestone breakdown.
 ## Where things live
 
 - **Chat endpoint with recursive tool-use loop:** [server/src/routes/chat.js](server/src/routes/chat.js). NDJSON events: `delta`, `tool_start`, `tool_progress`, `tool_end`, `artifact`, `done`, `error`.
-- **System prompt assembly:** [server/src/lib/prompt.js](server/src/lib/prompt.js). Inlines [docs/upgrade-knowledge/concepts.md](docs/upgrade-knowledge/concepts.md) + [client-integration.md](docs/upgrade-knowledge/client-integration.md).
+- **System prompt assembly:** [server/src/lib/prompt.js](server/src/lib/prompt.js). Inlines the curated UpGrade knowledge from [server/src/lib/prompt-knowledge/](server/src/lib/prompt-knowledge/) (`upgrade-concepts.md`). Client-integration is deliberately not in the prompt — it's a report-template section composed by [report.js](server/src/lib/report.js).
 - **Tool registry:** [server/src/lib/tools.js](server/src/lib/tools.js). One file per tool under [server/src/lib/tools/](server/src/lib/tools/) with `{name, description, input_schema, run({input, emit})}`.
 - **UpGrade client + token cache:** [server/src/lib/upgrade.js](server/src/lib/upgrade.js). `displayNameForMetric()` is here; AI never parses display strings.
 - **Report composer + templates:** [server/src/lib/report.js](server/src/lib/report.js) and [server/src/lib/report-templates/](server/src/lib/report-templates/) (`.md` files with `{{placeholder}}` markers, grep-friendly placeholder text).
@@ -45,9 +45,11 @@ See [docs/tasks.md](docs/tasks.md) for the milestone breakdown.
 - **No login / auth in this prototype.** Open local/demo access. Auth may be added
   later directly in the existing UpGrade demo Express app, separately from this codebase.
 - **No React, no Next.js, no TypeScript.** Plain Vite + vanilla JS by design.
-- **Keep [docs/upgrade-knowledge/](docs/upgrade-knowledge/) narrow.** It scopes the AI consultant
+- **Keep the prompt knowledge in [server/src/lib/prompt-knowledge/](server/src/lib/prompt-knowledge/) narrow.** It scopes the AI consultant
   to simple, supported experiment designs. Do not lift advanced UpGrade features
-  into it without an explicit reason — that narrowness is a safety rail.
+  into it without an explicit reason — that narrowness is a safety rail. Anything
+  loaded there ships verbatim to the model, so keep it reviewed and free of
+  dev-only notes (TODOs, milestone refs). Dev reference lives under [docs/](docs/).
 - **Verify UpGrade behavior against real docs.** Do not invent endpoints,
   payloads, or fields. When details are missing, leave a `TODO(upgrade):` marker
   and ask. Authoritative source: https://upgrade-platform.gitbook.io/upgrade-documentation

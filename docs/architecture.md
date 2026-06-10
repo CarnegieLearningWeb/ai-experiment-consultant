@@ -39,7 +39,15 @@ upgrade-consultant/
     │   ├── app.js           Express app factory
     │   ├── config.js        Env var loading + validation
     │   ├── lib/
-    │   │   └── (TODO: anthropic.js, upgrade.js helpers)
+    │   │   ├── prompt.js          System-prompt assembly
+    │   │   ├── prompt-knowledge/  Curated UpGrade knowledge inlined into the prompt
+    │   │   ├── tools.js           Tool registry (+ tools/ — one file per AI tool)
+    │   │   ├── report.js          Report composer (+ report-templates/ static .md)
+    │   │   ├── upgrade.js         UpGrade client + cached auth token
+    │   │   ├── papers.js          Semantic Scholar client
+    │   │   ├── uploads.js         Upload registry + MIME allowlist
+    │   │   ├── anthropic.js       Anthropic client setup
+    │   │   └── log.js             Debug logging
     │   └── routes/
     │       ├── index.js     Mounts all routes under /api/v1/ai-consultant
     │       ├── health.js
@@ -71,7 +79,7 @@ See [.env.example](../.env.example). Required:
 - `CLIENT_ORIGIN` — used by CORS in dev to allow the Vite origin (`http://localhost:5173`). In prod, the client and API share an origin so CORS is a no-op.
 - `ANTHROPIC_API_KEY` — required once the chat endpoint is wired (M2).
 - `UPGRADE_API_URL` — base URL of the UpGrade demo backend (default `https://upgrade-demo.carnegielearning.com/api`). Paths sit under `/v6/...`.
-- `UPGRADE_SERVICE_ACCOUNT_KEY_PATH` — path to the Google service-account JSON used to mint OAuth tokens for UpGrade requests (default `upgrade-service-account-key.json` at the repo root, git-ignored). Pattern in [docs/upgrade-knowledge/upgrade-auth.js](../docs/upgrade-knowledge/upgrade-auth.js). Required for M4.
+- `UPGRADE_SERVICE_ACCOUNT_KEY_PATH` — path to the Google service-account JSON used to mint OAuth tokens for UpGrade requests (default `upgrade-service-account-key.json` at the repo root, git-ignored). Implemented in [server/src/lib/upgrade.js](../server/src/lib/upgrade.js) (cached bearer token).
 
 ## Server design
 
@@ -96,7 +104,7 @@ See [.env.example](../.env.example). Required:
 
 The `/chat` endpoint constructs an Anthropic request with:
 
-- A system prompt assembled by [server/src/lib/prompt.js](../server/src/lib/prompt.js) that inlines the consultant role, the six-phase flow, and the contents of [upgrade-knowledge/concepts.md](upgrade-knowledge/concepts.md) + [client-integration.md](upgrade-knowledge/client-integration.md). Kept narrow on purpose so the model doesn't propose unsupported designs.
+- A system prompt assembled by [server/src/lib/prompt.js](../server/src/lib/prompt.js) that inlines the consultant role, the six-phase flow, and the curated UpGrade knowledge in [server/src/lib/prompt-knowledge/](../server/src/lib/prompt-knowledge/) (`upgrade-concepts.md`). Kept narrow on purpose so the model doesn't propose unsupported designs. Client-integration details are intentionally **not** in the prompt — they're fixed report-template content composed by [report.js](../server/src/lib/report.js) (see [spec.md](spec.md) §29–30).
 - Conversation history sent by the client (the server is stateless; the browser is the source of truth).
 - Defaults: `claude-opus-4-7`, `thinking: {type: "adaptive"}` (model decides depth per turn), `max_tokens: 64000` (safe ceiling for streaming).
 - Prompt caching: `cache_control: {type: "ephemeral"}` on the system block. The system prompt is over the 4096-token minimum for Opus 4.7, so cache hits kick in starting on the second turn. Verified `cache_read_input_tokens: 4050` on follow-up turns.
