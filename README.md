@@ -1,62 +1,66 @@
 # upgrade-consultant
 
-AI-assisted experimentation consultant that helps educational software teams
-plan A/B experiments using [UpGrade](https://upgrade-platform.gitbook.io/upgrade-documentation).
-A lightweight prototype built for the [PELE 2026 workshop](https://sites.google.com/carnegielearning.com/pele-2026/home).
+An AI consultant that helps educational software teams turn an idea or pain
+point into a concrete, implementation-ready A/B experiment plan for
+[UpGrade](https://upgrade-platform.gitbook.io/upgrade-documentation), an
+experimentation platform for educational software. Built for the
+[PELE 2026 workshop](https://sites.google.com/carnegielearning.com/pele-2026/home).
 
-> **Status:** scaffolding only. The MVP workflow is not yet implemented — see [docs/tasks.md](docs/tasks.md) for the milestone plan.
+## What it does
 
-## What it does (planned)
+You describe your learning app and something you'd like to improve, and the
+consultant guides you — in a single conversation — to a plan you can act on:
 
-The user chats with an AI consultant. The consultant walks them through six phases —
-learning app description → page/problem → experiment idea → UpGrade plan →
-simulation/preflight → final markdown report — and generates a structured,
-actionable plan they can share with researchers, developers, or AI coding tools.
-See [docs/spec.md](docs/spec.md) for the full product vision and [docs/mvp.md](docs/mvp.md)
-for the buildable v1 scope.
+- **Guided consulting flow** — app description → page/problem → hypothesis →
+  experiment design → preflight simulation → final report.
+- **Screenshots & files** — attach images or PDFs to ground the discussion.
+- **Research grounding** — pulls related papers from Semantic
+  Scholar to help sharpen a hypothesis.
+- **Preflight simulation** — runs a synthetic cohort against UpGrade's demo
+  backend so you can see how assignment, enrollment, and metrics would look (no
+  real users).
+- **Shareable report** — a structured markdown plan, including UpGrade setup and
+  client-integration guides, ready to hand to researchers, developers, or an AI
+  coding tool.
 
-## Stack
+See [docs/spec.md](docs/spec.md) for the product vision and [docs/mvp.md](docs/mvp.md)
+for scope.
+
+## Tech stack
 
 - **Frontend:** Vite + vanilla JavaScript ([client/](client/))
-- **Backend:** Node.js + Express ([server/](server/))
-- **Deployment target:** alongside the existing UpGrade demo at `/ai-consultant`
+- **Backend:** Node.js + Express, ES modules ([server/](server/))
+- **AI:** Anthropic Claude — streaming chat with tool use
 
-## Quick start
+## Getting started
 
-Requires Node.js 20+.
+**Prerequisites:** Node.js 20+ and an [Anthropic API key](https://console.anthropic.com/).
 
 ```bash
 npm install
-cp .env.example .env       # fill in ANTHROPIC_API_KEY when implementing chat
+cp .env.example .env        # add your ANTHROPIC_API_KEY
 npm run dev
 ```
 
-Open http://localhost:5173/ai-consultant/. The backend listens on port 3001;
-Vite proxies `/api/...` to it during dev.
+Open <http://localhost:5173/ai-consultant/>. The backend runs on port 3001 and
+Vite proxies `/api/...` to it during development.
 
-See [docs/setup.md](docs/setup.md) for more.
+The preflight simulation and optional research grounding need extra credentials
+(UpGrade demo-backend access and a Semantic Scholar key) — see
+[docs/setup.md](docs/setup.md) and [.env.example](.env.example) for the full list.
 
-## Repository layout
+## Project structure
 
 ```
 upgrade-consultant/
-├── client/                  Vite + vanilla JS frontend
-├── server/                  Express backend (API at /api/v1/ai-consultant/*)
-├── docs/
-│   ├── spec.md              Product vision (source of truth)
-│   ├── mvp.md               Buildable v1 scope
-│   ├── architecture.md      Stack and design decisions
-│   ├── tasks.md             Milestone checklist
-│   ├── setup.md             Local setup
-│   ├── open-questions.md    Open questions
-│   └── simulation-api.md    UpGrade demo-backend API reference (dev)
-└── CLAUDE.md                Orientation for Claude Code sessions
+├── client/   Vite + vanilla JS frontend
+├── server/   Express backend (API under /api/v1/ai-consultant/*)
+└── docs/     Product spec, architecture, setup, and reference notes
 ```
 
-## Scope
+## Documentation
 
-- **In:** chat-based consulting flow, file upload, simulated UpGrade experiment, markdown report.
-- **Out (for now):** authentication, persistent database, real production experiment launches,
-  automated code changes, broad UpGrade feature support.
-
-Authentication is intentionally excluded from this prototype. It may be added later directly in the existing UpGrade demo app, separately from this codebase.
+- [docs/spec.md](docs/spec.md) — product vision and intent
+- [docs/mvp.md](docs/mvp.md) — v1 scope
+- [docs/architecture.md](docs/architecture.md) — stack and design decisions
+- [docs/setup.md](docs/setup.md) — local setup
