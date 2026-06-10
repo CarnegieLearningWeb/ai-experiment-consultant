@@ -34,7 +34,7 @@ for scope.
 
 ## Getting started
 
-**Prerequisites:** Node.js 20+ and an [Anthropic API key](https://console.anthropic.com/).
+**Requirements:** Node.js 20+
 
 ```bash
 npm install
