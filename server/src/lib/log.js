@@ -1,7 +1,5 @@
-import { config } from '../config.js';
-
-// Debug logging is on by default in development and off in production.
-// Override either way with DEBUG_LOGGING=true|false in .env.
+// Debug logging is off unless DEBUG_LOGGING is set to a truthy value
+// (true/1/yes/on) in .env. Warnings always print regardless.
 function parseFlag(v) {
   if (v == null) return null;
   const s = String(v).toLowerCase();
@@ -10,8 +8,12 @@ function parseFlag(v) {
   return null;
 }
 
-const override = parseFlag(process.env.DEBUG_LOGGING);
-const ENABLED = override == null ? config.isDev : override;
+// Read lazily so it doesn't depend on env being loaded at module-eval time.
+let cached = null;
+function isEnabled() {
+  if (cached === null) cached = parseFlag(process.env.DEBUG_LOGGING) === true;
+  return cached;
+}
 
 const COLORS = {
   tool: '\x1b[36m', // cyan
@@ -34,7 +36,7 @@ function fmt(category, msg, fields) {
 
 function make(category, level = 'log') {
   return (msg, fields) => {
-    if (!ENABLED && level === 'log') return;
+    if (!isEnabled() && level === 'log') return;
     const out = fmt(category, msg, fields);
     if (level === 'warn') console.warn(out);
     else console.log(out);
@@ -42,7 +44,9 @@ function make(category, level = 'log') {
 }
 
 export const log = {
-  enabled: ENABLED,
+  get enabled() {
+    return isEnabled();
+  },
   tool: make('tool'),
   upgrade: make('upgrade'),
   sim: make('sim'),

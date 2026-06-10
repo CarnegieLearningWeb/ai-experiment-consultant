@@ -10,7 +10,6 @@
 // `x-api-key`. `hasApiKey` is included in per-call logs so we can verify
 // operationally without printing the key itself.
 
-import { config } from '../config.js';
 import { log } from './log.js';
 
 const BASE_URL = 'https://api.semanticscholar.org/graph/v1';
@@ -141,9 +140,9 @@ async function searchOneQuery({ query, limit, timeoutMs }) {
   url.searchParams.set('limit', String(limit));
   url.searchParams.set('fields', FIELDS);
 
-  const hasApiKey = !!config.semanticScholarApiKey;
+  const hasApiKey = !!process.env.SEMANTIC_SCHOLAR_API_KEY;
   const headers = { Accept: 'application/json' };
-  if (hasApiKey) headers['x-api-key'] = config.semanticScholarApiKey;
+  if (hasApiKey) headers['x-api-key'] = process.env.SEMANTIC_SCHOLAR_API_KEY;
 
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
@@ -233,7 +232,7 @@ export async function searchPapersSequential({
     .map((q) => (typeof q === 'string' ? q.trim() : ''))
     .filter((q) => q.length >= 3);
 
-  const hasApiKey = !!config.semanticScholarApiKey;
+  const hasApiKey = !!process.env.SEMANTIC_SCHOLAR_API_KEY;
 
   if (cleanQueries.length === 0) {
     return { candidates: [], errors: [], succeeded: 0 };

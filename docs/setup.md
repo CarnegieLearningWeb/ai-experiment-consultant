@@ -14,8 +14,9 @@ npm install            # installs root + client + server workspaces
 cp .env.example .env   # fill in values as you reach each milestone
 ```
 
-`ANTHROPIC_API_KEY` is only required once you reach M2 (real chat). Earlier
-milestones run without it.
+The server loads `.env` from the repo root and constructs the Anthropic client
+at boot, so `ANTHROPIC_API_KEY` and `ANTHROPIC_MODEL` must be set before
+`npm run dev` will start the server.
 
 ## Run the dev servers
 
@@ -69,8 +70,7 @@ See [architecture.md](architecture.md) for the URL plan.
 
 - **`npm install` fails on a fresh clone.** Make sure you're on Node 20+ (`node -v`). The workspaces feature relies on a recent npm.
 - **`localhost:5173/` shows a 404.** Open `localhost:5173/ai-consultant/` (with the trailing slash). The Vite `base` is set to `/ai-consultant/`.
-- **CORS errors in dev.** Make sure `CLIENT_ORIGIN` in `.env` matches the Vite URL (default `http://localhost:5173`).
-- **Express port already in use.** Set `PORT` in `.env` and restart. The Vite proxy reads the same value.
+- **Express port already in use.** The port (3001) is hardcoded in [server/src/index.js](../server/src/index.js), with the Vite proxy targeting it in [client/vite.config.js](../client/vite.config.js). Free the port, or change it in both places.
 
 ## Demo walkthrough
 

@@ -1,7 +1,5 @@
 import { defineConfig } from 'vite';
 
-const SERVER_PORT = process.env.PORT || 3001;
-
 export default defineConfig({
   base: '/ai-consultant/',
   server: {
@@ -9,7 +7,7 @@ export default defineConfig({
     strictPort: true,
     proxy: {
       '/api': {
-        target: `http://localhost:${SERVER_PORT}`,
+        target: 'http://localhost:3001',
         changeOrigin: false,
       },
     },

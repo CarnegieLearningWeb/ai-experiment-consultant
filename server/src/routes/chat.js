@@ -1,9 +1,12 @@
 import { Router } from 'express';
-import { getAnthropicClient, DEFAULT_MODEL } from '../lib/anthropic.js';
+import Anthropic from '@anthropic-ai/sdk';
 import { SYSTEM_PROMPT } from '../lib/prompt.js';
 import { ALLOWED_UPLOADS, TEXT_INLINE_MAX_BYTES, readUploadBytes } from '../lib/uploads.js';
 import { getTool, getToolDefinitionsForAnthropic } from '../lib/tools.js';
 import { log } from '../lib/log.js';
+
+// Constructed at module load — throws on boot if ANTHROPIC_API_KEY is missing.
+const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 export const chatRouter = Router();
 
@@ -171,7 +174,7 @@ const EVENT_HANDLERS = {
 
 async function runOneRound({ client, messages, tools, ctx }) {
   const stream = await client.messages.create({
-    model: DEFAULT_MODEL,
+    model: process.env.ANTHROPIC_MODEL,
     max_tokens: 64000,
     thinking: { type: 'adaptive' },
     system: [{ type: 'text', text: SYSTEM_PROMPT, cache_control: { type: 'ephemeral' } }],
@@ -264,19 +267,12 @@ async function executeToolUse({ toolUse, ctx }) {
 //   {"type":"error","code":"...","message":"..."}
 // ============================================================================
 
-chatRouter.post('/', async (req, res, next) => {
+chatRouter.post('/', async (req, res) => {
   const validationError = validateMessages(req.body?.messages);
   if (validationError) {
     return res
       .status(400)
       .json({ error: { code: 'invalid_request', message: validationError } });
-  }
-
-  let client;
-  try {
-    client = getAnthropicClient();
-  } catch (err) {
-    return next(err);
   }
 
   res.status(200);
@@ -305,7 +301,7 @@ chatRouter.post('/', async (req, res, next) => {
   try {
     for (let round = 0; round < MAX_TOOL_ROUNDS; round += 1) {
       const roundStart = Date.now();
-      const result = await runOneRound({ client, messages, tools, ctx });
+      const result = await runOneRound({ client: anthropic, messages, tools, ctx });
       const roundMs = Date.now() - roundStart;
       stopReason = result.stopReason;
       // Sum usage across rounds.

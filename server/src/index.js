@@ -1,16 +1,14 @@
+import './env.js';
 import { createApp } from './app.js';
-import { config } from './config.js';
 import { initUploadsDir } from './lib/uploads.js';
 
 initUploadsDir();
 
 const app = createApp();
 
-const server = app.listen(config.port, () => {
-  console.log(
-    `[upgrade-consultant] server listening on http://localhost:${config.port} ` +
-      `(env=${config.nodeEnv})`,
-  );
+const PORT = 3001;
+const server = app.listen(PORT, () => {
+  console.log(`[upgrade-consultant] server listening on http://localhost:${PORT}`);
 });
 
 function shutdown(signal) {

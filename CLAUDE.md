@@ -48,7 +48,7 @@ After finishing each task or bugfix:
 - **UpGrade client + token cache:** [server/src/lib/upgrade.js](server/src/lib/upgrade.js). `displayNameForMetric()` is here; AI never parses display strings.
 - **Report composer + templates:** [server/src/lib/report.js](server/src/lib/report.js) and [server/src/lib/report-templates/](server/src/lib/report-templates/) (`.md` files with `{{placeholder}}` markers, grep-friendly placeholder text).
 - **Upload registry + allowlist:** [server/src/lib/uploads.js](server/src/lib/uploads.js).
-- **Debug logging:** [server/src/lib/log.js](server/src/lib/log.js). Toggle via `DEBUG_LOGGING`; defaults on in dev. `log.warn` always prints.
+- **Debug logging:** [server/src/lib/log.js](server/src/lib/log.js). Off unless `DEBUG_LOGGING` is set truthy in `.env`. `log.warn` always prints.
 - **Frontend state + render:** [client/src/app.js](client/src/app.js). Renders markdown via `marked` for assistant bubbles. Side panel is mounted in [client/index.html](client/index.html) as `<aside id="artifact-panel">`.
 
 ## Important constraints
@@ -73,7 +73,7 @@ After finishing each task or bugfix:
 - Backend routes live in [server/src/routes/](server/src/routes/), one file per resource.
 - All backend endpoints sit under `/api/v1/ai-consultant/...`.
 - Frontend talks to the backend using **relative** paths so the sub-path deployment works without changes.
-- In dev, Vite proxies `/api/...` to the Express server (default port 3001).
+- In dev, Vite proxies `/api/...` to the Express server (port 3001, hardcoded).
 
 ## How to develop
 

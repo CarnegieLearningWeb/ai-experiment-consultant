@@ -1,21 +1,16 @@
 import express from 'express';
-import cors from 'cors';
-import { config } from './config.js';
+import { log } from './lib/log.js';
 import { mountRoutes } from './routes/index.js';
 
 export function createApp() {
   const app = express();
-
-  if (config.isDev) {
-    app.use(cors({ origin: config.clientOrigin, credentials: false }));
-  }
 
   app.use(express.json({ limit: '2mb' }));
   app.use(express.urlencoded({ extended: false }));
 
   // Lightweight request log; enough for prototyping without bringing in morgan.
   app.use((req, _res, next) => {
-    if (config.isDev) console.log(`${req.method} ${req.url}`);
+    if (log.enabled) console.log(`${req.method} ${req.url}`);
     next();
   });
 

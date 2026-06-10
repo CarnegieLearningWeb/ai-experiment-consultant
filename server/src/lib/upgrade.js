@@ -1,5 +1,5 @@
 import { GoogleAuth } from 'google-auth-library';
-import { config } from '../config.js';
+import { fromRepoRoot } from '../env.js';
 import { log } from './log.js';
 
 // ============================================================================
@@ -64,7 +64,7 @@ let cachedToken = null;
 function getAuth() {
   if (!auth) {
     auth = new GoogleAuth({
-      keyFilename: config.upgradeServiceAccountKeyPath,
+      keyFilename: fromRepoRoot(process.env.UPGRADE_SERVICE_ACCOUNT_KEY_PATH),
       scopes: 'https://www.googleapis.com/auth/cloud-platform',
     });
   }
@@ -95,7 +95,7 @@ class UpgradeError extends Error {
 }
 
 async function upgradeFetch(path, { method = 'POST', body, userId, auth: needsAuth = false } = {}) {
-  const url = `${config.upgradeApiUrl}${path}`;
+  const url = `${process.env.UPGRADE_API_URL}${path}`;
   const headers = {
     'Content-Type': 'application/json',
     Accept: 'application/json',
