@@ -266,19 +266,20 @@ export function initChatApp({
         li.appendChild(buildToolSegment(segment));
       }
     }
-    // Tail thinking-dots show in the "gap" states only: before the first
-    // delta, between a text block ending and the next thing (typically
-    // tool_start), and between tool_end and the next round's first delta.
-    // We hide them while text is actively streaming (the text itself is the
-    // indicator) and while a tool is running (the tool-runs card is). The
-    // server emits a `text_stop` event when a text content block ends so we
-    // can tell "delta paused for a tick" apart from "text block fully done".
+    // Tail thinking-dots show only when we're genuinely waiting on the model
+    // with nothing else on screen to signal it:
+    //   - before the first delta (no segments yet), or
+    //   - after a tool finishes, before the next round's first text delta.
+    // We never show them after a text block: while it streams the text is its
+    // own indicator, and once the block completes we're either done (the `done`
+    // event clears `pending`) or a tool card is about to appear. Rendering dots
+    // in that sliver between text_stop and done is what made finished responses
+    // flicker.
     if (!msg.pending) return;
     const last = segments.at(-1);
-    const activelyStreaming =
-      (last?.type === 'text' && !last.completed) ||
-      (last?.type === 'tool' && last.status === 'running');
-    if (!activelyStreaming) li.appendChild(buildPendingTail());
+    const waitingOnModel =
+      !last || (last.type === 'tool' && last.status !== 'running');
+    if (waitingOnModel) li.appendChild(buildPendingTail());
   }
 
   function buildMessageLi(msg) {
