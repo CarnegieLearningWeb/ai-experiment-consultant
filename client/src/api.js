@@ -95,8 +95,5 @@ async function uploadFile(file) {
 export const api = {
   health: () => request('/health'),
   upload: uploadFile,
-  simulation: (design, cohortSize) =>
-    request('/simulation', { method: 'POST', body: { design, cohortSize } }),
-  report: (state) => request('/report', { method: 'POST', body: { state } }),
   streamChat,
 };

@@ -34,7 +34,7 @@ upgrade-consultant/
 │       ├── api.js           Thin fetch wrapper for /api/v1/ai-consultant/*
 │       └── styles.css
 └── server/                  Express backend (workspace)
-    ├── src/
+    └── src/
     │   ├── index.js         Server entry (boot + listen)
     │   ├── app.js           Express app factory
     │   ├── config.js        Env var loading + validation
@@ -52,10 +52,7 @@ upgrade-consultant/
     │       ├── index.js     Mounts all routes under /api/v1/ai-consultant
     │       ├── health.js
     │       ├── chat.js
-    │       ├── uploads.js
-    │       ├── simulation.js
-    │       └── report.js
-    └── .env.example         Mirror of root for clarity
+    │       └── uploads.js
 ```
 
 ## URLs and routing
