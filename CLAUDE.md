@@ -11,10 +11,26 @@ See [docs/spec.md](docs/spec.md) for the full product vision.
 1. [docs/spec.md](docs/spec.md) — product vision and intent (source of truth)
 2. [docs/mvp.md](docs/mvp.md) — buildable v1 scope
 3. [docs/architecture.md](docs/architecture.md) — stack, layout, design patterns
-4. [docs/tasks.md](docs/tasks.md) — milestone checklist
+4. [docs/tasks.md](docs/tasks.md) — task board (Now / Backlog / Done)
 5. [docs/setup.md](docs/setup.md) — local setup
-6. [docs/simulation-api.md](docs/simulation-api.md) — dev-facing UpGrade demo-backend API reference (NOT loaded into the AI prompt; the consultant's knowledge lives in [server/src/lib/prompt-knowledge/](server/src/lib/prompt-knowledge/))
+6. [docs/simulation-api.md](docs/simulation-api.md) — UpGrade demo-backend API reference (used by the simulation feature)
 7. [docs/open-questions.md](docs/open-questions.md) — things still undecided
+
+## Task management
+
+- Before starting any work, read [docs/tasks.md](docs/tasks.md).
+- Work only on items under `## Now`; keep it small (1–2 items).
+- When a task is done, flip `- [ ]` to `- [x]` (keep the same line).
+- Don't start `## Backlog` items unless explicitly told to. If new work surfaces mid-task, add it to `## Backlog` rather than expanding the current task.
+
+## Work cycle (required)
+
+After finishing each task or bugfix:
+
+1. Stop and tell the user what changed and what to manually test (specific actions to take in the browser).
+2. Don't start the next task until the user confirms it works.
+3. Once the user confirms, commit that task's changes before starting the next task.
+4. Mark the task `- [x]` in [docs/tasks.md](docs/tasks.md) and pull the next item into `## Now`.
 
 ## Stack at a glance
 
@@ -23,11 +39,6 @@ See [docs/spec.md](docs/spec.md) for the full product vision.
 - **Monorepo:** npm workspaces, root `package.json` orchestrates dev
 - **Deployment target:** existing UpGrade demo EC2 host at `/ai-consultant`
 - **Backend API namespace:** `/api/v1/ai-consultant/*`
-
-## Current state
-
-M0–M5 are done; M6 (ChatGPT/Claude-style UI polish) is the next milestone.
-See [docs/tasks.md](docs/tasks.md) for the milestone breakdown.
 
 ## Where things live
 
