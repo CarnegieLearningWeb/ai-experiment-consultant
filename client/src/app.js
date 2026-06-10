@@ -51,10 +51,29 @@ function messageContent(msg) {
   return msg.content || '';
 }
 
+// Make external links open in a new tab so users never lose their chat/report
+// session by navigating away. We post-process marked's output rather than
+// override its link renderer, which would mean reimplementing marked's internal
+// URL cleaning/escaping. A <template> parses the HTML inertly (no network or
+// script execution). Only absolute http(s) and protocol-relative links are
+// treated as external; relative paths and in-page anchors are left alone.
+function openExternalLinksInNewTab(html) {
+  const tpl = document.createElement('template');
+  tpl.innerHTML = html;
+  for (const a of tpl.content.querySelectorAll('a[href]')) {
+    const href = a.getAttribute('href') || '';
+    if (/^https?:\/\//i.test(href) || href.startsWith('//')) {
+      a.setAttribute('target', '_blank');
+      a.setAttribute('rel', 'noopener noreferrer');
+    }
+  }
+  return tpl.innerHTML;
+}
+
 function renderMarkdown(text) {
   if (!text) return '';
   const out = marked.parse(text);
-  return typeof out === 'string' ? out : '';
+  return typeof out === 'string' ? openExternalLinksInNewTab(out) : '';
 }
 
 function escapeHtml(s) {

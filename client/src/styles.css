@@ -639,6 +639,25 @@ body {
   margin: 0;
 }
 
+/* Links in Markdown-rendered content (chat bubbles + report panel). Pin one
+   accent color across :link and :visited so clicking a paper/doc link never
+   recolors it (browsers otherwise apply purple visited styling). Hover/focus
+   keep a thicker underline as a clear affordance. New-tab behavior is set in
+   JS; this is purely visual and scoped to Markdown content. */
+.msg__bubble--md a,
+.msg__bubble--md a:visited,
+.artifact-panel__body a,
+.artifact-panel__body a:visited {
+  color: var(--accent);
+}
+
+.msg__bubble--md a:hover,
+.msg__bubble--md a:focus-visible,
+.artifact-panel__body a:hover,
+.artifact-panel__body a:focus-visible {
+  text-decoration-thickness: 2px;
+}
+
 .msg__bubble--md h1,
 .msg__bubble--md h2,
 .msg__bubble--md h3,
