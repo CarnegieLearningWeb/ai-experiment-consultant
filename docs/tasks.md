@@ -188,12 +188,26 @@ Goal: ready to present the demo at the PELE 2026 workshop. Address closer to the
 
 - [ ] Demo script + walkthrough notes in [docs/setup.md](setup.md)'s "Demo walkthrough" section — sample inputs, the path through the six phases, and what to highlight for the audience.
 
+## M10 — Related Research Grounding (optional)
+
+Goal: after the hypothesis is approved, give the user the option to pull up to three related research papers from Semantic Scholar that may help ground or refine the experiment design. Skipping or failing should never block the main planning flow.
+
+- [ ] `server/src/lib/papers.js` — small Semantic Scholar client. Multi-query search via `paper/search` (`fields=title,authors.name,year,venue,abstract,url,externalIds,citationCount`), per-query timeout (~8s), dedupe by DOI / normalized title, optional `SEMANTIC_SCHOLAR_API_KEY` header.
+- [ ] `server/src/lib/tools/search-papers.js` — new tool exposing `{ queries: 1–4, resultsPerQuery: 1–10 }`. Returns `{ candidates: [{title, authors, year, venue, abstract, url, doi, citationCount}], warnings: [...] }`. Tool failures degrade to a warning, not a thrown error.
+- [ ] Register the tool in [`tools.js`](../server/src/lib/tools.js).
+- [ ] Prompt: in "How you behave", add a bullet describing the optional research-grounding step (suggested wording: "Would you like me to look for up to three related research papers…"). Add `search_papers` tool docs alongside `run_simulation` and `generate_report`. Add the grounding rules — use only metadata/abstracts, never claim "proves/validates/confirms", say relevance is tentative when abstracts are vague, degrade gracefully when nothing useful comes back. Update the section list inline so the AI knows to mention "Related Research Grounding" only if it searched.
+- [ ] `generate_report` schema: add optional `relatedResearch.papers[]` with `{ title, url?, authorsYear?, relevance, designImplication }`.
+- [ ] [`report.js`](../server/src/lib/report.js): compose the new "Related Research Grounding" section between Hypothesis and Proposed UpGrade Experiment Design. Omit entirely (no placeholder) when no papers are passed.
+- [ ] Config + env: add optional `SEMANTIC_SCHOLAR_API_KEY` to [`config.js`](../server/src/config.js) and the root `.env.example`. Calls work without it; the key just raises the rate cap.
+
+Non-goals for v1: OpenAlex fallback (deferred — primary source is enough), persisting selected papers across sessions, full literature review or multi-page summarization. Keep the chat summary short.
+
 ## Deferred (post-MVP) (clarification needed)
 
 - Persistent project history
-- Related-paper retrieval (needs a curated source first)
 - Variant content generation
 - Client code generation
 - Repo / PR integration
 - Multi-decision-point and factorial experiments
 - Authentication — add to the existing UpGrade demo app, not this codebase, if needed at all
+- Related-paper retrieval — additional sources beyond Semantic Scholar (OpenAlex fallback, curated set), if/when needed

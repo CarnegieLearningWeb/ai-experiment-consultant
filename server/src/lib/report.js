@@ -224,6 +224,32 @@ function composeSimulationSummary(sim) {
   return parts.join('\n');
 }
 
+// Compose the optional "Related Research Grounding" section. Returns null
+// when no papers were passed so the section is omitted entirely (no
+// placeholder). The AI is responsible for not inventing findings — the
+// composer just lays out whatever it received.
+function composeRelatedResearchGrounding(research) {
+  const papers = (research?.papers || []).slice(0, 3);
+  if (papers.length === 0) return null;
+
+  const lead =
+    'The papers below were selected as related background for this experiment idea. ' +
+    'They do not verify that the proposed intervention will work, but they may help ' +
+    'refine the hypothesis, condition design, and metrics.';
+
+  const items = papers.map((p, i) => {
+    const title = (p.title || '').trim() || '(untitled paper)';
+    const headLink = p.url ? `[${title}](${p.url})` : title;
+    const meta = p.authorsYear ? ` — ${p.authorsYear}` : '';
+    const lines = [`${i + 1}. **${headLink}**${meta}`];
+    if (p.relevance) lines.push(`   - Relevance: ${p.relevance}`);
+    if (p.designImplication) lines.push(`   - Design implication: ${p.designImplication}`);
+    return lines.join('\n');
+  });
+
+  return [lead, '', items.join('\n\n')].join('\n');
+}
+
 function composeSetupGuide(experiment) {
   return substitute(TEMPLATES.setupGuide, {
     app_context: experiment.appContext,
@@ -271,6 +297,7 @@ export function composeReport(input) {
     experiment: rawExperiment,
     simulationResult,
     simulationInterpretation,
+    relatedResearch,
     include = {},
   } = input;
 
@@ -299,6 +326,11 @@ export function composeReport(input) {
   push('Page / Problem Description', pageDescription);
   push('Experiment Idea', experimentIdea);
   push('Hypothesis', hypothesis);
+
+  if (include.relatedResearchGrounding !== false) {
+    push('Related Research Grounding', composeRelatedResearchGrounding(relatedResearch));
+  }
+
   push('Proposed UpGrade Experiment Design', composeExperimentDesign(experiment));
 
   if (include.simulationResult !== false && simulationResult) {

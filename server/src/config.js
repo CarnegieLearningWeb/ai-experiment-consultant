@@ -32,4 +32,9 @@ export const config = {
   upgradeServiceAccountKeyPath: resolveFromRepoRoot(
     process.env.UPGRADE_SERVICE_ACCOUNT_KEY_PATH || 'upgrade-service-account-key.json',
   ),
+
+  // Optional. Semantic Scholar accepts unauthenticated requests at a lower
+  // rate cap, which is fine for our 1–4 queries per chat session. Set this
+  // if you've requested an API key and want the higher cap.
+  semanticScholarApiKey: process.env.SEMANTIC_SCHOLAR_API_KEY || null,
 };

@@ -304,7 +304,9 @@ chatRouter.post('/', async (req, res, next) => {
 
   try {
     for (let round = 0; round < MAX_TOOL_ROUNDS; round += 1) {
+      const roundStart = Date.now();
       const result = await runOneRound({ client, messages, tools, ctx });
+      const roundMs = Date.now() - roundStart;
       stopReason = result.stopReason;
       // Sum usage across rounds.
       usage.input_tokens += result.usage.input_tokens || 0;
@@ -313,6 +315,26 @@ chatRouter.post('/', async (req, res, next) => {
       usage.cache_read_input_tokens += result.usage.cache_read_input_tokens || 0;
 
       const toolUses = result.blocks.filter((b) => b.type === 'tool_use');
+      const textBlocks = result.blocks.filter((b) => b.type === 'text');
+
+      // Per-round timing. Splits model-side latency (this log line's `ms`)
+      // from server-side tool-execution latency (the existing `log.tool`
+      // start/end pair around executeToolUse). For tool-using rounds the
+      // round's `ms` includes both the AI's text deltas AND the JSON
+      // streaming of the tool_use block's `input` — which is where a verbose
+      // tool input (e.g. `relatedResearch.papers[]` on generate_report) adds
+      // wall-clock time before the server ever sees the tool handler.
+      log.chat('round done', {
+        round,
+        ms: roundMs,
+        stopReason,
+        outputTokens: result.usage.output_tokens || 0,
+        inputTokens: result.usage.input_tokens || 0,
+        cacheReadTokens: result.usage.cache_read_input_tokens || 0,
+        toolUses: toolUses.map((t) => t.name),
+        textBlocks: textBlocks.length,
+      });
+
       if (stopReason !== 'tool_use' || toolUses.length === 0) {
         break;
       }

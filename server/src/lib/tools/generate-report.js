@@ -108,10 +108,44 @@ export const GENERATE_REPORT_SCHEMA = {
       description:
         'Optional. A short paragraph interpreting the simulation result (which condition looked better, what to read into it). Only used if simulationResult is also provided.',
     },
+    relatedResearch: {
+      type: 'object',
+      description:
+        "Optional. Selected papers from the optional Related Research Grounding step. Pass only if you called `search_papers` earlier and presented up to 3 papers in chat — pass those same papers here with the same one-sentence relevance + design-implication summaries you used. Use only metadata you actually got back; do not invent findings or claim the papers validate the intervention. If the section is empty or omitted, the report skips it entirely (no placeholder).",
+      properties: {
+        papers: {
+          type: 'array',
+          maxItems: 3,
+          items: {
+            type: 'object',
+            properties: {
+              title: { type: 'string', description: 'Paper title as returned by search_papers.' },
+              url: { type: 'string', description: 'Direct URL to the paper, if available.' },
+              authorsYear: {
+                type: 'string',
+                description:
+                  'Short citation snippet for display, e.g. "Smith et al., 2023". Compose from the returned authors[] and year fields. Optional but recommended.',
+              },
+              relevance: {
+                type: 'string',
+                description:
+                  'One-sentence statement of why this paper is relevant to the proposed experiment. Tentative phrasing if the abstract is vague.',
+              },
+              designImplication: {
+                type: 'string',
+                description:
+                  'One-sentence concrete suggestion for the experiment design (hypothesis, conditions, metrics, or cautions) that this paper supports.',
+              },
+            },
+            required: ['title', 'relevance', 'designImplication'],
+          },
+        },
+      },
+    },
     include: {
       type: 'object',
       description:
-        "Optional section toggles. Defaults are all true. Set a section to false if the user explicitly asked to exclude it. Recognized keys: simulationResult, recommendedImplementationOrder, setupGuide, experimentCreationGuide, clientIntegrationGuide, assumptionsAndNotes.",
+        "Optional section toggles. Defaults are all true. Set a section to false if the user explicitly asked to exclude it. Recognized keys: relatedResearchGrounding, simulationResult, recommendedImplementationOrder, setupGuide, experimentCreationGuide, clientIntegrationGuide, assumptionsAndNotes.",
       additionalProperties: { type: 'boolean' },
     },
   },
@@ -119,25 +153,60 @@ export const GENERATE_REPORT_SCHEMA = {
 };
 
 export async function generateReport({ input, emit }) {
+  const t0 = Date.now();
   const title = input.title || 'Experiment Plan';
-  log.tool('compose report', {
+
+  // Payload-size signals so we can attribute report-generation latency.
+  // Composition itself is pure string manipulation and should be sub-50ms;
+  // any wall-clock difference between sessions with/without related research
+  // grounding is dominated by model-side tool-input construction time (the
+  // AI streams `relatedResearch.papers[]` as JSON via Anthropic
+  // input_json_delta events before the server ever sees this handler).
+  const relatedPapers = input.relatedResearch?.papers;
+  const relatedPaperCount = Array.isArray(relatedPapers) ? relatedPapers.length : 0;
+  const relatedResearchBytes = relatedPaperCount
+    ? JSON.stringify(input.relatedResearch).length
+    : 0;
+  const inputBytes = JSON.stringify(input).length;
+  const excludedSections = Object.entries(input.include || {})
+    .filter(([, v]) => v === false)
+    .map(([k]) => k);
+
+  log.tool('generate_report start', {
     title,
-    sections: Object.keys(input).filter((k) => input[k] != null).length,
+    inputBytes,
     hasSimulation: !!input.simulationResult,
+    hasRelatedResearch: relatedPaperCount > 0,
+    relatedPaperCount,
+    relatedResearchBytes,
+    excludedSections,
   });
 
+  const tComposeStart = Date.now();
   const markdown = composeReport(input);
+  const composerMs = Date.now() - tComposeStart;
+
   const artifactId = `rpt_${uuidv4().slice(0, 8)}`;
 
   // Emit the artifact alongside the standard tool_progress channel — the chat
   // route forwards anything we emit. The client recognizes type: "artifact"
-  // and opens the side panel.
+  // and opens the side panel directly from this payload; the AI does NOT
+  // re-stream or rephrase the markdown after the tool returns (it just
+  // sends one short acknowledgment line per the system prompt).
   emit({
     type: 'artifact',
     artifactId,
     kind: 'markdown',
     title,
     content: markdown,
+  });
+
+  const totalMs = Date.now() - t0;
+  log.tool('generate_report done', {
+    artifactId,
+    composerMs,
+    totalMs,
+    markdownBytes: markdown.length,
   });
 
   return {

@@ -1,5 +1,6 @@
 import { runSimulation, RUN_SIMULATION_SCHEMA } from './tools/run-simulation.js';
 import { generateReport, GENERATE_REPORT_SCHEMA } from './tools/generate-report.js';
+import { searchPapersTool, SEARCH_PAPERS_SCHEMA } from './tools/search-papers.js';
 
 // A tool definition:
 //   {
@@ -16,6 +17,34 @@ import { generateReport, GENERATE_REPORT_SCHEMA } from './tools/generate-report.
 // in the next round.
 
 const REGISTRY = {
+  search_papers: {
+    name: 'search_papers',
+    description:
+      'Search Semantic Scholar for related academic papers. Takes a structured ' +
+      '`researchContext` ({subject, mechanism, setting, outcome}), 1–2 ' +
+      '`specificQueries` derived from the hypothesis, and 2–3 stable ' +
+      '`domainQueries` for the experiment mechanism. The researchContext is ' +
+      'used as the ranking signal — its segments drive the token-overlap ' +
+      'score that orders candidates. Every call runs a fresh Semantic Scholar ' +
+      'search (no candidate caching). The tool **always runs both query lists** ' +
+      'together in a single throttled batch — every Semantic Scholar call ' +
+      '(initial, retry, across concurrent users) is serialized through a ' +
+      'single reservation queue and spaced >=1.5s apart. 429 responses honor ' +
+      '`Retry-After` when present, else wait an extra 2s before retry. The ' +
+      'queue is scoped to Semantic Scholar fetches only — unrelated chat, ' +
+      'simulation, and report requests run normally. De-duped candidates are ' +
+      "**deterministically pre-ranked** by canonical-key token overlap, " +
+      'abstract presence, recency, and citation count. Returns ' +
+      '`{ candidates: [...] }` — each has title, authors, year, venue, ' +
+      'abstract (truncated), url, doi, citationCount. ' +
+      'Call this only when the user has explicitly opted into research grounding ' +
+      'after the hypothesis is approved. After the tool returns, apply the 0–3 ' +
+      'relevance rubric and select only papers scoring >= 2 (see system prompt). ' +
+      'Use ONLY the returned metadata/abstracts when summarizing — never invent ' +
+      'findings, effect sizes, or claims not present in the data.',
+    input_schema: SEARCH_PAPERS_SCHEMA,
+    run: searchPapersTool,
+  },
   run_simulation: {
     name: 'run_simulation',
     description:
