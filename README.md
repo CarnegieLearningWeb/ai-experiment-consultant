@@ -37,17 +37,15 @@ for scope.
 **Requirements:** Node.js 20+
 
 ```bash
+# Clone and install (installs both the frontend and the server)
+git clone https://github.com/CarnegieLearningWeb/upgrade-consultant.git
+cd upgrade-consultant
 npm install
-cp .env.example .env        # then fill in your credentials
+cp server/.env.example server/.env   # then fill in your credentials
 npm run dev
 ```
 
-Open <http://localhost:5173/ai-consultant/>. The backend runs on port 3001 and
-Vite proxies `/api/...` to it during development.
-
-The preflight simulation and optional research grounding need extra credentials
-(UpGrade demo-backend access and a Semantic Scholar key) — see
-[docs/setup.md](docs/setup.md) and [.env.example](.env.example) for the full list.
+Then open the URL Vite prints — by default <http://localhost:5173/ai-consultant/>.
 
 ## Project structure
 

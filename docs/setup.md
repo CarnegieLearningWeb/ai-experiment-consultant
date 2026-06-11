@@ -8,19 +8,11 @@
 ## First-time setup
 
 ```bash
-git clone <this repo>
+# Clone and install (installs both the frontend and the server)
+git clone https://github.com/CarnegieLearningWeb/upgrade-consultant.git
 cd upgrade-consultant
-npm install            # installs root + client + server workspaces
-cp .env.example .env   # fill in values as you reach each milestone
-```
-
-The server loads `.env` from the repo root and constructs the Anthropic client
-at boot, so `ANTHROPIC_API_KEY` and `ANTHROPIC_MODEL` must be set before
-`npm run dev` will start the server.
-
-## Run the dev servers
-
-```bash
+npm install
+cp server/.env.example server/.env   # then fill in your credentials
 npm run dev
 ```
 

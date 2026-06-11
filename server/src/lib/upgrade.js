@@ -1,5 +1,5 @@
 import { GoogleAuth } from 'google-auth-library';
-import { fromRepoRoot } from '../env.js';
+import { fromServerDir } from '../env.js';
 import { log } from './log.js';
 
 // ============================================================================
@@ -64,7 +64,7 @@ let cachedToken = null;
 function getAuth() {
   if (!auth) {
     auth = new GoogleAuth({
-      keyFilename: fromRepoRoot(process.env.UPGRADE_SERVICE_ACCOUNT_KEY_PATH),
+      keyFilename: fromServerDir(process.env.UPGRADE_SERVICE_ACCOUNT_KEY_PATH),
       scopes: 'https://www.googleapis.com/auth/cloud-platform',
     });
   }

@@ -21,7 +21,6 @@ future Claude Code sessions can pick up without re-deriving them.
 ```
 upgrade-consultant/
 ├── package.json             npm workspaces root + dev orchestration
-├── .env.example             Copy to .env locally
 ├── CLAUDE.md                Claude Code orientation
 ├── README.md
 ├── docs/                    Source of truth and dev docs
@@ -34,10 +33,11 @@ upgrade-consultant/
 │       ├── api.js           Thin fetch wrapper for /api/v1/ai-consultant/*
 │       └── styles.css
 └── server/                  Express backend (workspace)
+    ├── .env.example         Copy to .env (both live in server/)
     └── src/
     │   ├── index.js         Server entry (boot + listen)
     │   ├── app.js           Express app factory
-    │   ├── env.js           .env loading (repo root) + path resolution
+    │   ├── env.js           .env loading (server/) + path resolution
     │   ├── lib/
     │   │   ├── prompt.js          System-prompt assembly
     │   │   ├── prompt-knowledge/  Curated UpGrade knowledge inlined into the prompt
@@ -68,12 +68,12 @@ Vite's `base: '/ai-consultant/'` is set in [client/vite.config.js](../client/vit
 
 ## Environment variables
 
-See [.env.example](../.env.example). Loaded from the repo root by [server/src/env.js](../server/src/env.js); the server reads `process.env` directly with no in-code fallbacks, so a missing required value fails fast.
+See [server/.env.example](../server/.env.example). Loaded from `server/.env` by [server/src/env.js](../server/src/env.js); the server reads `process.env` directly with no in-code fallbacks, so a missing required value fails fast.
 
 - `ANTHROPIC_API_KEY` — Anthropic API key. The chat route constructs the client at module load, so a missing key fails on server boot.
 - `ANTHROPIC_MODEL` — model id (e.g. `claude-opus-4-8`).
 - `UPGRADE_API_URL` — base URL of the UpGrade demo backend (`https://upgrade-demo.carnegielearning.com/api`). Paths sit under `/v6/...`.
-- `UPGRADE_SERVICE_ACCOUNT_KEY_PATH` — path to the Google service-account JSON used to mint OAuth tokens for UpGrade requests (`upgrade-service-account-key.json` at the repo root, git-ignored; relative paths resolve against the repo root). Implemented in [server/src/lib/upgrade.js](../server/src/lib/upgrade.js) (cached bearer token).
+- `UPGRADE_SERVICE_ACCOUNT_KEY_PATH` — path to the Google service-account JSON used to mint OAuth tokens for UpGrade requests (`upgrade-service-account-key.json` in `server/`, git-ignored; relative paths resolve against `server/`). Implemented in [server/src/lib/upgrade.js](../server/src/lib/upgrade.js) (cached bearer token).
 - `SEMANTIC_SCHOLAR_API_KEY` — optional; raises the Semantic Scholar rate cap for the Related Research Grounding step.
 - `DEBUG_LOGGING` — set `true` to print categorized server-side activity; off otherwise. Warnings always print.
 

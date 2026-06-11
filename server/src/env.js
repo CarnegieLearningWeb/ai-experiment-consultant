@@ -2,10 +2,10 @@ import { config as loadDotenv } from 'dotenv';
 import { fileURLToPath } from 'node:url';
 import { dirname, isAbsolute, join } from 'node:path';
 
-// .env and the service-account key live at the repo root, but the server's cwd
-// under `npm run dev` is server/. Load the env file and resolve relative paths
-// against the repo root. Import this once, first, before anything reads env.
-const REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
-loadDotenv({ path: join(REPO_ROOT, '.env') });
+// This app is backend-only, so .env and the service-account key live in server/.
+// Resolve them relative to this file so loading works regardless of cwd. Import
+// this once, first, before anything reads env.
+const SERVER_DIR = join(dirname(fileURLToPath(import.meta.url)), '..');
+loadDotenv({ path: join(SERVER_DIR, '.env') });
 
-export const fromRepoRoot = (p) => (isAbsolute(p) ? p : join(REPO_ROOT, p));
+export const fromServerDir = (p) => (isAbsolute(p) ? p : join(SERVER_DIR, p));
