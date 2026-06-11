@@ -149,6 +149,56 @@ body {
 }
 
 /* ============================================================================
+   Copy button on code blocks (chat bubbles + report panel)
+   ============================================================================ */
+
+.code-block {
+  position: relative;
+}
+
+/* Pinned to the block's corner (not the <pre>), so it stays put while the code
+   scrolls horizontally. The default surface-2 fill matches the code block, so
+   it sits flush over the first line until hover lifts it. */
+.code-copy-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: var(--surface-2);
+  color: var(--muted);
+  cursor: pointer;
+  transition: background 80ms ease, color 80ms ease, border-color 80ms ease;
+}
+
+.code-copy-btn:hover,
+.code-copy-btn:focus-visible {
+  background: var(--surface);
+  border-color: var(--border);
+  color: var(--fg);
+  outline: none;
+}
+
+.code-copy-btn--success,
+.code-copy-btn--success:hover {
+  color: #16a34a;
+}
+
+@media (prefers-color-scheme: dark) {
+  .code-copy-btn--success,
+  .code-copy-btn--success:hover {
+    color: #4ade80;
+  }
+}
+
+/* ============================================================================
    Chat area + conversation column
    ============================================================================ */
 

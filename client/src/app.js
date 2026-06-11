@@ -70,10 +70,67 @@ function openExternalLinksInNewTab(html) {
   return tpl.innerHTML;
 }
 
+// Wrap each fenced code block in a positioned container holding a copy button
+// in the top-right corner (ChatGPT-style). We parse the HTML inertly via a
+// <template> — same approach as openExternalLinksInNewTab. The button is a
+// sibling of <pre> rather than a child so it stays pinned to the corner even
+// when the code scrolls horizontally. The raw code is read from the <code>'s
+// textContent at click time (see handleCodeCopyClick), which preserves line
+// breaks and indentation exactly, so nothing is duplicated into the markup.
+function enhanceCodeBlocks(html) {
+  const tpl = document.createElement('template');
+  tpl.innerHTML = html;
+  for (const pre of tpl.content.querySelectorAll('pre')) {
+    if (!pre.querySelector('code')) continue;
+    const wrap = document.createElement('div');
+    wrap.className = 'code-block';
+    pre.replaceWith(wrap);
+    wrap.appendChild(pre);
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'code-copy-btn';
+    btn.title = 'Copy code';
+    btn.setAttribute('aria-label', 'Copy code');
+    btn.innerHTML = COPY_ICON_SVG;
+    wrap.appendChild(btn);
+  }
+  return tpl.innerHTML;
+}
+
 function renderMarkdown(text) {
   if (!text) return '';
   const out = marked.parse(text);
-  return typeof out === 'string' ? openExternalLinksInNewTab(out) : '';
+  return typeof out === 'string' ? enhanceCodeBlocks(openExternalLinksInNewTab(out)) : '';
+}
+
+// Delegated click handler for the copy buttons injected by enhanceCodeBlocks.
+// We read textContent off the <code> at click time, which preserves the code's
+// line breaks and indentation exactly; a single trailing newline (marked always
+// emits one) is trimmed. The "Copied!" reset timeout is parked on the button
+// element so rapid clicks reset cleanly without a shared handle.
+async function handleCodeCopyClick(event) {
+  const btn = event.target.closest('.code-copy-btn');
+  if (!btn) return;
+  const pre = btn.closest('.code-block')?.querySelector('pre');
+  if (!pre) return;
+  const code = pre.querySelector('code') || pre;
+  try {
+    await navigator.clipboard.writeText(code.textContent.replace(/\n$/, ''));
+    btn.innerHTML = CHECK_ICON_SVG;
+    btn.classList.add('code-copy-btn--success');
+    btn.title = 'Copied!';
+    btn.setAttribute('aria-label', 'Copied!');
+    if (btn._copyReset) clearTimeout(btn._copyReset);
+    btn._copyReset = setTimeout(() => {
+      btn.innerHTML = COPY_ICON_SVG;
+      btn.classList.remove('code-copy-btn--success');
+      btn.title = 'Copy code';
+      btn.setAttribute('aria-label', 'Copy code');
+      btn._copyReset = null;
+    }, 1000);
+  } catch (err) {
+    console.warn('clipboard copy failed:', err);
+  }
 }
 
 function escapeHtml(s) {
@@ -508,6 +565,13 @@ export function initChatApp({
   artifactCloseBtn?.addEventListener('click', closeArtifact);
   artifactCopyBtn?.addEventListener('click', copyCurrentArtifact);
   artifactDownloadBtn?.addEventListener('click', downloadCurrentArtifact);
+
+  // Copy buttons on rendered code blocks (chat bubbles + report panel). Both
+  // surfaces are containers whose markdown HTML is rebuilt on every render, so
+  // the click is delegated (see handleCodeCopyClick) rather than bound per
+  // button.
+  messagesEl.addEventListener('click', handleCodeCopyClick);
+  artifactBodyEl?.addEventListener('click', handleCodeCopyClick);
 
   // Escape closes the artifact panel. (The lightbox is a <dialog> and handles
   // Escape natively, so we only need to handle the panel here.)
