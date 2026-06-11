@@ -55,10 +55,3 @@ upgrade-consultant/
 ├── server/   Express backend (API under /api/v1/ai-consultant/*)
 └── docs/     Product spec, architecture, setup, and reference notes
 ```
-
-## Documentation
-
-- [docs/spec.md](docs/spec.md) — product vision and intent
-- [docs/mvp.md](docs/mvp.md) — v1 scope
-- [docs/architecture.md](docs/architecture.md) — stack and design decisions
-- [docs/setup.md](docs/setup.md) — local setup
