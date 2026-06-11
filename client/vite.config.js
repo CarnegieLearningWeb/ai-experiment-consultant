@@ -1,20 +1,8 @@
-import { defineConfig } from 'vite';
-
-export default defineConfig({
+export default {
   base: '/ai-consultant/',
   server: {
-    port: 5173,
-    strictPort: true,
     proxy: {
-      '/api': {
-        target: 'http://localhost:3001',
-        changeOrigin: false,
-      },
+      '/api': 'http://localhost:3001',
     },
   },
-  build: {
-    outDir: 'dist',
-    emptyOutDir: true,
-    sourcemap: true,
-  },
-});
+};
