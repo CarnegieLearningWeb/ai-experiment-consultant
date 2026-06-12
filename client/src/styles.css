@@ -114,8 +114,8 @@ body {
   border: 0;
   color: var(--muted);
   border-radius: 8px;
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -335,6 +335,12 @@ body {
 
 .tool-run--error {
   border-color: var(--danger);
+}
+
+/* A tool that was still running when the user stopped the turn. */
+.tool-run--stopped {
+  border-style: dashed;
+  opacity: 0.75;
 }
 
 .tool-run__header {
@@ -611,8 +617,8 @@ body {
   border: 0;
   background: var(--fg);
   color: var(--bg);
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   display: inline-flex;
   align-items: center;
@@ -630,6 +636,21 @@ body {
   background: var(--surface-2);
   color: var(--muted);
   cursor: not-allowed;
+}
+
+/* Stop state: the same dark pill as Send, shown with the square icon while a
+   response streams. Kept enabled so it stays clickable to abort. */
+.send-btn--stop {
+  background: var(--fg);
+  color: var(--bg);
+}
+
+/* "Stopped" note under an assistant turn the user aborted. */
+.msg__stopped {
+  margin-top: 8px;
+  font-size: 12px;
+  font-style: italic;
+  color: var(--muted);
 }
 
 /* Permanent muted disclaimer below the composer — sets expectations about

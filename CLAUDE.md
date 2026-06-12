@@ -30,7 +30,7 @@ After finishing each task or bugfix:
 1. Stop and tell the user what changed and what to manually test (specific actions to take in the browser).
 2. Don't start the next task until the user confirms it works.
 3. Once the user confirms, commit that task's changes before starting the next task.
-4. Mark the task `- [x]` in [docs/tasks.md](docs/tasks.md) and pull the next item into `## Now`.
+4. Mark the task `- [x]` and move it to the **bottom** of `## Done` in [docs/tasks.md](docs/tasks.md) (the section is chronological — oldest first, newest last), then pull the next item into `## Now`.
 
 ## Stack at a glance
 

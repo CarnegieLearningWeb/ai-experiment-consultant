@@ -29,12 +29,34 @@ const CHECK_ICON_SVG = `<svg width="16" height="16" viewBox="0 0 24 24" fill="no
   <path d="M5 12.5l4.5 4.5L19 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>`;
 
+// Send-button icons. The composer button swaps between these: the up-arrow
+// while idle, a filled square (ChatGPT-style) while a response streams so the
+// same button doubles as Stop. SEND_ICON_SVG mirrors the markup in index.html
+// so the first render doesn't visibly repaint the button.
+const SEND_ICON_SVG = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+  <path d="M12 19V5M5 12l7-7 7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>`;
+
+const STOP_ICON_SVG = `<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+  <rect x="5" y="5" width="14" height="14" rx="2.5" fill="currentColor"/>
+</svg>`;
+
 function makeSeedMessage() {
   return {
     role: 'assistant',
     isSeed: true,
     segments: [{ type: 'text', content: SEED_GREETING }],
   };
+}
+
+// Flag an assistant turn as user-stopped: keep its streamed text/tool cards but
+// flip any still-running tool to a "stopped" state and surface a "Stopped" note
+// (see buildAssistantBody).
+function markTurnStopped(msg) {
+  msg.stopped = true;
+  for (const seg of msg.segments || []) {
+    if (seg.type === 'tool' && seg.status === 'running') seg.status = 'stopped';
+  }
 }
 
 // Derive the plain-text content of a message for the Anthropic payload. User
@@ -164,6 +186,9 @@ export function initChatApp({
     messages: [makeSeedMessage()],
     pendingAttachments: [],
     isSending: false,
+    // AbortController for the in-flight chat stream; null when idle. The Stop
+    // button and New Chat both abort through it.
+    abortController: null,
     artifacts: new Map(),
     openArtifactId: null,
     isPinnedToBottom: true,
@@ -234,7 +259,7 @@ export function initChatApp({
     li.appendChild(wrap);
   }
 
-  const TOOL_RUN_ICONS = { error: '⚠', done: '✓' };
+  const TOOL_RUN_ICONS = { error: '⚠', done: '✓', stopped: '⏹' };
 
   function buildToolSegment(segment) {
     const wrap = document.createElement('div');
@@ -332,6 +357,13 @@ export function initChatApp({
     // event clears `pending`) or a tool card is about to appear. Rendering dots
     // in that sliver between text_stop and done is what made finished responses
     // flicker.
+    if (msg.stopped) {
+      const note = document.createElement('div');
+      note.className = 'msg__stopped';
+      note.textContent = 'Stopped';
+      li.appendChild(note);
+      return;
+    }
     if (!msg.pending) return;
     const last = segments.at(-1);
     const waitingOnModel =
@@ -393,7 +425,7 @@ export function initChatApp({
         if (state.isSending) return;
         inputEl.value = prompt;
         autosize();
-        updateSendDisabled();
+        updateSendButton();
         formEl.requestSubmit();
       });
       starterChipsEl.appendChild(btn);
@@ -428,7 +460,7 @@ export function initChatApp({
     const idx = state.pendingAttachments.indexOf(pa);
     if (idx !== -1) state.pendingAttachments.splice(idx, 1);
     renderAttachmentTray();
-    updateSendDisabled();
+    updateSendButton();
   }
 
   function clearPendingAttachments() {
@@ -486,11 +518,27 @@ export function initChatApp({
     }
   }
 
-  function updateSendDisabled() {
+  // The composer's primary button is dual-purpose: Send when idle, Stop while a
+  // response/tool is streaming. While sending it stays enabled (so it can abort)
+  // and shows the square icon; otherwise it follows the usual "nothing to send"
+  // disabled rule.
+  function updateSendButton() {
+    if (state.isSending) {
+      sendBtn.disabled = false;
+      sendBtn.classList.add('send-btn--stop');
+      sendBtn.innerHTML = STOP_ICON_SVG;
+      sendBtn.setAttribute('aria-label', 'Stop');
+      sendBtn.title = 'Stop';
+      return;
+    }
+    sendBtn.classList.remove('send-btn--stop');
+    sendBtn.innerHTML = SEND_ICON_SVG;
+    sendBtn.setAttribute('aria-label', 'Send');
+    sendBtn.title = 'Send';
     const hasText = inputEl.value.trim().length > 0;
     const hasReadyAttachment = state.pendingAttachments.some((pa) => pa.status === 'ready');
     const isUploading = state.pendingAttachments.some((pa) => pa.status === 'uploading');
-    sendBtn.disabled = state.isSending || isUploading || (!hasText && !hasReadyAttachment);
+    sendBtn.disabled = isUploading || (!hasText && !hasReadyAttachment);
   }
 
   // ===========================================================================
@@ -613,7 +661,7 @@ export function initChatApp({
     renderMessages();
     renderStarterChipsVisibility();
     renderAttachmentTray();
-    updateSendDisabled();
+    updateSendButton();
     scrollToBottom();
   }
 
@@ -661,6 +709,8 @@ export function initChatApp({
     const assistantMsg = { role: 'assistant', segments: [], pending: true };
     state.messages.push(assistantMsg);
     state.isSending = true;
+    const controller = new AbortController();
+    state.abortController = controller;
     // A fresh send pins the user back to the bottom.
     state.isPinnedToBottom = true;
     render();
@@ -677,7 +727,12 @@ export function initChatApp({
           out.attachments = m.attachments.map((a) => ({ id: a.id }));
         }
         return out;
-      });
+      })
+      // A turn stopped before any text streamed leaves an empty-content
+      // assistant message; the Messages API rejects empty assistant content, so
+      // drop it. (Consecutive user turns this may create are accepted — the API
+      // merges same-role messages into one turn.)
+      .filter((m) => m.role !== 'assistant' || m.content.trim().length > 0);
 
     // Tool segments and text segments are interleaved in `segments` in the
     // order Anthropic emits them, so the renderer naturally shows the tool
@@ -789,6 +844,7 @@ export function initChatApp({
 
     try {
       await api.streamChat(apiMessages, {
+        signal: controller.signal,
         onEvent: (evt) => {
           applyEvent(evt);
           renderMessages();
@@ -796,12 +852,25 @@ export function initChatApp({
         },
       });
     } catch (err) {
-      appendTextDelta(`\n\n_⚠️ ${err.message || 'Request failed'}_`);
+      // A user-initiated stop (Stop button / New Chat) aborts the fetch. Keep
+      // whatever streamed so far and mark the turn stopped rather than showing
+      // it as an error.
+      if (err?.name === 'AbortError' || controller.signal.aborted) {
+        markTurnStopped(assistantMsg);
+      } else {
+        appendTextDelta(`\n\n_⚠️ ${err.message || 'Request failed'}_`);
+      }
     } finally {
       assistantMsg.pending = false;
-      state.isSending = false;
-      render();
-      inputEl.focus();
+      // New Chat (or a superseding send) may have moved on while this stream
+      // unwound after an abort — only reset shared send state if we're still
+      // the active turn, so we don't clobber a newer request.
+      if (state.abortController === controller) {
+        state.isSending = false;
+        state.abortController = null;
+        render();
+        inputEl.focus();
+      }
     }
   }
 
@@ -822,7 +891,7 @@ export function initChatApp({
     };
     state.pendingAttachments.push(slot);
     renderAttachmentTray();
-    updateSendDisabled();
+    updateSendButton();
 
     try {
       const meta = await api.upload(file);
@@ -840,7 +909,7 @@ export function initChatApp({
     } finally {
       if (state.pendingAttachments.includes(slot)) {
         renderAttachmentTray();
-        updateSendDisabled();
+        updateSendButton();
       }
     }
   }
@@ -873,14 +942,29 @@ export function initChatApp({
     }
   }
 
+  // Abort the in-flight stream (Stop button / New Chat). The fetch rejection
+  // surfaces in handleSubmit's catch, which marks the turn stopped and resets
+  // the composer.
+  function stopGeneration() {
+    if (!state.isSending) return;
+    state.abortController?.abort();
+  }
+
   function handleKeydown(event) {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
+      // While a response streams, Enter neither submits a new turn nor stops —
+      // it's inert (Stop is mouse-only, matching ChatGPT).
+      if (state.isSending) return;
       formEl.requestSubmit();
     }
   }
 
   function handleNewChat() {
+    // Tear down any in-flight stream before resetting so the old turn's async
+    // unwind can't write into the fresh conversation.
+    stopGeneration();
+    state.abortController = null;
     state.messages = [makeSeedMessage()];
     clearPendingAttachments();
     state.isSending = false;
@@ -895,11 +979,20 @@ export function initChatApp({
   }
 
   formEl.addEventListener('submit', handleSubmit);
+  // The composer button is a submit button when idle and a Stop button while
+  // sending. Intercept the click in the sending state so it aborts instead of
+  // (no-op) re-submitting the form.
+  sendBtn.addEventListener('click', (event) => {
+    if (state.isSending) {
+      event.preventDefault();
+      stopGeneration();
+    }
+  });
   fileInputEl.addEventListener('change', handleFileChange);
   inputEl.addEventListener('keydown', handleKeydown);
   inputEl.addEventListener('input', () => {
     autosize();
-    updateSendDisabled();
+    updateSendButton();
   });
   newChatBtn.addEventListener('click', handleNewChat);
 

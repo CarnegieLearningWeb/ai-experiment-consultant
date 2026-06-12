@@ -14,3 +14,4 @@
 - [x] **M10 — Related Research Grounding (optional).** Semantic Scholar `search_papers` tool; optional post-hypothesis step that pulls up to three related papers; degrades gracefully.
 - [x] **M11 — Prompt knowledge moved server-side.** Curated UpGrade knowledge relocated to `server/src/lib/prompt-knowledge/upgrade-concepts.md` and trimmed to consulting-only; client-integration dropped from the prompt; `docs/upgrade-knowledge/` removed.
 - [x] **Cleanup.** External links open in a new tab; removed dead simulation/report REST stubs and the empty `client/public` dir.
+- [x] **Stop generation.** ChatGPT-style stop: send button becomes a stop button while a response/tool is in flight; clicking it aborts the stream and recovers the UI cleanly; Enter can't submit/stop mid-response. Propagates the abort to the backend (Anthropic streaming, simulation loop, paper search).
