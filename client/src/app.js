@@ -427,6 +427,9 @@ export function initChatApp({
         autosize();
         updateSendButton();
         formEl.requestSubmit();
+        // Clicking the chip moved focus to the button; hand it back to the
+        // composer so the user can keep typing without a stray click.
+        inputEl.focus();
       });
       starterChipsEl.appendChild(btn);
     }
