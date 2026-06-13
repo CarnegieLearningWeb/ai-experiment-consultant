@@ -41,6 +41,14 @@ const STOP_ICON_SVG = `<svg width="18" height="18" viewBox="0 0 24 24" aria-hidd
   <rect x="5" y="5" width="14" height="14" rx="2.5" fill="currentColor"/>
 </svg>`;
 
+// Brand mark (flask) used as the assistant's avatar in the opening welcome
+// composition — mirrors the login page + header mark for visual cohesion.
+const SEED_MARK_SVG = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <path d="M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2"/>
+  <path d="M6.453 15h11.094"/>
+  <path d="M8.5 2h7"/>
+</svg>`;
+
 function makeSeedMessage() {
   return {
     role: 'assistant',
@@ -378,6 +386,15 @@ export function initChatApp({
     if (msg.isSeed) {
       li.classList.add('msg--seed');
       if (!state.seedAnimated) li.classList.add('msg--seed-anim');
+      // Brand avatar for the opening welcome composition. CSS reveals it only
+      // while the greeting is the sole message (.msg--seed:only-child); once
+      // the conversation starts it's hidden and the greeting is a plain turn,
+      // so message styling stays identical across the transition.
+      const intro = document.createElement('span');
+      intro.className = 'seed-intro';
+      intro.setAttribute('aria-hidden', 'true');
+      intro.innerHTML = SEED_MARK_SVG;
+      li.appendChild(intro);
     }
 
     renderMessageAttachments(msg, li);
@@ -411,6 +428,14 @@ export function initChatApp({
   function buildStarterChips() {
     if (!starterChipsEl) return;
     starterChipsEl.innerHTML = '';
+    // A muted lead-in ties the chips to the welcome greeting so they read as
+    // one suggestions section rather than buttons floating below it.
+    const label = document.createElement('p');
+    label.className = 'starter-chips__label';
+    label.textContent = 'Not sure where to start?';
+    starterChipsEl.appendChild(label);
+    const row = document.createElement('div');
+    row.className = 'starter-chips__row';
     for (const prompt of STARTER_CHIPS) {
       const btn = document.createElement('button');
       btn.type = 'button';
@@ -431,8 +456,9 @@ export function initChatApp({
         // composer so the user can keep typing without a stray click.
         inputEl.focus();
       });
-      starterChipsEl.appendChild(btn);
+      row.appendChild(btn);
     }
+    starterChipsEl.appendChild(row);
   }
 
   function renderStarterChipsVisibility() {
