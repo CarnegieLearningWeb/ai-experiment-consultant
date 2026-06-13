@@ -1,4 +1,5 @@
 import express from 'express';
+import cookieParser from 'cookie-parser';
 import { log } from './lib/log.js';
 import { mountRoutes } from './routes/index.js';
 
@@ -7,6 +8,7 @@ export function createApp() {
 
   app.use(express.json({ limit: '2mb' }));
   app.use(express.urlencoded({ extended: false }));
+  app.use(cookieParser());
 
   // Lightweight request log; enough for prototyping without bringing in morgan.
   app.use((req, _res, next) => {

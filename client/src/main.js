@@ -1,21 +1,24 @@
 import { initChatApp } from './app.js';
+import { ensureAuthenticated } from './auth.js';
 
-initChatApp({
-  messagesEl: document.getElementById('messages'),
-  starterChipsEl: document.getElementById('starter-chips'),
-  formEl: document.getElementById('composer-form'),
-  inputEl: document.getElementById('composer-input'),
-  fileInputEl: document.getElementById('file-input'),
-  sendBtn: document.getElementById('send-btn'),
-  attachmentTrayEl: document.getElementById('attachment-tray'),
-  newChatBtn: document.getElementById('new-chat'),
-  artifactPanelEl: document.getElementById('artifact-panel'),
-  artifactTitleEl: document.getElementById('artifact-panel-title'),
-  artifactBodyEl: document.getElementById('artifact-panel-body'),
-  artifactCopyBtn: document.getElementById('artifact-copy'),
-  artifactDownloadBtn: document.getElementById('artifact-download'),
-  artifactCloseBtn: document.getElementById('artifact-close'),
-  lightboxEl: document.getElementById('lightbox'),
-  lightboxImgEl: document.getElementById('lightbox-img'),
-  lightboxCloseBtn: document.getElementById('lightbox-close'),
+ensureAuthenticated().then(() => {
+  initChatApp({
+    messagesEl: document.getElementById('messages'),
+    starterChipsEl: document.getElementById('starter-chips'),
+    formEl: document.getElementById('composer-form'),
+    inputEl: document.getElementById('composer-input'),
+    fileInputEl: document.getElementById('file-input'),
+    sendBtn: document.getElementById('send-btn'),
+    attachmentTrayEl: document.getElementById('attachment-tray'),
+    newChatBtn: document.getElementById('new-chat'),
+    artifactPanelEl: document.getElementById('artifact-panel'),
+    artifactTitleEl: document.getElementById('artifact-panel-title'),
+    artifactBodyEl: document.getElementById('artifact-panel-body'),
+    artifactCopyBtn: document.getElementById('artifact-copy'),
+    artifactDownloadBtn: document.getElementById('artifact-download'),
+    artifactCloseBtn: document.getElementById('artifact-close'),
+    lightboxEl: document.getElementById('lightbox'),
+    lightboxImgEl: document.getElementById('lightbox-img'),
+    lightboxCloseBtn: document.getElementById('lightbox-close'),
+  });
 });
