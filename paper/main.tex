@@ -74,7 +74,7 @@ The following design goals and cross-cutting principles --- distinct from the si
 
 \begin{enumerate}
   \item Begin with information gathering to establish reference foundation for the consultation.
-  \item Act as an ideation coach by suggesting candidate interventions and  plausible outcome metrics.
+  \item Act as an ideation coach by suggesting candidate interventions and plausible outcome metrics.
   \item Help users refine existing ideas into specific, testable experiments.
   \item Translate the finalized hypothesis into UpGrade's vocabulary --- decision point, conditions, participants, metrics.
   \item Keep humans in control through explicit approval at each major step.
@@ -87,7 +87,7 @@ The initial prototype focuses on the planning layer: it does not modify client c
 
 The prototype is a web application deployed alongside the existing UpGrade demo app~\cite{upgrade-demo}. Its footprint is minimal: a login page as a soft access guard, and a chat-style main page that supports file uploads (e.g., screenshots or documents) and opens the final report in a right-side panel from which it can be copied or downloaded. The backend is built around a single primary AI request endpoint; the initial prototype does not rely on a persistent database.
 
-UpGrade-specific knowledge is supplied through curated prompt context and report-section templates, keeping guidance consistent with what the platform actually supports. For the preflight phase, the prototype communicates with the hosted UpGrade demo backend, creating a temporary experiment, simulating  participant enrollment and metric logging, and then deleting this temp data. The user is shown a conversational interface while the system maintains a parallel structured state behind the dialogue, so each phase builds on a record of the user's confirmed inputs that can be realistically matched to UpGrade's capabilities.
+UpGrade-specific knowledge is supplied through curated prompt context and report-section templates, keeping guidance consistent with what the platform actually supports. For the preflight phase, the prototype communicates with the hosted UpGrade demo backend, creating a temporary experiment, simulating participant enrollment and metric logging, and then deleting this temp data. The user is shown a conversational interface while the system maintains a parallel structured state behind the dialogue, so each phase builds on a record of the user's confirmed inputs that can be realistically matched to UpGrade's capabilities.
 
 \begin{figure}[h]
 \centering
@@ -175,7 +175,7 @@ The conversation opens by collecting basic context about the EdTech application 
 
 \subsection{Ideation and Hypothesis Refinement}
 
-This is the most dynamic phase. The user may arrive with a clear idea (``test whether adding a hint improves correctness rates''), an unfocused problem to solve (``students get stuck here''), or need more directed guidance on idea generation. The AI helps to refine ideas when needed, then proposes candidate interventions, providing comparison between alternative approaches if desired. During this phase, the system suggests outcome metrics based on contextual information gathered in the previous phase, then refines the approved approaches into a testable hypothesis, a sort of lightweight version of the \emph{generate $\rightarrow$ critique $\rightarrow$ refine $\rightarrow$ refine} pattern in the AI co-scientist model ~\cite{ai-coscientist}. Part of this flow may involve grounding ideas in prior research; users can request that the AI provide citations and background information that is then added to the final report.
+This is the most dynamic phase. The user may arrive with a clear idea (``test whether adding a hint improves correctness rates''), an unfocused problem to solve (``students get stuck here''), or need more directed guidance on idea generation. The AI helps to refine ideas when needed, then proposes candidate interventions, providing comparison between alternative approaches if desired. During this phase, the system suggests outcome metrics based on contextual information gathered in the previous phase, then refines the approved approaches into a testable hypothesis, a sort of lightweight version of the \emph{generate $\rightarrow$ critique $\rightarrow$ refine $\rightarrow$ refine} pattern in the AI co-scientist model~\cite{ai-coscientist}. Part of this flow may involve grounding ideas in prior research; users can request that the AI provide citations and background information that is then added to the final report.
 
 \subsection{UpGrade Experiment Design}
 
@@ -221,7 +221,7 @@ Metrics:
 
 A synthetic simulation with 200 participants returns balanced enrollment (control 97, hint\_button 103), correctnessRate 78.4 for control vs.\ 84.5 for hint\_button, and timeOnTask 11.2 vs.\ 12.6. The simulation suggests that \emph{hint\_button} trends higher on correctness in this synthetic run, but notes that this is not meant to replace a true randomized experiment. The final report bundles the app and page descriptions, hypothesis, UpGrade experiment design, simulation summary with caveat, implementation to-do list (add the hint component in the client code, insert UpGrade API calls for condition assignment and metric collection, gate hint rendering on the assigned condition), and client-integration code examples.
 
-The generated markdown report is the prototype's central artifact, making the experiment plan shareable across researchers, developers, and other stakeholders. As input to AI coding tools, the report can be used within the client application to support adding UpGrade API calls, implementing  intervention variations in the client app, or other actions.
+The generated markdown report is the prototype's central artifact, making the experiment plan shareable across researchers, developers, and other stakeholders. As input to AI coding tools, the report can be used within the client application to support adding UpGrade API calls, implementing intervention variations in the client app, or other actions.
 
 \section{Discussion, Limitations, and Future Vision}
 
@@ -229,7 +229,7 @@ The prototype described here occupies an intentionally narrow space in compariso
 
 \textbf{Limitations.} The MVP currently supports only simple randomized between-subjects designs with individual-level assignment and a single decision point. This is a deliberate scoping choice for the prototype rather than a constraint of UpGrade itself, and relaxing the single-decision-point restriction to support richer designs is the first limitation we plan to address. The synthetic preflight demonstrates UpGrade mechanics rather than learning outcomes and should not substitute for a properly powered randomized trial. Finally, the prototype has not yet been evaluated with real EdTech teams; the walkthrough in Section 5 is illustrative of a commonly encountered scenario. We anticipate being able to evaluate this tool during upcoming platform onboarding in Fall 2026. 
 
-\textbf{Future vision.} Looking ahead, in addition to supporting more complex experimental designs, the report could evolve into the hub of a human-supervised pipeline ~\cite{end-to-end-ai-research, asi-evolve}: a researcher approves the report; an AI coding agent drafts the variant's pull request for a developer to review and merge; automated tooling provisions the UpGrade experiment for the researcher to verify and launch; and AI-assisted analysis informs the next planning cycle. Each transition preserves human review, keeping the artifact a semi-executable specification rather than an autonomous workflow. In the near term, we will demonstrate the prototype at the workshop and pilot it with external EdTech teams during UpGrade onboarding.
+\textbf{Future vision.} Looking ahead, in addition to supporting more complex experimental designs, the report could evolve into the hub of a human-supervised pipeline~\cite{end-to-end-ai-research, asi-evolve}: a researcher approves the report; an AI coding agent drafts the variant's pull request for a developer to review and merge; automated tooling provisions the UpGrade experiment for the researcher to verify and launch; and AI-assisted analysis informs the next planning cycle. Each transition preserves human review, keeping the artifact a semi-executable specification rather than an autonomous workflow. In the near term, we will demonstrate the prototype at the workshop and pilot it with external EdTech teams during UpGrade onboarding.
 
 \bibliographystyle{ACM-Reference-Format}
 \bibliography{references}
