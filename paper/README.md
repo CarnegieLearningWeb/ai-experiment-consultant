@@ -1,18 +1,24 @@
 # Paper — AI Experiment Consultant (PELE 2026)
 
-Overleaf source for the workshop paper
+Overleaf source and camera-ready revision notes for the workshop paper
 **"AI-Assisted Experimentation Consulting for Educational Platform Adoption"**
 (ACM `acmart` format, `ACM-Reference-Format` bibliography).
 
 ## Files
 
-- `main.tex` — the paper.
-- `references.bib` — bibliography (referenced as `\bibliography{references}`).
+* `main.tex` — the paper source.
+* `references.bib` — bibliography, referenced from `main.tex` as `\bibliography{references}`.
+* `reviews.md` — PELE reviewer comments and revision guidance for the camera-ready version.
+* `README.md` — notes about this folder and the paper workflow.
 
-The folder is flat and mirrors the Overleaf project root, so the contents copy
-back into Overleaf as-is. Keep the filenames stable — `main.tex` resolves
-`references.bib` by name from the same directory, so renaming either requires a
-matching edit.
+The LaTeX source files are intentionally kept flat so `main.tex` and
+`references.bib` can be copied back into the Overleaf project root as-is. Keep
+those filenames stable — `main.tex` resolves `references.bib` by name from the
+same directory, so renaming either requires a matching edit.
+
+`reviews.md` and `README.md` are repository-side support files. They are useful
+for AI-assisted revision and project tracking, but they do not need to be copied
+into Overleaf.
 
 This is a project artifact, not app runtime code. It is intentionally a sibling
 of `client/` and `server/` so it stays out of the npm-workspace build graph.
