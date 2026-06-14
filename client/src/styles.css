@@ -6,6 +6,10 @@
   --surface-2: #eceef7;
   --border: #e4e6f1;
   --border-strong: #ccd0e2;
+  /* Fenced code-block surface — a touch more distinct than the page, lighter
+     than the inline-code pill. The copy button reuses these so it stays flush. */
+  --code-surface: #e9ecf6;
+  --code-border: #cfd4e8;
   --fg: #1a1a2e;
   --muted: #5a5c72;
   --accent: #0047cc;
@@ -202,8 +206,8 @@ body {
 }
 
 /* Pinned to the block's corner (not the <pre>), so it stays put while the code
-   scrolls horizontally. The default surface-2 fill matches the code block, so
-   it sits flush over the first line until hover lifts it. */
+   scrolls horizontally. The default code-surface fill matches the code block,
+   so it sits flush over the first line until hover tints it slightly darker. */
 .code-copy-btn {
   position: absolute;
   top: 6px;
@@ -215,18 +219,17 @@ body {
   width: 28px;
   height: 28px;
   padding: 0;
-  border: 1px solid transparent;
+  border: 0;
   border-radius: 6px;
-  background: var(--surface-2);
+  background: var(--code-surface);
   color: var(--muted);
   cursor: pointer;
-  transition: background 80ms ease, color 80ms ease, border-color 80ms ease;
+  transition: background 80ms ease, color 80ms ease;
 }
 
 .code-copy-btn:hover,
 .code-copy-btn:focus-visible {
-  background: var(--surface);
-  border-color: var(--border);
+  background: #dce0ee;
   color: var(--fg);
   outline: none;
 }
@@ -874,31 +877,38 @@ body {
 .msg__bubble--md code {
   font-family: var(--font-mono);
   font-size: 0.88em;
-  background: var(--surface-2);
-  border-radius: 4px;
+  /* A clearer pill (darker than the lavender page + a hairline border) so inline
+     tokens stand out from surrounding prose. pre code resets this below. */
+  background: #e3e6f4;
+  border: 1px solid #ced3ea;
+  border-radius: 5px;
   padding: 1px 5px;
 }
 
 .msg__bubble--md pre {
-  background: var(--surface-2);
-  border: 1px solid var(--border);
+  background: var(--code-surface);
+  border: 1px solid var(--code-border);
   border-radius: 8px;
   padding: 10px 12px;
   overflow-x: auto;
   font-size: 13px;
   line-height: 1.55;
   margin: 0 0 14px;
+  box-shadow: 0 1px 2px rgba(26, 24, 40, 0.05);
 }
 
 .msg__bubble--md pre code {
   background: transparent;
+  border: 0;
   padding: 0;
 }
 
 .msg__bubble--md blockquote {
   margin: 0 0 14px;
-  padding: 4px 14px;
-  border-left: 3px solid var(--border);
+  padding: 6px 14px;
+  border-left: 3px solid #a3acd8;
+  background: var(--surface-2);
+  border-radius: 0 6px 6px 0;
   color: var(--muted);
 }
 
@@ -910,13 +920,15 @@ body {
 
 .msg__bubble--md th,
 .msg__bubble--md td {
-  border: 1px solid var(--border);
+  border: 1px solid #d7dbec;
   padding: 5px 10px;
   text-align: left;
 }
 
 .msg__bubble--md th {
-  background: var(--surface-2);
+  /* A clearer lavender than the chat background so header rows read distinctly
+     (scoped to chat tables; the report panel keeps its own styling). */
+  background: #e3e6f4;
   font-weight: 600;
 }
 
@@ -1034,30 +1046,34 @@ body {
 .artifact-panel__body code {
   font-family: var(--font-mono);
   font-size: 0.88em;
-  background: var(--surface-2);
-  border-radius: 4px;
+  /* Matches the chat inline-code pill (see .msg__bubble--md code). */
+  background: #e3e6f4;
+  border: 1px solid #ced3ea;
+  border-radius: 5px;
   padding: 1px 5px;
 }
 
 .artifact-panel__body pre {
-  background: var(--surface-2);
-  border: 1px solid var(--border);
+  background: var(--code-surface);
+  border: 1px solid var(--code-border);
   border-radius: 8px;
   padding: 12px 14px;
   overflow-x: auto;
   font-size: 13px;
   line-height: 1.55;
+  box-shadow: 0 1px 2px rgba(26, 24, 40, 0.05);
 }
 
 .artifact-panel__body pre code {
   background: transparent;
+  border: 0;
   padding: 0;
 }
 
 .artifact-panel__body blockquote {
   margin: 1em 0;
   padding: 6px 14px;
-  border-left: 3px solid var(--border);
+  border-left: 3px solid #a3acd8;
   color: var(--muted);
   background: var(--surface-2);
   border-radius: 0 6px 6px 0;
