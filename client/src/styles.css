@@ -88,11 +88,29 @@ body {
   background: transparent;
 }
 
+/* Brand acts as a home link back to the login/landing page (overview + links).
+   Horizontal-only padding + matching negative margin gives a subtle hover
+   highlight without changing the header height or shifting other content. */
 .app-header__brand {
   display: flex;
   align-items: center;
   gap: 10px;
   min-width: 0;
+  padding: 0 6px;
+  margin: 0 -6px;
+  border-radius: 10px;
+  color: inherit;
+  text-decoration: none;
+  transition: background 100ms ease;
+}
+
+.app-header__brand:hover {
+  background: var(--surface-2);
+}
+
+.app-header__brand:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
 }
 
 .app-header__mark {
