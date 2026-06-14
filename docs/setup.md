@@ -25,6 +25,11 @@ Open the client URL. The Vite dev server proxies `/api/*` to the Express
 server, so the frontend code can use relative API paths exactly as it will in
 production.
 
+The app sits behind **Google login** (a soft access guard). Set `GOOGLE_CLIENT_ID`
+and `SESSION_SECRET` in `server/.env` (see [architecture.md](architecture.md#environment-variables))
+— without them the sign-in page can't complete login and the API guard returns
+`401` for every protected route. The `/health` endpoint stays open.
+
 To run them separately:
 
 ```bash

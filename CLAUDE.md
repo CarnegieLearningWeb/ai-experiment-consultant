@@ -53,8 +53,13 @@ After finishing each task or bugfix:
 
 ## Important constraints
 
-- **No login / auth in this prototype.** Open local/demo access. Auth may be added
-  later directly in the existing UpGrade demo Express app, separately from this codebase.
+- **Google login (soft access guard).** The app sits behind Google OAuth: a sign-in
+  page renders at `/ai-consultant/login` and the `/api/v1/ai-consultant/*` API is gated
+  by a signed-cookie session. Implemented in [server/src/lib/auth.js](server/src/lib/auth.js)
+  (Google OAuth via `google-auth-library` + an HMAC-signed session cookie — no Auth.js /
+  NextAuth, no database). Requires `GOOGLE_CLIENT_ID` and `SESSION_SECRET` in `server/.env`.
+  This is an abuse guard for the open demo, not per-user data isolation — there is still
+  no persistent per-user state.
 - **No React, no Next.js, no TypeScript.** Plain Vite + vanilla JS by design.
 - **Keep the prompt knowledge in [server/src/lib/prompt-knowledge/](server/src/lib/prompt-knowledge/) narrow.** It scopes the AI consultant
   to simple, supported experiment designs. Do not lift advanced UpGrade features

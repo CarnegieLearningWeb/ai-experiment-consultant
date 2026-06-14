@@ -16,6 +16,9 @@ been moved out of this file — see the corresponding commit messages and
 - **Where does the build run?** On the host or in CI? No CI yet, so provisionally: on the host.
 - **TLS / domain.** Inherits from the existing demo deployment. Confirm before M7.
 
-## Authentication (deferred)
+## Authentication (resolved)
 
-The user has explicitly excluded auth from this prototype. If any access control is needed, it will be added to the surrounding existing UpGrade demo Express app rather than to this codebase. Revisit only if asked.
+Initially excluded, then added directly to this codebase: Google OAuth sign-in
++ an HMAC-signed session cookie act as a soft access guard for the open demo
+(abuse prevention, not per-user data). See [server/src/lib/auth.js](../server/src/lib/auth.js)
+and `GOOGLE_CLIENT_ID` / `SESSION_SECRET` in [architecture.md](architecture.md#environment-variables).

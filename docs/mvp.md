@@ -25,11 +25,13 @@ a final markdown experiment-plan report.
 - Markdown report generation with a copy button.
 - All backend routes mounted at `/api/v1/ai-consultant/*` so the app can sit
   behind the `/ai-consultant` sub-path on the existing demo host.
+- Google login as a soft access guard: Google OAuth sign-in + a signed-cookie
+  session gating the API. Abuse prevention for the open demo, not per-user data.
 
 ## Out of scope for v1
 
-- **Authentication.** Open local/demo access. May be added later directly in
-  the existing UpGrade demo Express app.
+- Per-user accounts or data isolation. Google login is only a soft access
+  guard (abuse prevention); it does not scope or persist per-user data.
 - Persistent database. In-memory session state only; reload starts fresh.
 - Saved chat history or projects across sessions.
 - Production UpGrade integration (real experiments on real users).
