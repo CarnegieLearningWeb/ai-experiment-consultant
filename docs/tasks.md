@@ -2,6 +2,8 @@
 
 ## Backlog
 
+- [ ] **Camera-ready paper refinement.** Refine the PELE workshop paper in `paper/` (`main.tex`) for camera-ready, using the PELE review comments, the implemented app behavior, and paper↔prototype consistency. When finalized, add the compiled PDF to `paper/`, serve it under `/ai-consultant`, and point the login page "Paper" link at it (see the `TODO(paper):` marker in `server/src/views/login.html`).
+
 ## Done
 
 - [x] **M0 — Repository foundation.** npm-workspaces monorepo, Vite + vanilla JS client, Node + Express server (ESM), docs scaffold.

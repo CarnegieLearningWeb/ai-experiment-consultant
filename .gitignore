@@ -9,3 +9,14 @@ dist/
 coverage/
 uploads/
 upgrade-service-account-key.json
+
+# LaTeX build artifacts (paper/ compiles in Overleaf; ignore local build cruft)
+paper/*.aux
+paper/*.bbl
+paper/*.blg
+paper/*.out
+paper/*.synctex.gz
+paper/*.fls
+paper/*.fdb_latexmk
+paper/*.toc
+paper/*.log
