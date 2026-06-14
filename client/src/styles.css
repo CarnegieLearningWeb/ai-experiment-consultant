@@ -1,19 +1,25 @@
 :root {
-  --bg: #fdfcfa;
+  /* Light, bright palette shared with the redesigned login page:
+     UpGrade-family blue -> purple brand, lavender surfaces, ink text. */
+  --bg: #f5f6fc;
   --surface: #ffffff;
-  --surface-2: #f5f2ed;
-  --border: #e3e0db;
-  --border-strong: #c9c4bc;
-  --fg: #2c2925;
-  --muted: #6e6962;
-  --accent: #2b6cb0;
+  --surface-2: #eceef7;
+  --border: #e4e6f1;
+  --border-strong: #ccd0e2;
+  --fg: #1a1a2e;
+  --muted: #5a5c72;
+  --accent: #0047cc;
+  --accent-strong: #003aa6;
   --accent-fg: #ffffff;
-  --user-bubble: #efebe4;
+  --gradient-brand: linear-gradient(135deg, #0047cc 0%, #5a2fcf 100%);
+  --user-bubble: #e0e7ff;
+  --ring: 0 0 0 3px rgba(0, 71, 204, 0.18);
   --warning: #92400e;
-  --warning-bg: #fde68a;
-  --danger: #9b2419;
-  --danger-bg: #fbcfca;
-  --shadow-soft: 0 1px 2px rgba(20, 18, 14, 0.04), 0 8px 24px rgba(20, 18, 14, 0.05);
+  --warning-bg: #fdf0c9;
+  --danger: #b42318;
+  --danger-bg: #fde4e1;
+  --shadow-soft: 0 1px 2px rgba(26, 24, 40, 0.04), 0 10px 28px rgba(26, 24, 40, 0.07);
+  --shadow-lift: 0 2px 6px rgba(26, 24, 40, 0.06), 0 16px 36px rgba(26, 24, 40, 0.12);
 
   --font-body: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
     "Segoe UI Variable Display", "Segoe UI", Roboto, "Helvetica Neue", Arial,
@@ -22,26 +28,6 @@
     monospace;
 
   --column-max: 740px;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #1a1816;
-    --surface: #232220;
-    --surface-2: #2a2825;
-    --border: #353330;
-    --border-strong: #4b4844;
-    --fg: #ecebe8;
-    --muted: #a1a09c;
-    --accent: #6fa8e0;
-    --accent-fg: #0b0b0a;
-    --user-bubble: #2c2a26;
-    --warning: #fcd34d;
-    --warning-bg: #422006;
-    --danger: #fca5a5;
-    --danger-bg: #4a1208;
-    --shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.35);
-  }
 }
 
 * {
@@ -67,6 +53,10 @@ body {
   grid-template-rows: auto 1fr auto;
   height: 100vh;
   width: 100%;
+  /* One continuous, very subtle canvas — lighter at the top easing into the
+     login's lavender at the bottom — so the header, chat, and composer read as
+     a single surface rather than separate bands. */
+  background: linear-gradient(180deg, #f8f9fe 0%, #edf0fb 100%);
 }
 
 .sr-only {
@@ -88,20 +78,77 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 20px;
+  gap: 12px;
+  padding: 12px 20px;
   border-bottom: 1px solid var(--border);
-  background: var(--bg);
+  background: transparent;
+}
+
+.app-header__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.app-header__mark {
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  background: var(--gradient-brand);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 71, 204, 0.25);
 }
 
 .app-header__title {
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: -0.01em;
   font-size: 15px;
+  color: var(--fg);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .app-header__actions {
   display: flex;
   gap: 4px;
+}
+
+.new-chat-btn {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--fg);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 100ms ease, background 100ms ease, box-shadow 100ms ease;
+}
+
+.new-chat-btn svg {
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+.new-chat-btn:hover {
+  border-color: var(--border-strong);
+  background: var(--surface-2);
+}
+
+.new-chat-btn:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: var(--ring);
 }
 
 /* ============================================================================
@@ -123,11 +170,16 @@ body {
   transition: background 80ms ease, color 80ms ease;
 }
 
-.icon-btn:hover,
+.icon-btn:hover {
+  background: var(--surface-2);
+  color: var(--fg);
+}
+
 .icon-btn:focus-visible {
   background: var(--surface-2);
   color: var(--fg);
   outline: none;
+  box-shadow: var(--ring);
 }
 
 .icon-btn:disabled {
@@ -139,13 +191,6 @@ body {
 .icon-btn--success:hover {
   color: #16a34a;
   background: transparent;
-}
-
-@media (prefers-color-scheme: dark) {
-  .icon-btn--success,
-  .icon-btn--success:hover {
-    color: #4ade80;
-  }
 }
 
 /* ============================================================================
@@ -191,13 +236,6 @@ body {
   color: #16a34a;
 }
 
-@media (prefers-color-scheme: dark) {
-  .code-copy-btn--success,
-  .code-copy-btn--success:hover {
-    color: #4ade80;
-  }
-}
-
 /* ============================================================================
    Chat area + conversation column
    ============================================================================ */
@@ -206,6 +244,22 @@ body {
   overflow-y: auto;
   position: relative;
   padding: 24px 20px 64px;
+}
+
+/* Opening welcome state: center the greeting + suggestions as one composition,
+   over a whisper of the login's blue->purple glow. `safe` keeps the top
+   reachable on short screens. The moment a real message arrives this no longer
+   matches and the chat reverts to the normal top-anchored, scrollable column. */
+.chat:has(.msg--seed:only-child) {
+  display: flex;
+  flex-direction: column;
+  justify-content: safe center;
+  background: radial-gradient(
+    65% 55% at 50% 44%,
+    rgba(90, 47, 207, 0.06),
+    rgba(0, 71, 204, 0.04) 38%,
+    transparent 72%
+  );
 }
 
 .chat__column {
@@ -245,6 +299,39 @@ body {
 /* The seed greeting opens the conversation; give it breathing room above. */
 .msg--seed {
   margin-top: 40px;
+}
+
+/* Brand avatar, shown only in the opening welcome composition (greeting is the
+   sole message). Once the conversation starts it's hidden and the greeting is a
+   normal flush turn — so the greeting itself looks identical across the
+   transition; only the welcome framing (avatar, centering, suggestions) falls
+   away. The greeting stays at body size for consistency with every later turn. */
+.seed-intro {
+  display: none;
+}
+
+.msg--seed:only-child {
+  margin-top: 0;
+}
+
+.msg--seed:only-child .seed-intro {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  margin-bottom: 18px;
+  border-radius: 14px;
+  /* A lighter tint of the brand gradient (the header mark + send button keep the
+     full-strength --gradient-brand) with a soft, low shadow — so the welcome
+     badge supports the greeting rather than dominating it. */
+  background: linear-gradient(135deg, #2f5fd1 0%, #7150cc 100%);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(0, 71, 204, 0.15);
+}
+
+.msg--seed:only-child .msg__bubble--md > p:first-child {
+  font-size: 16px;
+  line-height: 1.6;
 }
 
 .msg__bubble {
@@ -331,6 +418,7 @@ body {
 
 .tool-run--running {
   border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 4%, var(--surface));
 }
 
 .tool-run--error {
@@ -448,14 +536,24 @@ body {
    ============================================================================ */
 
 .starter-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 24px 0 0;
+  margin: 26px 0 0;
 }
 
 .starter-chips[hidden] {
   display: none;
+}
+
+.starter-chips__label {
+  margin: 0 0 10px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.starter-chips__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .starter-chip {
@@ -464,18 +562,25 @@ body {
   border: 1px solid var(--border);
   color: var(--fg);
   border-radius: 999px;
-  padding: 8px 14px;
+  padding: 9px 16px;
   font: inherit;
   font-size: 14px;
+  font-weight: 500;
   cursor: pointer;
-  transition: border-color 80ms ease, background 80ms ease;
+  box-shadow: 0 1px 2px rgba(26, 24, 40, 0.04);
+  transition: border-color 120ms ease, color 120ms ease, background 120ms ease;
 }
 
-.starter-chip:hover,
+.starter-chip:hover {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 5%, var(--surface));
+}
+
 .starter-chip:focus-visible {
-  border-color: var(--border-strong);
-  background: var(--surface-2);
   outline: none;
+  border-color: var(--accent);
+  box-shadow: var(--ring);
 }
 
 /* ============================================================================
@@ -484,7 +589,7 @@ body {
 
 .composer-wrap {
   padding: 0 20px 20px;
-  background: var(--bg);
+  background: transparent;
 }
 
 .composer-wrap__inner {
@@ -574,14 +679,15 @@ body {
   gap: 6px;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 22px;
+  border-radius: 24px;
   padding: 6px 6px 6px 8px;
   box-shadow: var(--shadow-soft);
-  transition: border-color 80ms ease;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
 }
 
 .composer:focus-within {
-  border-color: var(--border-strong);
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--border-strong));
+  box-shadow: var(--shadow-soft), 0 0 0 3px rgba(0, 71, 204, 0.09);
 }
 
 .composer__input {
@@ -615,8 +721,8 @@ body {
 .send-btn {
   appearance: none;
   border: 0;
-  background: var(--fg);
-  color: var(--bg);
+  background: var(--gradient-brand);
+  color: #fff;
   width: 36px;
   height: 36px;
   border-radius: 50%;
@@ -624,25 +730,39 @@ body {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: background 80ms ease, opacity 80ms ease;
+  box-shadow: 0 2px 8px rgba(0, 71, 204, 0.28);
+  transition: filter 120ms ease, box-shadow 120ms ease, background 120ms ease;
   flex-shrink: 0;
 }
 
 .send-btn:hover:not(:disabled) {
-  opacity: 0.85;
+  filter: brightness(1.08);
+}
+
+.send-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
 }
 
 .send-btn:disabled {
   background: var(--surface-2);
   color: var(--muted);
+  box-shadow: none;
   cursor: not-allowed;
 }
 
-/* Stop state: the same dark pill as Send, shown with the square icon while a
-   response streams. Kept enabled so it stays clickable to abort. */
+/* Stop state: a softer, muted slate-indigo (not the brand blue, not pure black)
+   shown with the square icon while a response streams. Kept visually distinct
+   from the brand-blue Send, and enabled so it stays clickable to abort. */
 .send-btn--stop {
-  background: var(--fg);
-  color: var(--bg);
+  background: #3f4661;
+  color: #fff;
+  box-shadow: none;
+}
+
+.send-btn--stop:hover:not(:disabled) {
+  background: #4a5273;
+  filter: none;
 }
 
 /* "Stopped" note under an assistant turn the user aborted. */
@@ -811,11 +931,11 @@ body {
   bottom: 0;
   width: min(50vw, 720px);
   min-width: 480px;
-  background: var(--bg);
+  background: var(--surface);
   border-left: 1px solid var(--border);
   display: grid;
   grid-template-rows: auto 1fr;
-  box-shadow: -8px 0 24px rgba(0, 0, 0, 0.08);
+  box-shadow: -10px 0 40px rgba(26, 24, 40, 0.14);
   z-index: 50;
   animation: artifact-slide-in 180ms ease-out;
 }
@@ -842,7 +962,7 @@ body {
   gap: 12px;
   padding: 10px 12px 10px 20px;
   border-bottom: 1px solid var(--border);
-  background: var(--bg);
+  background: var(--surface);
 }
 
 .artifact-panel__title {
@@ -1170,6 +1290,15 @@ body {
   .composer-wrap {
     padding-left: 12px;
     padding-right: 12px;
+  }
+  .app-header__title {
+    font-size: 14px;
+  }
+  .new-chat-btn__label {
+    display: none;
+  }
+  .new-chat-btn {
+    padding: 7px;
   }
   .msg--user {
     max-width: 92%;
