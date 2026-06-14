@@ -124,7 +124,7 @@ UpGrade-specific knowledge is supplied through curated prompt context and report
 
 % --- pipeline (left to right) ---
 \node[phase] (app) at (0,0) {Learning\\App};
-\node[phase, right=8mm of app]    (target) {Ideation\\Coaching};
+\node[phase, right=8mm of app]    (target) {Page /\\Problem};
 \node[value, right=8mm of target] (idea)   {Hypothesis\\Refinement};
 \node[value, right=8mm of idea]   (design) {Experiment\\Design};
 \node[optional, right=8mm of design] (sim) {Synthetic\\Preflight};
@@ -161,7 +161,7 @@ UpGrade-specific knowledge is supplied through curated prompt context and report
 \end{tikzpicture}
 \caption{Six-phase consulting workflow and report handoff. Context phases (dashed group, left) feed the AI-driven core; explicit user approvals (\checkmark) gate the major transitions, and the dashed Synthetic Preflight node is optional. The resulting report is the shared handoff artifact across researchers, developers, stakeholders, and/or AI coding tools.}
 
-\Description{Horizontal pipeline of six phases connected by arrows: Learning App, Ideation Coaching (both grouped under a dashed Context-collection label), Hypothesis Refinement, Experiment Design, Synthetic Preflight (dashed border, indicating optional), and Report Generation (drawn with a heavier border as the central artifact). Small boxed checkmarks sit on the arrows between Hypothesis Refinement and Experiment Design, and between Experiment Design and Synthetic Preflight, indicating user-approval gates. Below the Report Generation box, four arrows fan out via a horizontal bus to four italicized labels: Developers, Researchers/Product Managers, Additional Stakeholders, and AI coding tools.}
+\Description{Horizontal pipeline of six phases connected by arrows: Learning App, Page / Problem (both grouped under a dashed Context-collection label), Hypothesis Refinement, Experiment Design, Synthetic Preflight (dashed border, indicating optional), and Report Generation (drawn with a heavier border as the central artifact). Small boxed checkmarks sit on the arrows between Hypothesis Refinement and Experiment Design, and between Experiment Design and Synthetic Preflight, indicating user-approval gates. Below the Report Generation box, four arrows fan out via a horizontal bus to four italicized labels: Developers, Researchers/Product Managers, Additional Stakeholders, and AI coding tools.}
 \label{fig:workflow}
 \end{figure}
 
@@ -171,7 +171,7 @@ The flow has six phases, presented above in five grouped subsections. Context co
 
 \subsection{Context Collection}
 
-The conversation opens by collecting basic context about the EdTech application and how it works: what the application does, who its learners are, the domain, and a description of the typical user flow. This is followed by "ideation coaching," which gathers information about whether the user is interested in solving a specific problem, developing an intervention, or creating a feature. The system then helps identify where in the app's interaction flow an experiment might run. Users can upload files such as screenshots or documents to help the AI provide more specific follow-up questions and suggestions.
+The conversation opens by collecting basic context about the EdTech application and how it works: what the application does, who its learners are, the domain, and a description of the typical user flow. It then turns to the specific page, problem, or interaction where an experiment might run, including whether the user is trying to solve a problem, develop an intervention, or create a feature. Users can upload files such as screenshots or documents to help the AI provide more specific follow-up questions and suggestions.
 
 \subsection{Ideation and Hypothesis Refinement}
 
