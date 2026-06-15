@@ -23,7 +23,8 @@ consultant guides you — in a single conversation — to a plan you can act on:
   coding tool.
 
 See [docs/spec.md](docs/spec.md) for the product vision and [docs/mvp.md](docs/mvp.md)
-for scope.
+for scope. The PELE 2026 paper is available at
+[paper/ai-experiment-consultant-pele-2026.pdf](paper/ai-experiment-consultant-pele-2026.pdf).
 
 ## Tech stack
 
@@ -33,7 +34,9 @@ for scope.
 
 ## Getting started
 
-**Requirements:** Node.js 20+
+**Requirements:** Node.js 20+. Running the full app also requires Anthropic,
+Google OAuth, UpGrade service-account, and Semantic Scholar credentials; see
+[server/.env.example](server/.env.example).
 
 ```bash
 # Clone and install (installs both the frontend and the server)
