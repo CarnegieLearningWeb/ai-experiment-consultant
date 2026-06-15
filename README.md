@@ -1,10 +1,9 @@
-# UpGrade Consultant
+# AI Experiment Consultant
 
 An AI consultant that helps educational software teams turn an idea or pain
 point into a concrete, implementation-ready A/B experiment plan for
-[UpGrade](https://upgrade-platform.gitbook.io/upgrade-documentation), an
-experimentation platform for educational software. Built for the
-[PELE 2026 workshop](https://sites.google.com/carnegielearning.com/pele-2026/home).
+[UpGrade](https://www.upgradeplatform.org/), an
+experimentation platform for educational software.
 
 ## What it does
 
@@ -38,8 +37,8 @@ for scope.
 
 ```bash
 # Clone and install (installs both the frontend and the server)
-git clone https://github.com/CarnegieLearningWeb/upgrade-consultant.git
-cd upgrade-consultant
+git clone https://github.com/CarnegieLearningWeb/ai-experiment-consultant.git
+cd ai-experiment-consultant
 npm install
 cp server/.env.example server/.env   # then fill in your credentials
 npm run dev
@@ -50,7 +49,7 @@ Then open the URL Vite prints — by default <http://localhost:5173/ai-consultan
 ## Project structure
 
 ```
-upgrade-consultant/
+ai-experiment-consultant/
 ├── client/   Vite + vanilla JS frontend
 ├── server/   Express backend (API under /api/v1/ai-consultant/*)
 └── docs/     Product spec, architecture, setup, and reference notes

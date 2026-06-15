@@ -19,7 +19,7 @@ future Claude Code sessions can pick up without re-deriving them.
 ## Repository layout
 
 ```
-upgrade-consultant/
+ai-experiment-consultant/
 ├── package.json             npm workspaces root + dev orchestration
 ├── CLAUDE.md                Claude Code orientation
 ├── README.md

@@ -1029,8 +1029,8 @@ export function initChatApp({
 
   api
     .health()
-    .then(() => console.info('[upgrade-consultant] api healthy'))
-    .catch((err) => console.warn('[upgrade-consultant] api health check failed:', err.message));
+    .then(() => console.info('[ai-experiment-consultant] api healthy'))
+    .catch((err) => console.warn('[ai-experiment-consultant] api health check failed:', err.message));
 
   render();
   inputEl.focus();

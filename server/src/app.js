@@ -27,7 +27,7 @@ export function createApp() {
 
   // Error envelope.
   app.use((err, _req, res, _next) => {
-    console.error('[upgrade-consultant] unhandled error:', err);
+    console.error('[ai-experiment-consultant] unhandled error:', err);
     const status = err.status || 500;
     res.status(status).json({
       error: {

@@ -9,8 +9,8 @@
 
 ```bash
 # Clone and install (installs both the frontend and the server)
-git clone https://github.com/CarnegieLearningWeb/upgrade-consultant.git
-cd upgrade-consultant
+git clone https://github.com/CarnegieLearningWeb/ai-experiment-consultant.git
+cd ai-experiment-consultant
 npm install
 cp server/.env.example server/.env   # then fill in your credentials
 npm run dev
