@@ -2,8 +2,6 @@
 
 ## Backlog
 
-- [ ] **Camera-ready ACM metadata.** After acceptance, fill in the ACM-supplied metadata in `paper/main.tex` (uncomment the author block; set `\setcopyright`, `\copyrightyear`, `\acmYear`, `\acmConference`, `\acmISBN`, `\acmDOI`; confirm the required `acmart` class option; recheck the page count), then recompile and refresh `paper/ai-experiment-consultant-pele-2026.pdf`.
-
 ## Done
 
 - [x] **M0 — Repository foundation.** npm-workspaces monorepo, Vite + vanilla JS client, Node + Express server (ESM), docs scaffold.
