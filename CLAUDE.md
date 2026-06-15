@@ -1,4 +1,4 @@
-# Claude Code Guidance — upgrade-consultant
+# Claude Code Guidance — ai-experiment-consultant
 
 ## What this project is
 

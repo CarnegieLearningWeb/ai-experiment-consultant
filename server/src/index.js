@@ -8,11 +8,11 @@ const app = createApp();
 
 const PORT = 3001;
 const server = app.listen(PORT, () => {
-  console.log(`[upgrade-consultant] server listening on http://localhost:${PORT}`);
+  console.log(`[ai-experiment-consultant] server listening on http://localhost:${PORT}`);
 });
 
 function shutdown(signal) {
-  console.log(`[upgrade-consultant] ${signal} received, shutting down`);
+  console.log(`[ai-experiment-consultant] ${signal} received, shutting down`);
   server.close(() => process.exit(0));
   // Force-exit if close hangs.
   setTimeout(() => process.exit(1), 5000).unref();
