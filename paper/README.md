@@ -31,10 +31,13 @@ LaTeX auxiliary files (`.aux`, `.bbl`, `.log`, `.out`, etc.) are git-ignored onl
 to avoid accidentally committing local build artifacts. The compiled PDF is
 **not** ignored.
 
-## Final PDF
+## Hosted PDF
 
-`ai-experiment-consultant-pele-2026.pdf` is the finalized compiled paper
-artifact. The login page's "Paper" link is its intended home: see the
-`TODO(paper):` marker in [`server/src/views/login.html`](../server/src/views/login.html).
-Wiring it up is a small follow-up — serve this PDF under the app's `/ai-consultant`
-base (a static route or an asset copy) and point that link at it.
+`ai-experiment-consultant-pele-2026.pdf` is the finalized compiled paper. The
+app serves it inline under the `/ai-consultant` base at
+`/ai-consultant/paper/ai-experiment-consultant-pele-2026.pdf`
+([`server/src/routes/index.js`](../server/src/routes/index.js)), and the login
+page's "Paper" link opens it in a new tab
+([`server/src/views/login.html`](../server/src/views/login.html)). To update the
+hosted paper, re-export from Overleaf and replace this file, keeping the
+filename stable since the route and the link reference it by name.
