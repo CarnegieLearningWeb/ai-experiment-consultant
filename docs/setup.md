@@ -58,7 +58,9 @@ npm start          # runs Express server in production mode
 
 In production, a reverse proxy on the deployment host should:
 
-- Serve `client/dist/` at `/ai-consultant` (with HTML5-history fallback to `index.html`).
+- Serve the built client (`client/dist/`) at `/ai-consultant` (with HTML5-history fallback to `index.html`).
+- Proxy `/ai-consultant/login` to the Express server (server-rendered sign-in page).
+- Proxy `/ai-consultant/paper/*` to the Express server (hosted paper PDF).
 - Proxy `/api/v1/ai-consultant/*` to the Express server.
 
 See [architecture.md](architecture.md) for the URL plan.

@@ -2,7 +2,7 @@
 
 ## Backlog
 
-- [ ] **Camera-ready paper refinement.** Refine the PELE workshop paper in `paper/` (`main.tex`) for camera-ready, using the PELE review comments, the implemented app behavior, and paper↔prototype consistency. When finalized, add the compiled PDF to `paper/`, serve it under `/ai-consultant`, and point the login page "Paper" link at it (see the `TODO(paper):` marker in `server/src/views/login.html`).
+- [ ] **Camera-ready ACM metadata.** After acceptance, fill in the ACM-supplied metadata in `paper/main.tex` (uncomment the author block; set `\setcopyright`, `\copyrightyear`, `\acmYear`, `\acmConference`, `\acmISBN`, `\acmDOI`; confirm the required `acmart` class option; recheck the page count), then recompile and refresh `paper/ai-experiment-consultant-pele-2026.pdf`.
 
 ## Done
 
@@ -19,3 +19,4 @@
 - [x] **Stop generation.** Send button becomes a Stop button while a response/tool streams; aborts the stream and backend cleanly and recovers the UI; Enter is inert mid-response.
 - [x] **Login page redesign.** Sign-in page rebuilt as a product-landing split card (blue→purple value-prop + Google sign-in) on lavender that explains the tool before sign-in; Google login flow and templating preserved.
 - [x] **Chat UI redesign (cohesion with login).** Restyled the post-login chat to match the login page — light lavender + blue→purple brand, gradient brand mark/send button, light report panel, no dark mode, centered welcome state that collapses into normal chat. Visual/CSS-only; behavior preserved.
+- [x] **Camera-ready paper refinement + hosted PDF.** Refined the PELE paper (`paper/main.tex`) for camera-ready against the reviews and the implemented app; added the compiled PDF (`paper/ai-experiment-consultant-pele-2026.pdf`), served it at `/ai-consultant/paper/ai-experiment-consultant-pele-2026.pdf`, and wired the login page "Paper" link to it.
