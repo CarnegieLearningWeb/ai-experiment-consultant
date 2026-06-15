@@ -73,7 +73,7 @@ This paper presents a prototype of an \textbf{AI-assisted experimentation consul
 The following design goals and cross-cutting principles --- distinct from the six-phase consulting workflow described later --- shaped the prototype, drawn from observed onboarding patterns:
 
 \begin{enumerate}
-  \item Begin with information gathering to establish reference foundation for the consultation.
+  \item Begin with information gathering to establish a shared foundation for the consultation.
   \item Support ideation by suggesting candidate interventions and plausible outcome metrics.
   \item Help users refine existing ideas into specific, testable experiments.
   \item Translate the finalized hypothesis into UpGrade's vocabulary --- decision point, conditions, participants, metrics.
@@ -167,7 +167,7 @@ UpGrade-specific knowledge is supplied through curated prompt context and report
 
 \section{Consulting Workflow}
 
-The flow has six phases, presented above in five grouped subsections. Context collection comes first; the later phases --- hypothesis refinement, experiment design, synthetic preflight, and report generation --- show how each step builds from initial information-gathering toward an implementation-ready experiment plan for UpGrade. We describe each phase in detail below.
+Figure~\ref{fig:workflow} summarizes the six-phase flow, which we describe below in five grouped subsections. Context collection comes first; the later phases --- hypothesis refinement, experiment design, synthetic preflight, and report generation --- show how each step builds from initial information-gathering toward an implementation-ready experiment plan for UpGrade. We describe each phase in detail below.
 
 \subsection{Context Collection}
 
@@ -225,7 +225,7 @@ The generated markdown report is the prototype's central artifact, making the ex
 
 \section{Discussion, Limitations, and Future Vision}
 
-The prototype described here occupies an intentionally narrow space in comparison to recent AI-assisted research tools. The AI co-scientist~\cite{ai-coscientist} uses tournament-style generation, debate, and evolution to autonomously traverse large, open-ended hypothesis spaces in domains like drug repurposing, while the AI Scientist~\cite{end-to-end-ai-research} goes further toward end-to-end automation, from ideation through manuscript generation. While our tool borrows the high-level \emph{iterative hypothesis generation, evaluation, and refinement} pattern from these approaches, we apply it to the tightly scoped challenge of translating an EdTech team's product or research idea into a concrete UpGrade experiment design. Where other systems maximize autonomous exploration, this AI consultant maximizes human control, ensuring that every major phase transition relies on explicit user approval, more appropriate for users who require strong control over interventions and interpretability of outcomes.
+The prototype described here occupies an intentionally narrow space in comparison to recent AI-assisted research tools. The AI co-scientist~\cite{ai-coscientist} uses tournament-style generation, debate, and evolution to autonomously traverse large, open-ended hypothesis spaces in domains like drug repurposing, while the AI Scientist~\cite{end-to-end-ai-research} goes further toward end-to-end automation, from ideation through manuscript generation. While our tool borrows the high-level \emph{iterative hypothesis generation, evaluation, and refinement} pattern from these approaches, we apply it to the tightly scoped challenge of translating an EdTech team's product or research idea into a concrete UpGrade experiment design. Where other systems maximize autonomous exploration, this AI consultant maximizes human control, ensuring that every major phase transition relies on explicit user approval, an approach that is more appropriate for users who require strong control over interventions and interpretability of outcomes.
 
 \textbf{Limitations.} The MVP currently supports only simple randomized between-subjects designs with individual-level assignment and a single decision point. This is a deliberate scoping choice for the prototype rather than a constraint of UpGrade itself, and relaxing the single-decision-point restriction to support richer designs is the first limitation we plan to address. The synthetic preflight demonstrates UpGrade mechanics rather than learning outcomes and should not substitute for a properly powered randomized trial. Finally, the prototype has not yet been evaluated with real EdTech teams; the walkthrough in Section 5 is illustrative of a commonly encountered scenario. We anticipate being able to evaluate this tool during upcoming platform onboarding in Fall 2026. 
 
