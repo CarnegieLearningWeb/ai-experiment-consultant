@@ -14,7 +14,7 @@ future Claude Code sessions can pick up without re-deriving them.
 
 - The user explicitly chose vanilla JS + Vite + Express for this prototype to keep the surface area small, avoid framework churn, and stay easy to iterate on with Claude Code in future sessions.
 - No TypeScript: the prototype is small enough that the ergonomics aren't worth the setup cost. If the prototype grows past this, revisit.
-- No Next.js / React / Auth.js / NextAuth: explicit non-goals for this codebase.
+- No Next.js / React: explicit non-goals for this codebase. Auth is hand-rolled (Google OAuth via `google-auth-library` + an HMAC-signed session cookie), **not** Auth.js / NextAuth.
 
 ## Repository layout
 
@@ -41,17 +41,21 @@ upgrade-consultant/
     │   ├── lib/
     │   │   ├── prompt.js          System-prompt assembly
     │   │   ├── prompt-knowledge/  Curated UpGrade knowledge inlined into the prompt
+    │   │   ├── auth.js            Google OAuth + signed-cookie session guard
+    │   │   ├── login-page.js      Server-rendered sign-in page
     │   │   ├── tools.js           Tool registry (+ tools/ — one file per AI tool)
     │   │   ├── report.js          Report composer (+ report-templates/ static .md)
     │   │   ├── upgrade.js         UpGrade client + cached auth token
     │   │   ├── papers.js          Semantic Scholar client
     │   │   ├── uploads.js         Upload registry + MIME allowlist
     │   │   └── log.js             Debug logging
-    │   └── routes/
-    │       ├── index.js     Mounts all routes under /api/v1/ai-consultant
-    │       ├── health.js
-    │       ├── chat.js
-    │       └── uploads.js
+    │   ├── routes/
+    │   │   ├── index.js     Mounts all routes under /api/v1/ai-consultant (+ auth/login routes)
+    │   │   ├── health.js
+    │   │   ├── chat.js
+    │   │   └── uploads.js
+    │   └── views/
+    │       └── login.html   Sign-in page served at /ai-consultant/login
 ```
 
 ## URLs and routing
@@ -72,6 +76,8 @@ See [server/.env.example](../server/.env.example). Loaded from `server/.env` by 
 
 - `ANTHROPIC_API_KEY` — Anthropic API key. The chat route constructs the client at module load, so a missing key fails on server boot.
 - `ANTHROPIC_MODEL` — model id (e.g. `claude-opus-4-8`).
+- `GOOGLE_CLIENT_ID` — Google OAuth client id for the sign-in page; required for login to work.
+- `SESSION_SECRET` — HMAC secret for signing the session cookie; required. Without it the API guard fails closed (every protected route returns `401`). Optional: `SESSION_COOKIE_NAME` (defaults to `app-session`); `MODE=PROD` / `NODE_ENV=production` sets the cookie's `Secure` flag.
 - `UPGRADE_API_URL` — base URL of the UpGrade demo backend (`https://upgrade-demo.carnegielearning.com/api`). Paths sit under `/v6/...`.
 - `UPGRADE_SERVICE_ACCOUNT_KEY_PATH` — path to the Google service-account JSON used to mint OAuth tokens for UpGrade requests (`upgrade-service-account-key.json` in `server/`, git-ignored; relative paths resolve against `server/`). Implemented in [server/src/lib/upgrade.js](../server/src/lib/upgrade.js) (cached bearer token).
 - `SEMANTIC_SCHOLAR_API_KEY` — optional; raises the Semantic Scholar rate cap for the Related Research Grounding step.
@@ -84,6 +90,7 @@ The Express port (3001) is hardcoded in [server/src/index.js](../server/src/inde
 - **One Express app, one process.** No microservices.
 - **ESM throughout** (`"type": "module"`).
 - **Route mounting:** [server/src/routes/index.js](../server/src/routes/index.js) is the single mount point under `/api/v1/ai-consultant`. Adding an endpoint = adding a file + one `router.use(...)` line.
+- **Auth (soft access guard):** the `/api/v1/ai-consultant/*` API is gated by `auth.apiGuard`, and a sign-in page renders at `/ai-consultant/login`. Hand-rolled in [server/src/lib/auth.js](../server/src/lib/auth.js) — Google OAuth (`google-auth-library`) verifies the sign-in, then an HMAC-signed cookie (`node:crypto`, 60-min expiry) carries the session. No Auth.js/NextAuth, no DB. It's abuse prevention for the open demo, not per-user data isolation.
 - **In-memory state.** No DB. Conversation context is sent from the client each turn (the source of truth lives in the browser). The server stays stateless except for short-lived upload references.
 - **Uploads:** stored under `server/uploads/` (gitignored) keyed by a server-generated id. Returned to the client as `{ id, mimeType, size }`. The id is referenced by subsequent `/chat` calls. Cleanup is post-MVP; for now, files live for the lifetime of the process.
 - **Error envelope:** errors return `{ error: { code, message } }` with HTTP status. Code strings are stable for client-side handling.
@@ -126,7 +133,6 @@ Outlined in [spec.md](spec.md) §22. Implementation details to be confirmed duri
 
 ## Things we explicitly chose not to do
 
-- No authentication. The user can decide later whether to add auth to the existing UpGrade demo app rather than to this prototype.
 - No TypeScript.
 - No tests yet. Add when behavior stabilizes.
 - No CI yet.

@@ -25,6 +25,11 @@ Open the client URL. The Vite dev server proxies `/api/*` to the Express
 server, so the frontend code can use relative API paths exactly as it will in
 production.
 
+The app sits behind **Google login** (a soft access guard). Set `GOOGLE_CLIENT_ID`
+and `SESSION_SECRET` in `server/.env` (see [architecture.md](architecture.md#environment-variables))
+— without them the sign-in page can't complete login and the API guard returns
+`401` for every protected route. The `/health` endpoint stays open.
+
 To run them separately:
 
 ```bash
@@ -53,7 +58,9 @@ npm start          # runs Express server in production mode
 
 In production, a reverse proxy on the deployment host should:
 
-- Serve `client/dist/` at `/ai-consultant` (with HTML5-history fallback to `index.html`).
+- Serve the built client (`client/dist/`) at `/ai-consultant` (with HTML5-history fallback to `index.html`).
+- Proxy `/ai-consultant/login` to the Express server (server-rendered sign-in page).
+- Proxy `/ai-consultant/paper/*` to the Express server (hosted paper PDF).
 - Proxy `/api/v1/ai-consultant/*` to the Express server.
 
 See [architecture.md](architecture.md) for the URL plan.
