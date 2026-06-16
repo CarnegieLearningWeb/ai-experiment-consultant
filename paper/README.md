@@ -9,6 +9,7 @@ Overleaf source and the compiled PDF for the workshop paper
 * `main.tex` — the paper source.
 * `references.bib` — bibliography, referenced from `main.tex` as `\bibliography{references}`.
 * `ai-experiment-consultant-pele-2026.pdf` — the finalized compiled paper.
+* `ai-experiment-consultant-pele-2026.md` — the finalized paper in markdown.
 * `README.md` — notes about this folder and the paper workflow.
 
 The LaTeX source files are intentionally kept flat so `main.tex` and
