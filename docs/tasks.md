@@ -2,6 +2,20 @@
 
 ## Backlog
 
+### Presentation — PELE 2026
+
+Planning artifacts created (see [../slides/presentation-plan.md](../slides/presentation-plan.md),
+[../slides/pele-2026-ai-experiment-consultant.md](../slides/pele-2026-ai-experiment-consultant.md),
+[../demo/minimath-app/](../demo/minimath-app/)). Remaining work:
+
+- [ ] **Finalize slide outline + write content.** Replace placeholders in the Marp deck scaffold.
+- [x] **Capture MiniMathApp screenshot.** Canonical clean capture at `demo/minimath-app/screenshot.png`. (Optional cropped/fallback shots can come later — not required now.)
+- [ ] **Write speaker notes / script.** Per-slide talking points + demo narration; fill the notes comment blocks.
+- [ ] **Prepare the live-demo prompt/script.** Exact text to type, which screenshot to upload, small-cohort simulation choice.
+- [ ] **Rehearse timing.** Confirm ~5 min slides + ~5 min demo with a hard stop.
+- [ ] **Record a backup demo** (screen capture + fallback screenshots) in case the live AI run hiccups.
+- [ ] **Export the Marp deck to PDF.**
+
 ## Done
 
 - [x] **M0 — Repository foundation.** npm-workspaces monorepo, Vite + vanilla JS client, Node + Express server (ESM), docs scaffold.
