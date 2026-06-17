@@ -40,13 +40,18 @@ I'll start with the practical problem that motivated this work.
 
 # The onboarding problem
 
-- UpGrade makes **running and managing** experiments straightforward — *once you have a plan*
-- For new teams, the hard part comes **earlier**: turning an idea into an implementable plan
-- *What* to test? *Where* does assignment happen? *Which* conditions & metrics? *How* to instrument the app?
-- Today that gap is filled by **expert consultation** — which doesn't scale
+- **UpGrade** is Carnegie Learning's open-source platform for educational A/B testing
+- It supports **running and managing** experiments — *once a team has a clear experiment plan*
+- The hard part often comes **earlier**: turning a rough idea, pain point, or specific interaction into that plan
+- *What* should we test? *Where* does condition assignment happen? *Which* conditions and metrics? *What needs to change in the app?*
+- Today, that planning gap often requires **expert consultation**
 
 <!-- notes:
-UpGrade is Carnegie Learning's open-source platform for running A/B experiments inside real learning apps. Once a team knows what to test, UpGrade supports setting up and managing experiments. But for new teams, the hard part often happens before they open UpGrade. They have an idea or a pain point. Turning that into an experiment raises many questions. What should we test? Where does the app pick a condition? Which metrics matter? Today, an expert answers these in meetings. That helps, but it doesn't scale.
+UpGrade is Carnegie Learning's open-source platform for A/B testing in educational software. It helps teams run and manage experiments once they have a clear experiment plan.
+
+But in recent onboarding work with external EdTech teams, we saw that the hard part often comes earlier. A team may have a rough idea, a pain point, or a specific interaction they want to improve, but they still need to decide what to test, where condition assignment should happen, what the conditions and metrics should be, and what needs to change in the app.
+
+That planning step usually takes expert consultation. This project is about supporting that earlier planning layer.
 -->
 
 ---
