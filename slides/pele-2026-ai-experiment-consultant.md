@@ -58,13 +58,19 @@ That planning step usually takes expert consultation. This project is about supp
 
 # What it does
 
-- A web-based, **chat-driven** consultant for learning-app teams
+- A web-based, **chat-driven** consultant for educational software teams
 - **Input:** an idea, a pain point, or a screenshot
-- **Output:** a concrete A/B test plan + an implementation-ready **markdown report** targeting UpGrade
-- **Human-controlled** and **planning-focused** — it advises, you decide
+- **Output:** a concrete A/B test plan + an implementation-ready **markdown report** tailored to UpGrade
+- **Human-controlled** and **planning-focused** — the tool suggests, the user decides
 
 <!-- notes:
-So we built AI Experiment Consultant to take on part of that work. It's a web app, and you use it by chatting. You describe your learning app and something you'd like to improve, and you can attach a screenshot. In one conversation, it helps you go from a rough idea to a clear experiment plan in UpGrade's terms. The result is a markdown report you can act on. Two things to remember. The tool suggests; the human decides. And it only plans — it doesn't run experiments or touch your code.
+AI Experiment Consultant is a web-based, chat-driven consultant for educational software teams.
+
+The input can be an idea, a pain point, or a screenshot of a page or interaction the user wants to improve. The tool asks follow-up questions, suggests possible directions, and helps turn that input into a concrete A/B test plan in UpGrade terms.
+
+The main output is an implementation-ready markdown report tailored to UpGrade, so the plan can be shared and acted on after the conversation.
+
+The tool is intentionally human-controlled and planning-focused. It suggests options and structures the plan, but the user decides what to approve or change. It stays at the planning layer; it does not run real experiments or change client app code.
 -->
 
 ---
