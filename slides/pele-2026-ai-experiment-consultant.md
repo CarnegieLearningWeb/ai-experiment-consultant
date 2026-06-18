@@ -111,16 +111,16 @@ The user approves every major transition before the tool moves on.
 - The conversation ends as a **structured markdown report**
 - It captures the **hypothesis, UpGrade design, simulation summary, and implementation guidance**
 - It gives researchers, developers, and product teams **one shared artifact**
-- It can also seed future **AI-assisted implementation** work
+- It can also serve as a **concrete spec** for later implementation work
 
 <!-- notes:
-I want to pause on the report, because it's the main output — not just the last step in the chat.
+Before the demo, I want to highlight the report as the main output, not just the last step in the chat.
 
-The conversation ends as a structured markdown report. It pulls together the hypothesis, the UpGrade experiment design with real names and metrics, the simulation summary, and step-by-step implementation guidance.
+The conversation ends as a structured markdown report. It pulls together the hypothesis, the UpGrade experiment design, the simulation summary, and step-by-step implementation guidance.
 
-That makes it one shared artifact. A researcher, a developer, and a product manager can all work from the same document, instead of reading a long chat transcript.
+That turns the report into one shared artifact. Researchers, developers, and product managers can all work from the same document, instead of reading a long chat transcript.
 
-And because it's plain markdown, it can also seed later work — for example, handing it to an AI coding tool as a starting spec, with a person still reviewing everything.
+And because it's plain markdown, it can also seed later work — for example, a team could hand it to an AI coding tool as a starting spec, with a person still reviewing everything.
 -->
 
 ---
