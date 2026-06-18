@@ -7,8 +7,6 @@ theme: default
 ---
 
 <!--
-First draft — concise slide text plus draft speaker-note narration.
-
 - Source of truth: ./presentation-plan.md, ../paper/, ../server/src/lib/prompt.js (background: ../docs/spec.md).
 - Speaker notes live in the notes comment on each slide and are draft narration to refine, written for easy spoken delivery.
 - Target: about 5 minutes of slides, then a ~5 minute live demo (MiniMathApp), then ~5 minutes of Q&A.
@@ -66,7 +64,7 @@ That planning step usually takes expert consultation. This project is about supp
 <!-- notes:
 AI Experiment Consultant is a web-based, chat-driven consultant for educational software teams.
 
-The input can be an idea, a pain point, or a screenshot of a page or interaction the user wants to improve. The tool asks follow-up questions, suggests possible directions, and helps turn that input into a concrete A/B test plan in UpGrade terms.
+The input can be an idea, a pain point, or a screenshot of a page or interaction the user wants to improve. The tool asks follow-up questions, suggests possible directions, and helps turn that input into a concrete UpGrade experiment design.
 
 The main output is an implementation-ready markdown report tailored to UpGrade, so the plan can be shared and acted on after the conversation.
 
@@ -109,7 +107,7 @@ The user approves every major transition before the tool moves on.
 # Why the report matters
 
 - The conversation ends as a **structured markdown report**
-- It captures the **hypothesis, UpGrade design, simulation summary, and implementation guidance**
+- It captures the **hypothesis, UpGrade experiment design, simulation summary, and implementation guidance**
 - It gives researchers, developers, and product teams **one shared artifact**
 - It can also serve as a **concrete spec** for later implementation work
 
@@ -118,7 +116,7 @@ Before the demo, I want to highlight the report as the main output, not just the
 
 The conversation ends as a structured markdown report. It pulls together the hypothesis, the UpGrade experiment design, the simulation summary, and step-by-step implementation guidance.
 
-That turns the report into one shared artifact. Researchers, developers, and product managers can all work from the same document, instead of reading a long chat transcript.
+That turns the report into one shared artifact. Researchers, developers, and product teams can all work from the same document, instead of reading a long chat transcript.
 
 And because it's plain markdown, it can also seed later work — for example, a team could hand it to an AI coding tool as a starting spec, with a person still reviewing everything.
 -->
