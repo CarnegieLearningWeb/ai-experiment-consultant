@@ -93,7 +93,7 @@ Second, it asks about the specific page, problem, or interaction where an experi
 
 Third, it helps turn the starting point into a testable hypothesis. This is where it can suggest possible interventions and outcome metrics, and also offer optional related research grounding.
 
-Fourth, it translates the approved hypothesis into a concrete UpGrade experiment design: the decision point, conditions, assignment weights, and metrics.
+Fourth, it translates the approved hypothesis into a concrete UpGrade experiment design, including the decision point, conditions, and metrics.
 
 Fifth, it can run an optional synthetic preflight simulation, using simulated participants, to show enrollment and metric outputs.
 
@@ -116,9 +116,9 @@ Before the demo, I want to highlight the report as the main output, not just the
 
 The conversation ends as a structured markdown report. It pulls together the hypothesis, the UpGrade experiment design, the simulation summary, and step-by-step implementation guidance.
 
-That turns the report into one shared artifact. Researchers, developers, and product teams can all work from the same document, instead of reading a long chat transcript.
+This makes the report a shared artifact. Researchers, developers, and product teams can use it to align on the experiment design and implementation plan.
 
-And because it's plain markdown, it can also seed later work — for example, a team could hand it to an AI coding tool as a starting spec, with a person still reviewing everything.
+And because it's plain markdown, it can also be used by AI coding tools as a concrete spec for implementation, with a person still reviewing the work.
 -->
 
 ---
@@ -133,11 +133,11 @@ And because it's plain markdown, it can also seed later work — for example, a 
 **Next:** we give the consultant this screenshot and ask it to help plan an experiment →
 
 <!-- notes:
-Let's make this concrete. For the demo, I'll use a fictional app called MiniMathApp — a simple math-practice app for upper-elementary and middle-school students.
+Now let's make this concrete with a short demo. I'll use a fictional app called MiniMathApp — a simple math-practice app for upper-elementary and middle-school students.
 
-Here's the screen: an area word problem about a rectangular garden, with a diagram, an answer box, and a "Check answer" button. The team noticed that many students get stuck or answer incorrectly on the first try.
+The screen shows an area word problem about a rectangular garden, with a diagram, an answer box, and a "Check answer" button. The team noticed that many students get stuck or answer incorrectly on the first try.
 
-Notice we haven't picked an intervention yet — no hint button, no app change. We'll give the consultant this screenshot and ask it to help us plan an experiment.
+Notice we haven't picked an intervention yet. We'll start from the current screen and the pain point, and ask the consultant to help us plan an experiment.
 
 Let's switch to the live demo.
 -->
@@ -149,18 +149,18 @@ Let's switch to the live demo.
 - Today: a **planning-focused MVP** for simple, concrete UpGrade experiment designs
 - Synthetic preflight shows **UpGrade mechanics**, not evidence of learning effects
 - Not yet evaluated with real teams — planned during **Fall 2026 onboarding**
-- Future: the report as a starting point for **human-reviewed implementation, configuration, and analysis**
+- Future: an approved report could connect planning, implementation, UpGrade setup, and analysis in a **human-reviewed pipeline**
 
 <!-- notes:
-Now that we've seen the workflow end to end, I'll wrap up with the current scope and future direction for the prototype.
+Now I'll wrap up with the current scope and future direction.
 
 Today, this is a planning-focused MVP. It focuses on simple, concrete UpGrade experiment designs, such as one decision point with basic conditions and metrics. That's a deliberate choice for this prototype, not a limit of UpGrade.
 
-A quick caveat about the simulation: the synthetic preflight only shows UpGrade mechanics — how assignment, enrollment, and metrics look. It is not evidence that an intervention improves learning.
+One caveat from the demo: the synthetic preflight shows UpGrade mechanics, not evidence of learning effects.
 
 We also haven't evaluated the tool with real teams yet. We plan to do that during Fall 2026 onboarding.
 
-Looking ahead, the report could serve as the starting point for a human-reviewed workflow. It could help guide implementing the app change, configuring the UpGrade experiment, and analyzing results, with human review at each step.
+Looking ahead, an approved report could become the shared input for a human-reviewed pipeline. AI and automation could use it to draft the client-app changes, prepare the UpGrade configuration, and later support analysis, with humans reviewing each step.
 -->
 
 ---
