@@ -148,21 +148,21 @@ Let's switch to the live demo.
 
 # Scope today, future direction
 
-- Today: a **planning-focused MVP** for simple UpGrade-shaped experiments
-- Synthetic preflight shows **UpGrade mechanics**, not learning effects
+- Today: a **planning-focused MVP** for simple, concrete UpGrade experiment designs
+- Synthetic preflight shows **UpGrade mechanics**, not evidence of learning effects
 - Not yet evaluated with real teams — planned during **Fall 2026 onboarding**
-- Future: the report as a **human-reviewed handoff** to coding, UpGrade setup, and analysis tools
+- Future: the report as a starting point for **human-reviewed implementation, configuration, and analysis**
 
 <!-- notes:
-That's the workflow end to end. Let me wrap up with where the prototype stands.
+Now that we've seen the workflow end to end, I'll wrap up with the current scope and future direction for the prototype.
 
-Today it's a planning-focused MVP. It supports simple, UpGrade-shaped experiments — a single decision point, individual assignment, a control and a variant, and basic metrics. That's a deliberate choice for the prototype, not a limit of UpGrade.
+Today, this is a planning-focused MVP. It focuses on simple, concrete UpGrade experiment designs, such as one decision point with basic conditions and metrics. That's a deliberate choice for this prototype, not a limit of UpGrade.
 
-One caution about the simulation: the synthetic preflight only shows UpGrade mechanics — how assignment, enrollment, and metrics look. It is not evidence that an intervention improves learning.
+A quick caveat about the simulation: the synthetic preflight only shows UpGrade mechanics — how assignment, enrollment, and metrics look. It is not evidence that an intervention improves learning.
 
-We also haven't tested the tool with real teams yet. That's planned during onboarding in Fall 2026.
+We also haven't evaluated the tool with real teams yet. We plan to do that during Fall 2026 onboarding.
 
-Looking ahead, the report could become a human-reviewed handoff into other tools — for coding the change, setting up UpGrade, and analyzing results.
+Looking ahead, the report could serve as the starting point for a human-reviewed workflow. It could help guide implementing the app change, configuring the UpGrade experiment, and analyzing results, with human review at each step.
 -->
 
 ---
