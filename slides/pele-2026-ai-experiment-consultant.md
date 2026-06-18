@@ -106,28 +106,21 @@ The user approves every major transition before the tool moves on.
 
 ---
 
-# What it supports — and what it doesn't
+# Why the report matters
 
-- Deliberately **narrow** shape: between-subjects, individual assignment, one decision point, simple conditions & metrics
-- **Planning only** — no real experiments, no code changes, no PRs, no deployment
-- Simulation = a **preflight demo of UpGrade mechanics**, *not* evidence an intervention works
-- Not yet evaluated with real teams *(planned: Fall 2026)*
-
-<!-- notes:
-The limits here are on purpose. The prototype supports one simple design: a single decision point, individual assignment, a control and a variant, and basic metrics. That's a choice for the prototype, not a limit of UpGrade. It only plans. It doesn't run real experiments with real learners, change code, open pull requests, or deploy. The simulation also needs care. It uses fake participants on a demo server, just to show how UpGrade assigns people and reports metrics. These numbers are only a preflight check; they don't prove the idea works. We haven't tested it with real teams yet — that's planned for Fall 2026.
--->
-
----
-
-# The report: a shared handoff artifact
-
-- The **markdown report** is the central output
-- One shared language for **researchers, developers, product, stakeholders**
-- **Tailored** to your app and experiment — not generic docs
-- Can also seed an **AI coding tool** as a concrete spec — with humans reviewing
+- The conversation ends as a **structured markdown report**
+- It captures the **hypothesis, UpGrade design, simulation summary, and implementation guidance**
+- It gives researchers, developers, and product teams **one shared artifact**
+- It can also seed future **AI-assisted implementation** work
 
 <!-- notes:
-The report is the heart of the tool. It's not generic documentation — it's a plan made for this app and this experiment. It has the hypothesis, the UpGrade design with real names and metrics, the simulation summary with its warning, a suggested order of steps, and setup and integration guidance. So one document works for everyone — researchers, developers, and product people. And because it's markdown, you can hand it to an AI coding tool as a starting spec, with a person still checking the work. That's the direction we're excited about.
+I want to pause on the report, because it's the main output — not just the last step in the chat.
+
+The conversation ends as a structured markdown report. It pulls together the hypothesis, the UpGrade experiment design with real names and metrics, the simulation summary, and step-by-step implementation guidance.
+
+That makes it one shared artifact. A researcher, a developer, and a product manager can all work from the same document, instead of reading a long chat transcript.
+
+And because it's plain markdown, it can also seed later work — for example, handing it to an AI coding tool as a starting spec, with a person still reviewing everything.
 -->
 
 ---
@@ -142,7 +135,34 @@ The report is the heart of the tool. It's not generic documentation — it's a p
 **Next:** we hand the consultant this screenshot and ask it to help plan an experiment →
 
 <!-- notes:
-Let's make this concrete. For the demo I'll use a made-up app called MiniMathApp — a simple math practice app for upper-elementary and middle-school students. Here's the screen: an area word problem about a rectangular garden, with a picture, an answer box, and a submit button. The team noticed that many students get stuck or get it wrong on the first try. Notice we haven't picked a fix yet — no hint, no change. We'll give the consultant this screenshot and ask it to help us plan an experiment. Let's switch over.
+Let's make this concrete. For the demo I'll use a made-up app called MiniMathApp — a simple math practice app for upper-elementary and middle-school students.
+
+Here's the screen: an area word problem about a rectangular garden, with a picture, an answer box, and a submit button. The team noticed that many students get stuck or get it wrong on the first try.
+
+Notice we haven't picked a fix yet — no hint, no change. We'll give the consultant this screenshot and ask it to help us plan an experiment.
+
+Let's switch over to the live tool.
+-->
+
+---
+
+# Scope today, future direction
+
+- Today: a **planning-focused MVP** for simple UpGrade-shaped experiments
+- Synthetic preflight shows **UpGrade mechanics**, not learning effects
+- Not yet evaluated with real teams — planned during **Fall 2026 onboarding**
+- Future: the report as a **human-reviewed handoff** to coding, UpGrade setup, and analysis tools
+
+<!-- notes:
+That's the workflow end to end. Let me wrap up with where the prototype stands.
+
+Today it's a planning-focused MVP. It supports simple, UpGrade-shaped experiments — a single decision point, individual assignment, a control and a variant, and basic metrics. That's a deliberate choice for the prototype, not a limit of UpGrade.
+
+One caution about the simulation: the synthetic preflight only shows UpGrade mechanics — how assignment, enrollment, and metrics look. It is not evidence that an intervention improves learning.
+
+We also haven't tested the tool with real teams yet. That's planned during onboarding in Fall 2026.
+
+Looking ahead, the report could become a human-reviewed handoff into other tools — for coding the change, setting up UpGrade, and analyzing results.
 -->
 
 ---
@@ -159,5 +179,5 @@ Contact: <zlee@carnegielearning.com>
 
 <!-- TODO: add the public paper link when available. -->
 <!-- notes:
-So that's the tool — a human-controlled way to turn an idea or a screenshot into a clear, shareable experiment plan for UpGrade. The repo and my email are on the slide. I'm happy to take questions.
+Thanks for listening. The repository and my email are on the slide. I'm happy to take questions.
 -->
