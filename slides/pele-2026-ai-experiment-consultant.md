@@ -173,11 +173,12 @@ Looking ahead, the report could serve as the starting point for a human-reviewed
 
 ### Questions?
 
+Try the app: <https://upgrade-demo.carnegielearning.com/ai-consultant>
+
 Repository: <https://github.com/CarnegieLearningWeb/ai-experiment-consultant>
 
 Contact: <zlee@carnegielearning.com>
 
-<!-- TODO: add the public paper link when available. -->
 <!-- notes:
-Thanks for listening. The repository and my email are on the slide. I'm happy to take questions.
+Thanks for listening. I'm happy to take questions.
 -->
