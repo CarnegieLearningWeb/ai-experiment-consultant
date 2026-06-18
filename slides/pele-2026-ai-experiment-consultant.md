@@ -132,16 +132,16 @@ And because it's plain markdown, it can also seed later work — for example, a 
 
 ![w:560](../demo/minimath-app/screenshot.png)
 
-**Next:** we hand the consultant this screenshot and ask it to help plan an experiment →
+**Next:** we give the consultant this screenshot and ask it to help plan an experiment →
 
 <!-- notes:
-Let's make this concrete. For the demo I'll use a made-up app called MiniMathApp — a simple math practice app for upper-elementary and middle-school students.
+Let's make this concrete. For the demo, I'll use a fictional app called MiniMathApp — a simple math-practice app for upper-elementary and middle-school students.
 
-Here's the screen: an area word problem about a rectangular garden, with a picture, an answer box, and a submit button. The team noticed that many students get stuck or get it wrong on the first try.
+Here's the screen: an area word problem about a rectangular garden, with a diagram, an answer box, and a "Check answer" button. The team noticed that many students get stuck or answer incorrectly on the first try.
 
-Notice we haven't picked a fix yet — no hint, no change. We'll give the consultant this screenshot and ask it to help us plan an experiment.
+Notice we haven't picked an intervention yet — no hint button, no app change. We'll give the consultant this screenshot and ask it to help us plan an experiment.
 
-Let's switch over to the live tool.
+Let's switch to the live demo.
 -->
 
 ---
