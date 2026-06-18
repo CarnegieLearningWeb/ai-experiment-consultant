@@ -78,16 +78,30 @@ The tool is intentionally human-controlled and planning-focused. It suggests opt
 # Six-phase consulting workflow
 
 1. Learning app description
-2. Page / problem description
-3. Ideation & hypothesis refinement · *optional research grounding*
+2. Page / problem / interaction description
+3. Ideation & hypothesis refinement (*optional research grounding*)
 4. UpGrade experiment design
-5. Synthetic preflight simulation · *optional*
+5. Synthetic preflight simulation (*optional*)
 6. Report generation
 
-**You approve every major transition.**
+**The user approves every major transition.**
 
 <!-- notes:
-Inside, it follows six phases, but to the user it just feels like a chat. First, it asks about the app and who uses it. Then it asks about the page or problem you care about — a screenshot helps here. The third phase is the most active. It turns a vague idea into a clear, testable hypothesis, and suggests changes to test and metrics to measure. It can also pull a few related papers. Fourth, it writes a concrete UpGrade design: decision point, conditions, split, and metrics. Fifth, it can run a quick synthetic check of enrollment and metrics. Sixth, it builds the report. At each major step, it waits for your approval.
+The consultant follows six phases, but to the user it still feels like a guided chat.
+
+First, it asks about the learning app: what it does, who uses it, and what students are trying to learn.
+
+Second, it asks about the specific page, problem, or interaction where an experiment might happen. A screenshot can help, but the user can also describe it in text.
+
+Third, it helps turn the starting point into a testable hypothesis. This is where it can suggest possible interventions and outcome metrics, and also offer optional related research grounding.
+
+Fourth, it translates the approved hypothesis into a concrete UpGrade experiment design: the decision point, conditions, assignment weights, and metrics.
+
+Fifth, it can run an optional synthetic preflight simulation, using simulated participants, to show enrollment and metric outputs.
+
+Sixth, it generates the final markdown report.
+
+The user approves every major transition before the tool moves on.
 -->
 
 ---
