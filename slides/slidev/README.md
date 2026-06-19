@@ -72,19 +72,38 @@ use `npx slidev --port 3030` if you want to control it manually.)
 
 ## Change the live-demo URL (one place)
 
-Open [`slides.md`](slides.md), find the slide with `layout: iframe`, and edit only its
-`url:` field:
+Open [`slides.md`](slides.md), find the live-demo slide (`layout: iframe`) and edit its
+`url:` field in the slide frontmatter:
 
 ```yaml
 ---
 layout: iframe
 url: http://localhost:5173/ai-consultant/login   # ← change this
+scale: 0.8
 ---
 ```
 
 - **Local app (default):** `http://localhost:5173/ai-consultant/login`
   (start the app from the repo root with `npm run dev`; the client serves on 5173)
 - **Deployed app:** `https://upgrade-demo.carnegielearning.com/ai-consultant/login`
+
+### Iframe zoom (scale)
+
+The embedded app is rendered **slightly zoomed out** so more of it is visible. This uses
+Slidev's built-in `iframe` layout `scale` field: `scale: 0.8` makes the layout size the
+iframe to 125% (= 1 / 0.8) and apply `transform: scale(0.8)` from the top-left, so it
+**fills the full slide canvas** while showing ~25% more of the app. To change the zoom,
+edit `scale:` in that slide's frontmatter (lower = more zoomed out, e.g. `0.7`). The
+built-in layout recomputes the sizing for you — no CSS to touch.
+
+### Black area around the demo is expected (letterbox)
+
+The demo iframe fills the entire **16:9 slide canvas** — there is no padding, card, or
+background inside the canvas. Any **black around the slide in a browser window is Slidev's
+letterbox** (`--slidev-slide-container-background`), shown when the window's aspect ratio
+isn't 16:9. It is **outside** the slide canvas, so it is not something to remove from the
+slide — it shrinks to nothing when you present **fullscreen** (press `F`) on a 16:9
+external display.
 
 ### ⚠️ Login inside the iframe (manual check)
 

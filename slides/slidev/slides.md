@@ -142,10 +142,11 @@ Let's switch to the live demo.
 ---
 layout: iframe
 url: http://localhost:5173/ai-consultant/login
+scale: 0.8
 ---
 
 <!--
-LIVE DEMO — AI Experiment Consultant is embedded in this slide.
+LIVE DEMO — AI Experiment Consultant fills this slide via Slidev's built-in iframe layout, rendered slightly zoomed out (scale 0.8) so the audience sees more of the app.
 
 Presenting setup: the audience window (fullscreen on the external display) holds the LIVE, interactive iframe. On your laptop, presenter view shows these notes, the next-slide preview, the timer, and a Screen Mirror — a live visual preview of the external display. Screen Mirror does not, on its own, send your clicks into the iframe. To drive the demo, move your mouse cursor onto the external display and operate the actual audience window / iframe there — while still watching the mirror and reading these notes on the laptop.
 
@@ -153,7 +154,7 @@ Demo path: (1) describe MiniMathApp and upload the screenshot, (2) ask the consu
 
 Heads-up: the login uses Google OAuth, which usually refuses to run inside an iframe. Sign in BEFORE the talk (or in a separate tab) so the iframe already shows the chat, OR be ready to run the demo in a separate browser window if the embedded login is blocked. See the README and the follow-up note.
 
-To point the demo at a different environment (local vs deployed), edit only this slide's `url:` field above — that is the single place to change it.
+To change the demo, edit two fields in this slide's frontmatter above: `url:` (the demo target — local vs deployed) and `scale:` (the zoom; lower = more zoomed out, e.g. 0.7). The iframe fills the full 16:9 slide canvas; any black bars above/below the app are Slidev's out-of-canvas letterbox in a non-16:9 window, and they vanish in fullscreen on a 16:9 display.
 -->
 
 ---
