@@ -130,7 +130,7 @@ And because it's plain markdown, it can also be used by AI coding tools as a con
 **Next:** we give the consultant this screenshot and ask it to help plan an experiment →
 
 <!--
-Now let's make this concrete with a short demo. I'll use a fictional app called MiniMathApp — a simple math-practice app for upper-elementary and middle-school students.
+Now let's make this concrete with a short demo. I'll use a fictional app called MiniMathApp — a simple math-practice app for middle-school students.
 
 The screen shows an area word problem about a rectangular garden, with a diagram, an answer box, and a "Check answer" button. The team noticed that many students get stuck or answer incorrectly on the first try.
 
@@ -146,15 +146,76 @@ scale: 0.8
 ---
 
 <!--
-LIVE DEMO — AI Experiment Consultant fills this slide via Slidev's built-in iframe layout, rendered slightly zoomed out (scale 0.8) so the audience sees more of the app.
+====================================
 
-Presenting setup: the audience window (fullscreen on the external display) holds the LIVE, interactive iframe. On your laptop, presenter view shows these notes, the next-slide preview, the timer, and a Screen Mirror — a live visual preview of the external display. Screen Mirror does not, on its own, send your clicks into the iframe. To drive the demo, move your mouse cursor onto the external display and operate the actual audience window / iframe there — while still watching the mirror and reading these notes on the laptop.
+MiniMathApp is a math practice app for middle-school students.
 
-Demo path: (1) describe MiniMathApp and upload the screenshot, (2) ask the consultant for experiment ideas for the first-try pain point, (3) refine to a hypothesis, (4) review the proposed UpGrade design, (5) optionally run the synthetic preflight, (6) generate the report and show it in the side panel.
+Many students get stuck or answer incorrectly on the first try on this area word-problem page.
 
-Heads-up: the login uses Google OAuth, which usually refuses to run inside an iframe. Sign in BEFORE the talk (or in a separate tab) so the iframe already shows the chat, OR be ready to run the demo in a separate browser window if the embedded login is blocked. See the README and the follow-up note.
+We have not chosen an intervention yet. Please suggest a few A/B test ideas and recommend a good starting experiment.
 
-To change the demo, edit two fields in this slide's frontmatter above: `url:` (the demo target — local vs deployed) and `scale:` (the zoom; lower = more zoomed out, e.g. 0.7). The iframe fills the full 16:9 slide canvas; any black bars above/below the app are Slidev's out-of-canvas letterbox in a non-16:9 window, and they vanish in fullscreen on a 16:9 display.
+====================================
+
+So this is the login page. I'll sign in with my Google account. (Click "Sign in as Zack")
+
+Now we're in the chat. I'll upload the MiniMathApp screenshot first. (Click +, choose minimath-app.png, Open)
+
+I have a short description ready, so I'll paste it here and send both together. (Paste prompt and send)
+
+(After response) OK, it gave me three experiment ideas and recommended the first one: an optional hint button.
+
+It also drafted a hypothesis about improving first-attempt correctness without substantially increasing time-on-task.
+
+I'll accept that and move forward. (Type "yes" and send)
+
+(After response) Now it asks whether I want to look for related research papers before creating the UpGrade experiment design.
+
+I'll say yes here. (Type "yes" and send)
+
+(While search_papers is running) Now it's looking for related research papers. Internally, it searches Semantic Scholar with a few different queries, collects up to 12 candidate papers, and then summarizes up to 3 relevant ones.
+
+(After response) It found a few related papers with relevance notes and design implications.
+
+(After reading suggested refinement) It also suggested a refinement. This sounds good to me, so I'll accept it.
+
+I'll continue to the UpGrade experiment design. (Type "yes" and send)
+
+(After response) Now it has turned the approved hypothesis into a concrete UpGrade experiment design: where the experiment runs, what the conditions are, and which metrics we will track.
+
+I could revise the details here, but for the demo, I'll accept this design. (Type "yes" and send)
+
+(If it asks about the preflight simulation) Now it asks whether to run a preflight simulation with synthetic participants.
+
+I'll say yes to run the simulation. (Type "yes" and send)
+
+(While run_simulation is running) Now it is running a synthetic preflight. It creates a temporary UpGrade experiment, simulates 200 students going through the decision point, logs synthetic metric events, and then cleans everything up.
+
+This is not testing real learners. It is a quick check of what assignment, enrollment, and metrics would look like in UpGrade.
+
+(After response) Now we can see the preflight result: enrollment by condition, followed by metric summaries.
+
+It also summarizes the synthetic result and reminds us that this is not evidence of a real learning effect.
+
+Now it asks whether to generate the final report. I'll say yes so we can see the shared handoff artifact. (Type "yes" and send)
+
+(While generate_report is running) This usually takes about 20 seconds.
+
+The report pulls together the full plan: the app and page description, the hypothesis, the related research, the UpGrade experiment design, the simulation summary, and guidance for UpGrade setup, experiment creation, and client integration.
+
+Any section can be excluded from the report, but for this demo I'm keeping everything in.
+
+(After report opens) Now the final report opens in the side panel.
+
+This is the main handoff artifact. It starts with the summary, the learning app, the page and problem, the experiment idea, and the hypothesis. (Scroll slowly)
+
+It also includes the related research grounding, the UpGrade experiment design, and the simulation result summary. (Scroll)
+
+Later sections are more implementation-focused. They give setup guidance, experiment creation steps, and client-integration guidance with code examples. (Scroll)
+
+In practice, this report can be shared with the people who need to act on the plan. A researcher can review the design, a developer can use the integration guidance, and an AI coding tool could use the report as a starting spec, with a human still reviewing the work.
+
+The report can be copied or downloaded from here. (Point to copy/download buttons)
+
 -->
 
 ---
