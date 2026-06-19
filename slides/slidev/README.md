@@ -1,0 +1,125 @@
+# PELE 2026 deck — Slidev version
+
+A [Slidev](https://sli.dev) port of the PELE 2026 *AI Experiment Consultant* talk,
+created to make the **live, iframe-based demo** easier to run from inside the deck
+(presenter notes on the laptop, interactive demo on the external display).
+
+> **Source of truth / fallback:** the finalized **Marp** deck at
+> [`../pele-2026-ai-experiment-consultant.md`](../pele-2026-ai-experiment-consultant.md)
+> and its exports in [`../export/`](../export/) remain the canonical version and the
+> backup. This Slidev deck mirrors that content slide-for-slide and adds **one**
+> embedded live-demo slide. If anything goes wrong with Slidev on the day, present
+> the Marp PDF/PPTX/HTML from `../export/`.
+
+## Slides
+
+Same 8 main slides as the Marp deck, plus 1 added live-demo iframe slide (9 total):
+
+1. AI Experiment Consultant (title)
+2. The onboarding problem
+3. What it does
+4. Six-phase consulting workflow
+5. Why the report matters
+6. Live demo — MiniMathApp (the screenshot / setup slide)
+7. **Live demo — embedded AI Experiment Consultant (iframe)** ← added
+8. Scope today, future direction
+9. Thank you / Questions
+
+Speaker notes are the trailing `<!-- ... -->` comment on each slide and appear in
+Slidev presenter mode.
+
+## Install
+
+```bash
+cd slides/slidev
+npm install
+```
+
+This installs into `slides/slidev/node_modules` only — it does **not** touch the
+root app workspace (`client` / `server`).
+
+## Run (dev)
+
+```bash
+cd slides/slidev
+npm run dev
+```
+
+Then open:
+
+- **Audience view:** <http://localhost:3030/1>
+- **Presenter view (notes + next slide + timer):** <http://localhost:3030/presenter/1>
+
+(Slidev uses port **3030** by default. `npm run dev` also tries to open a browser;
+use `npx slidev --port 3030` if you want to control it manually.)
+
+## Presenting: external display + presenter notes
+
+1. Connect the projector/TV as an **extended** display (not mirrored at the OS level).
+2. Open the **audience view** (`/1`) and put that browser window **fullscreen on the
+   external display** (press `F` in Slidev for fullscreen).
+3. Open the **presenter view** (`/presenter/1`) on your **laptop** screen. Slidev keeps
+   the two windows in sync, and the presenter view shows your notes, the next slide,
+   and a timer.
+4. On the live-demo slide, the **audience window (external display) holds the real,
+   interactive iframe**. Presenter view's **Screen Mirror** gives you a live visual
+   preview of that external display on your laptop, next to your notes — but Screen
+   Mirror does not, on its own, send your clicks into the iframe.
+5. To drive the demo, **move your mouse cursor onto the external display and operate the
+   actual audience window / iframe there** — that is what the audience sees. While you do
+   that, you can keep watching the mirrored external screen and reading these notes in
+   presenter view on the laptop.
+
+## Change the live-demo URL (one place)
+
+Open [`slides.md`](slides.md), find the slide with `layout: iframe`, and edit only its
+`url:` field:
+
+```yaml
+---
+layout: iframe
+url: http://localhost:5173/ai-consultant/login   # ← change this
+---
+```
+
+- **Local app (default):** `http://localhost:5173/ai-consultant/login`
+  (start the app from the repo root with `npm run dev`; the client serves on 5173)
+- **Deployed app:** `https://upgrade-demo.carnegielearning.com/ai-consultant/login`
+
+### ⚠️ Login inside the iframe (manual check)
+
+The app's login uses **Google OAuth**, which typically **refuses to load inside an
+iframe** (Google sets framing restrictions). The login page itself frames fine, but the
+"Sign in with Google" step may be blocked. Practical options:
+
+- **Sign in before the talk** (in a normal tab on the same browser profile) so the
+  embedded view already lands on the chat, **or**
+- run the demo in a **separate browser window** (not embedded) if the embedded login is
+  blocked — keep the Slidev presenter notes on the laptop either way.
+
+Verify this in your venue/browser ahead of time. See **Follow-up** below.
+
+## Export (optional)
+
+```bash
+cd slides/slidev
+npm run build     # static SPA into ./dist (host anywhere)
+npm run export    # PDF — requires: npm i -D playwright-chromium
+```
+
+The embedded iframe demo only works in the live dev/SPA build, not in a static PDF —
+the Marp exports in `../export/` are the portable, self-contained backup.
+
+## Keeping the Marp deck as fallback
+
+Nothing here modifies the Marp deck or its exports. Keep `../export/*.pdf` (and `.pptx`)
+on your laptop and a USB stick. If Slidev or the live demo fails on the day, present the
+Marp PDF and talk through the demo using the recorded backup / screenshots.
+
+## Follow-up (not done here — would need app-side work)
+
+Running the demo *inside* the iframe is blocked mainly by the OAuth login step. A future,
+app-side improvement (out of scope for this deck task) could add a presenter-only way to
+reach the chat without the Google redirect — e.g. a demo/guest entry behind a flag — so
+the whole demo runs embedded. This deck does **not** change app behavior; it only points
+at a local or deployed URL.

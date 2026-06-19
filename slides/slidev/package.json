@@ -1,0 +1,16 @@
+{
+  "name": "pele-2026-ai-experiment-consultant-slidev",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Slidev port of the PELE 2026 AI Experiment Consultant deck (live-demo workflow). Marp deck remains the source of truth.",
+  "scripts": {
+    "dev": "slidev --open",
+    "build": "slidev build",
+    "export": "slidev export"
+  },
+  "dependencies": {
+    "@slidev/cli": "latest",
+    "@slidev/theme-default": "latest"
+  }
+}
