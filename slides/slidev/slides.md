@@ -82,8 +82,8 @@ That planning step usually takes expert consultation. This project is about supp
 </div>
 
 <div class="cl-human-control">
-  <strong>Human-controlled and planning-focused</strong>
-  <span>The tool suggests; the user decides.</span>
+  <span class="cl-callout-label">Guiding principle</span>
+  <span class="cl-callout-copy"><strong>Human-controlled and planning-focused</strong> — the tool suggests; the user decides.</span>
 </div>
 
 <!--
@@ -102,17 +102,64 @@ Throughout the process, the tool remains human-controlled and planning-focused: 
 
 # Six-phase consulting workflow
 
-1. Learning app description
-2. Page / problem / interaction description
-3. Ideation & hypothesis refinement (*optional research grounding*)
-4. UpGrade experiment design
-5. Synthetic preflight simulation (*optional*)
-6. Report generation
+<div class="cl-workflow-main">
+  <div class="cl-workflow-group cl-context-group">
+    <div class="cl-workflow-group-label">Context collection</div>
+    <div class="cl-workflow-two">
+      <div class="cl-phase-node">
+        <div class="cl-phase-number">01</div>
+        <div class="cl-phase-title">Learning<br>app</div>
+      </div>
+      <div class="cl-phase-arrow" aria-hidden="true">→</div>
+      <div class="cl-phase-node">
+        <div class="cl-phase-number">02</div>
+        <div class="cl-phase-title">Page /<br>problem /<br>interaction</div>
+      </div>
+    </div>
+  </div>
+  <div class="cl-group-arrow" aria-hidden="true">→</div>
+  <div class="cl-workflow-group cl-core-group">
+    <div class="cl-workflow-group-label">AI-guided planning</div>
+    <div class="cl-workflow-three">
+      <div class="cl-phase-node">
+        <div class="cl-phase-number">03</div>
+        <div class="cl-phase-title">Hypothesis<br>refinement</div>
+        <div class="cl-optional-tag">Optional research grounding</div>
+      </div>
+      <div class="cl-phase-gate" aria-label="User approval">
+        <span>✓</span><b aria-hidden="true">→</b>
+      </div>
+      <div class="cl-phase-node">
+        <div class="cl-phase-number">04</div>
+        <div class="cl-phase-title">A/B test<br>design</div>
+      </div>
+      <div class="cl-phase-gate" aria-label="User approval">
+        <span>✓</span><b aria-hidden="true">→</b>
+      </div>
+      <div class="cl-phase-node cl-optional-node">
+        <div class="cl-phase-number">05</div>
+        <div class="cl-phase-title">Synthetic<br>preflight</div>
+        <div class="cl-optional-tag">Optional</div>
+      </div>
+    </div>
+  </div>
+  <div class="cl-group-arrow" aria-hidden="true">→</div>
+  <div class="cl-workflow-group cl-handoff-group">
+    <div class="cl-workflow-group-label">Handoff</div>
+    <div class="cl-phase-node cl-report-node">
+      <div class="cl-phase-number">06</div>
+      <div class="cl-phase-title">Report<br>generation</div>
+    </div>
+  </div>
+</div>
 
-**The user approves every major transition.**
+<div class="cl-workflow-approval">
+  <span class="cl-callout-label">Approval gates</span>
+  <span class="cl-callout-copy">The user approves every major transition.</span>
+</div>
 
 <!--
-The consultant follows six phases, but to the user it still feels like a guided chat.
+The consultant follows a six-phase workflow, but to the user it still feels like a guided chat.
 
 First, it asks about the learning app: what it does, who uses it, and what students are trying to learn.
 
@@ -122,7 +169,7 @@ Third, it helps turn the starting point into a testable hypothesis. This is wher
 
 Fourth, it translates the approved hypothesis into a concrete UpGrade experiment design, including the decision point, conditions, and metrics.
 
-Fifth, it can run an optional synthetic preflight simulation, using simulated participants, to show enrollment and metric outputs.
+Fifth, it can run an optional synthetic preflight using simulated participants. This is mainly meant to show what enrollment and metric data look like in UpGrade, not to provide evidence of learning effects.
 
 Sixth, it generates the final markdown report.
 
@@ -295,8 +342,8 @@ The report can be copied or downloaded from here. (Point to copy/download button
 </div>
 
 <div class="cl-scope-guardrail">
-  <div class="cl-guardrail-label">Guardrail</div>
-  <div class="cl-guardrail-copy"><strong>Synthetic preflight</strong> demonstrates UpGrade mechanics, not evidence of learning effects.</div>
+  <span class="cl-callout-label">Guardrail</span>
+  <span class="cl-callout-copy"><strong>Synthetic preflight</strong> demonstrates UpGrade mechanics, not evidence of learning effects.</span>
 </div>
 
 <!--
@@ -304,7 +351,7 @@ Now I'll wrap up with the current scope and future direction.
 
 Today, this is a planning-focused MVP. It focuses on simple, concrete UpGrade experiment designs, such as one decision point with basic conditions and metrics. That's a deliberate choice for this prototype, not a limit of UpGrade.
 
-One guardrail from the demo is that the synthetic preflight demonstrates UpGrade mechanics, not evidence of learning effects.
+One guardrail from the demo is that the synthetic preflight is mainly meant to show what enrollment and metric data look like in UpGrade, not to provide evidence of learning effects.
 
 The next step is evaluation with real teams, which we haven't done yet. We plan to do that during Fall 2026 UpGrade onboarding.
 
