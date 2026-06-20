@@ -292,7 +292,7 @@ We have not chosen an intervention yet. Please suggest a few A/B test ideas and 
 
 So this is the login page. I'll sign in with my Google account. (Click "Sign in as Zack")
 
-Now we're in the chat. I'll upload the MiniMathApp screenshot first. (Click +, choose minimath-app.png, Open)
+Now we're in the chat. I'll upload the MiniMathApp screenshot first. (Click +, choose minimath-screenshot.png, Open)
 
 I have a short description ready, so I'll paste it here and send both together. (Paste prompt and send)
 
@@ -350,6 +350,7 @@ In practice, this report can be shared with the people who need to act on the pl
 
 The report can be copied or downloaded from here. (Point to copy/download buttons)
 
+(Return to the slides)
 -->
 
 ---
