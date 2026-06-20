@@ -23,9 +23,6 @@
 
   /* Slidev primary (links, accents) */
   --slidev-theme-primary: #4264d9;
-
-  /* Content-frame geometry (consumed by layouts/default.vue) */
-  --cl-rail-w: 104px;
 }
 
 /* ----------------------------------------------------------------------------

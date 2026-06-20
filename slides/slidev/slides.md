@@ -129,9 +129,7 @@ And because it's plain markdown, it can also be used by AI coding tools as a con
 - A **fictional** math-practice app · an area word problem (a rectangular garden)
 - Pain point: students often **get stuck or answer incorrectly on the first try**
 
-<img src="./assets/minimath-screenshot.png" alt="MiniMathApp area word problem screen" class="block mx-auto mt-4 rounded shadow" style="max-height: 360px" />
-
-**Next:** we give the consultant this screenshot and ask it to help plan an experiment →
+<img src="./assets/minimath-screenshot.png" alt="MiniMathApp area word problem screen" class="block mx-auto mt-3 rounded shadow" style="max-height: 280px" />
 
 <!--
 Now let's make this concrete with a short demo. I'll use a fictional app called MiniMathApp — a simple math-practice app for middle-school students.
@@ -244,7 +242,7 @@ Looking ahead, an approved report could become the shared input for a human-revi
 -->
 
 ---
-layout: center
+layout: thanks
 ---
 
 # Thank you
