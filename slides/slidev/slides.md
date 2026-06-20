@@ -133,10 +133,34 @@ The user approves every major transition before the tool moves on.
 
 # Why the report matters
 
-- The conversation ends as a **structured markdown report**
-- It captures the **hypothesis, UpGrade experiment design, simulation summary, and implementation guidance**
-- It gives researchers, developers, and product teams **one shared artifact**
-- It can also serve as a **concrete spec** for later implementation work
+<div class="cl-report-layout">
+  <div class="cl-report-artifact">
+    <div class="cl-report-heading">
+      <img src="./assets/icon/universal3.png" alt="" aria-hidden="true" />
+      <div>
+        <div class="cl-report-kicker">Primary handoff</div>
+        <h2>Structured markdown report</h2>
+      </div>
+    </div>
+    <div class="cl-report-summary">Captures the complete experiment plan</div>
+    <div class="cl-report-sections" aria-label="Report contents">
+      <span>Hypothesis</span>
+      <span>UpGrade experiment design</span>
+      <span>Simulation summary</span>
+      <span>Implementation guidance</span>
+    </div>
+  </div>
+  <div class="cl-report-benefits">
+    <div class="cl-report-benefit cl-report-shared">
+      <div class="cl-benefit-label">One shared artifact</div>
+      <div class="cl-benefit-copy">For researchers, developers, and product teams</div>
+    </div>
+    <div class="cl-report-benefit cl-report-spec">
+      <div class="cl-benefit-label">Concrete specification</div>
+      <div class="cl-benefit-copy">For later implementation work</div>
+    </div>
+  </div>
+</div>
 
 <!--
 Before the demo, I want to highlight the report as the main output, not just the last step in the chat.
@@ -145,7 +169,7 @@ The conversation ends as a structured markdown report. It pulls together the hyp
 
 This makes the report a shared artifact. Researchers, developers, and product teams can use it to align on the experiment design and implementation plan.
 
-And because it's plain markdown, it can also be used by AI coding tools as a concrete spec for implementation, with a person still reviewing the work.
+And because it's plain markdown, it can also serve as a concrete spec for later implementation work. This can include work supported by AI coding tools, with a person still reviewing any resulting changes.
 -->
 
 ---
