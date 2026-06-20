@@ -246,17 +246,29 @@ And because it's plain markdown, it can also serve as a concrete spec for later 
 
 # Live demo — MiniMathApp
 
-- A **fictional** math-practice app · an area word problem (a rectangular garden)
-- Pain point: students often **get stuck or answer incorrectly on the first try**
-
-<img src="./assets/minimath-screenshot.png" alt="MiniMathApp area word problem screen" class="block mx-auto mt-3 rounded shadow" style="max-height: 280px" />
+<div class="cl-demo-layout">
+  <div class="cl-demo-context">
+    <section class="cl-demo-card cl-demo-scenario">
+      <div class="cl-demo-label">Demo scenario</div>
+      <h2>A fictional math-practice app</h2>
+      <p>An area word problem about a rectangular garden</p>
+    </section>
+    <section class="cl-demo-card cl-demo-pain-point">
+      <div class="cl-demo-label">Pain point</div>
+      <h2>Students often <strong>get stuck or answer incorrectly</strong> on the first try</h2>
+    </section>
+  </div>
+  <figure class="cl-demo-screen">
+    <img src="./assets/minimath-screenshot.png" alt="MiniMathApp area word problem screen" />
+  </figure>
+</div>
 
 <!--
 Now let's make this concrete with a short demo. I'll use a fictional app called MiniMathApp — a simple math-practice app for middle-school students.
 
 The screen shows an area word problem about a rectangular garden, with a diagram, an answer box, and a "Check answer" button. The team noticed that many students get stuck or answer incorrectly on the first try.
 
-Notice we haven't picked an intervention yet. We'll start from the current screen and the pain point, and ask the consultant to help us plan an experiment.
+Notice that we haven't chosen an intervention yet. We'll start with the current screen and the pain point, and ask the consultant to help us plan an experiment.
 
 Let's switch to the live demo.
 -->

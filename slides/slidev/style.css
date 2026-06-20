@@ -378,6 +378,96 @@
 }
 
 /* ----------------------------------------------------------------------------
+ * Slide 6 — live-demo context with the product screen as the main visual
+ * ------------------------------------------------------------------------- */
+.cl-demo-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.8fr);
+  align-items: stretch;
+  gap: 24px;
+  height: 334px;
+  margin-top: var(--cl-card-row-gap);
+}
+
+.cl-demo-context {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 16px;
+  min-width: 0;
+  min-height: 0;
+}
+
+.cl-demo-card {
+  min-width: 0;
+  min-height: 0;
+  padding: 18px 20px;
+  overflow: hidden;
+  border: 1px solid rgba(40, 42, 58, 0.12);
+  border-top-width: 7px;
+}
+
+.cl-demo-scenario {
+  border-top-color: var(--cl-blue);
+  background: #f3f5ff;
+}
+
+.cl-demo-pain-point {
+  border-top-color: var(--cl-gold);
+  background: #fffaf0;
+}
+
+.cl-demo-label {
+  color: var(--cl-blue);
+  font-size: 0.74rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.cl-demo-card h2 {
+  margin: 9px 0 0;
+  color: var(--cl-ink);
+  font-size: 1.05rem;
+  font-weight: 500;
+  line-height: 1.22;
+}
+
+.cl-demo-card p {
+  margin: 8px 0 0;
+  color: var(--cl-ink);
+  font-size: 0.82rem;
+  line-height: 1.35;
+}
+
+.cl-demo-card strong {
+  font-weight: 500;
+}
+
+.cl-demo-screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid rgba(40, 42, 58, 0.12);
+  border-radius: 5px;
+  background: #edf8f5;
+  box-shadow: 0 8px 20px rgba(40, 42, 58, 0.1);
+}
+
+.cl-demo-screen img {
+  display: block;
+  min-width: 0;
+  min-height: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* ----------------------------------------------------------------------------
  * Slide 8 — present scope → evaluation → future vision
  * ------------------------------------------------------------------------- */
 .cl-scope-timeline {
