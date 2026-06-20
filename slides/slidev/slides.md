@@ -42,7 +42,7 @@ I'll start with the practical problem that motivated this work.
 - **UpGrade** is Carnegie Learning's open-source platform for educational A/B testing
 - It supports **running and managing** experiments — *once a team has a clear experiment plan*
 - The hard part often comes **earlier**: turning a rough idea, pain point, or specific interaction into that plan
-- *What* should we test? *Where* does condition assignment happen? *Which* conditions and metrics? *What needs to change in the app?*
+- <span class="cl-question-word">What</span> should we test? <span class="cl-question-word">Where</span> does condition assignment happen? <span class="cl-question-word">Which</span> conditions and metrics? <span class="cl-question-word">What</span> needs to change in the app?
 - Today, that planning gap often requires **expert consultation**
 
 <!--

@@ -61,6 +61,13 @@
 
 .slidev-layout em { color: var(--cl-muted); font-style: italic; }
 
+/* Key prompts should read as emphasis, not as secondary/optional detail. */
+.slidev-layout .cl-question-word {
+  color: var(--cl-ink);
+  font-style: normal;
+  font-weight: 500;
+}
+
 /* ----------------------------------------------------------------------------
  * Bullets — custom square markers in brand colors
  * ------------------------------------------------------------------------- */
