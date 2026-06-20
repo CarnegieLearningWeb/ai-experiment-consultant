@@ -1,0 +1,100 @@
+/*
+ * Carnegie Learning brand foundation for the Slidev deck.
+ * Auto-imported by Slidev (root-level style.css).
+ *
+ * Step 1 (global) of the CL restyle: color tokens, type (Hepta Slab headings /
+ * Roboto Light body), bullet styling, and the shared content-slide frame used by
+ * layouts/default.vue. Per-slide compositions (cover, workflow, cards, thank-you)
+ * come in later steps. Palette sampled from assets/ (logo, icon, reference).
+ */
+
+:root {
+  /* Brand palette */
+  --cl-blue: #4264d9;     /* royal — primary */
+  --cl-navy: #103d9e;     /* deep accent */
+  --cl-sky: #cbe1f5;      /* powder blue — light fields / the right band */
+  --cl-lavender: #b880fa; /* light purple */
+  --cl-purple: #6d28d9;   /* deep purple */
+  --cl-green: #00b473;    /* emerald */
+  --cl-forest: #225c36;   /* dark green */
+  --cl-gold: #ecba11;     /* gold */
+  --cl-ink: #282a3a;      /* primary text */
+  --cl-muted: #6b6e7e;    /* eyebrow / footer / page number */
+
+  /* Slidev primary (links, accents) */
+  --slidev-theme-primary: #4264d9;
+
+  /* Content-frame geometry (consumed by layouts/default.vue) */
+  --cl-rail-w: 104px;
+}
+
+/* ----------------------------------------------------------------------------
+ * Base typography
+ * ------------------------------------------------------------------------- */
+.slidev-layout {
+  font-family: 'Roboto', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  font-weight: 300; /* Roboto Light */
+  color: var(--cl-ink);
+}
+
+.slidev-layout h1,
+.slidev-layout h2,
+.slidev-layout h3,
+.slidev-layout h4,
+.slidev-layout h5 {
+  font-family: 'Hepta Slab', ui-serif, Georgia, serif;
+  color: var(--cl-ink);
+  letter-spacing: -0.01em;
+}
+
+.slidev-layout h1 { font-weight: 500; }
+.slidev-layout h2,
+.slidev-layout h3,
+.slidev-layout h4,
+.slidev-layout h5 { font-weight: 400; }
+
+.slidev-layout strong { font-weight: 500; color: var(--cl-ink); }
+
+.slidev-layout a {
+  color: var(--cl-blue);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(66, 100, 217, 0.35);
+}
+.slidev-layout a:hover { border-bottom-color: var(--cl-blue); }
+
+.slidev-layout em { color: var(--cl-muted); font-style: italic; }
+
+/* ----------------------------------------------------------------------------
+ * Bullets — custom square markers in brand colors
+ * ------------------------------------------------------------------------- */
+.slidev-layout ul {
+  list-style: none;
+  padding-left: 0;
+}
+.slidev-layout ul li {
+  position: relative;
+  padding-left: 1.3em;
+  line-height: 1.7;
+  margin: 0.4em 0;
+}
+.slidev-layout ul li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 0.42em;
+  height: 0.42em;
+  border-radius: 2px;
+  background: var(--cl-blue);
+}
+.slidev-layout ul ul li::before { background: var(--cl-lavender); }
+
+.slidev-layout ol { padding-left: 1.2em; }
+.slidev-layout ol li { line-height: 1.7; margin: 0.4em 0; }
+.slidev-layout ol li::marker { color: var(--cl-blue); font-weight: 500; }
+
+/*
+ * The content-slide frame (eyebrow / footer / right brand band) is defined in
+ * layouts/default.vue so it always ships with the layout. This sheet supplies the
+ * shared brand tokens and global typography it builds on.
+ */

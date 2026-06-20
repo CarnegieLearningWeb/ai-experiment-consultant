@@ -1,5 +1,9 @@
 ---
 theme: default
+fonts:
+  sans: Roboto
+  serif: Hepta Slab
+  weights: '300,400,500,600,700'
 title: AI Experiment Consultant — PELE 2026
 info: |
   AI-assisted experimentation consulting for UpGrade adoption (Work-in-Progress / Demo).
