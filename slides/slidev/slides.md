@@ -274,21 +274,42 @@ The report can be copied or downloaded from here. (Point to copy/download button
 
 # Scope today, future direction
 
-- Today: a **planning-focused MVP** for simple, concrete UpGrade experiment designs
-- Synthetic preflight shows **UpGrade mechanics**, not evidence of learning effects
-- Not yet evaluated with real teams — planned during **Fall 2026 onboarding**
-- Future: an approved report could connect planning, implementation, UpGrade setup, and analysis in a **human-reviewed pipeline**
+<div class="cl-scope-timeline">
+  <div class="cl-scope-stage cl-scope-today">
+    <div class="cl-stage-label">Today</div>
+    <h2>Planning‑focused MVP</h2>
+    <div class="cl-stage-copy">Simple, concrete UpGrade experiment designs</div>
+  </div>
+  <div class="cl-scope-arrow" aria-hidden="true">→</div>
+  <div class="cl-scope-stage cl-scope-evaluation">
+    <div class="cl-stage-label">Fall 2026</div>
+    <h2>Real‑team evaluation</h2>
+    <div class="cl-stage-copy">Planned during UpGrade onboarding</div>
+  </div>
+  <div class="cl-scope-arrow" aria-hidden="true">→</div>
+  <div class="cl-scope-stage cl-scope-future">
+    <div class="cl-stage-label">Future</div>
+    <h2>Human‑reviewed pipeline</h2>
+    <div class="cl-stage-copy">An approved report connects planning, implementation, UpGrade setup, and analysis</div>
+  </div>
+</div>
+
+<div class="cl-scope-guardrail">
+  <div class="cl-guardrail-label">Guardrail</div>
+  <div class="cl-guardrail-copy"><strong>Synthetic preflight</strong> demonstrates UpGrade mechanics, not evidence of learning effects.</div>
+</div>
 
 <!--
 Now I'll wrap up with the current scope and future direction.
 
 Today, this is a planning-focused MVP. It focuses on simple, concrete UpGrade experiment designs, such as one decision point with basic conditions and metrics. That's a deliberate choice for this prototype, not a limit of UpGrade.
 
-One caveat from the demo: the synthetic preflight shows UpGrade mechanics, not evidence of learning effects.
+One guardrail from the demo is that the synthetic preflight demonstrates UpGrade mechanics, not evidence of learning effects.
 
-We also haven't evaluated the tool with real teams yet. We plan to do that during Fall 2026 onboarding.
+The next step is evaluation with real teams, which we haven't done yet. We plan to do that during Fall 2026 UpGrade onboarding.
 
-Looking ahead, an approved report could become the shared input for a human-reviewed pipeline. AI and automation could use it to draft the client-app changes, prepare the UpGrade configuration, and later support analysis, with humans reviewing each step.
+Looking ahead, an approved report could become the shared input for a human-reviewed pipeline. AI and automation could help draft client-app changes, prepare the UpGrade configuration, and later support experiment analysis, with humans reviewing each step.
+
 -->
 
 ---

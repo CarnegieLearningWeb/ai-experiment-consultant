@@ -272,6 +272,98 @@
   line-height: 1.4;
 }
 
+/* ----------------------------------------------------------------------------
+ * Slide 8 — present scope → evaluation → future vision
+ * ------------------------------------------------------------------------- */
+.cl-scope-timeline {
+  display: grid;
+  grid-template-columns: 1fr 42px 1fr 42px 1.25fr;
+  align-items: stretch;
+  gap: 12px;
+  margin-top: 2.25rem;
+}
+
+.cl-scope-stage {
+  height: 264px;
+  padding: 24px 24px 26px;
+  border: 1px solid rgba(40, 42, 58, 0.12);
+  border-top-width: 8px;
+}
+
+.cl-scope-today {
+  border-top-color: var(--cl-blue);
+  background: #f3f6ff;
+}
+
+.cl-scope-evaluation {
+  border-top-color: var(--cl-lavender);
+  background: #faf6ff;
+}
+
+.cl-scope-future {
+  border-top-color: var(--cl-green);
+  background: #eef9f5;
+}
+
+.cl-stage-label,
+.cl-guardrail-label {
+  color: var(--cl-blue);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.cl-scope-stage h2 {
+  margin: 1rem 0 0.8rem;
+  font-size: 1.38rem;
+  line-height: 1.18;
+}
+
+.cl-stage-copy {
+  color: var(--cl-ink);
+  font-size: 1.02rem;
+  line-height: 1.45;
+}
+
+.cl-scope-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--cl-blue);
+  font-size: 2rem;
+  font-weight: 300;
+}
+
+.cl-scope-guardrail {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 0.9rem;
+  margin-top: 1.15rem;
+  padding: 13px 18px;
+  height: 49.03125px;
+  box-sizing: border-box;
+  border-left: 6px solid var(--cl-gold);
+  background: #fff8e8;
+}
+
+.cl-guardrail-label {
+  color: var(--cl-ink);
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  white-space: nowrap;
+}
+
+.cl-guardrail-copy {
+  padding-left: 0.9rem;
+  border-left: 1px solid rgba(40, 42, 58, 0.2);
+  color: var(--cl-ink);
+  font-size: 0.95rem;
+  line-height: inherit;
+}
+
 /*
  * The content-slide frame (eyebrow / footer / right brand band) is defined in
  * layouts/default.vue so it always ships with the layout. This sheet supplies the
