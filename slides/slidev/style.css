@@ -97,6 +97,81 @@
 .slidev-layout ol li { line-height: 1.7; margin: 0.4em 0; }
 .slidev-layout ol li::marker { color: var(--cl-blue); font-weight: 500; }
 
+/* ----------------------------------------------------------------------------
+ * Slide 3 — input → guided consultation → report handoff
+ * ------------------------------------------------------------------------- */
+.cl-consulting-flow {
+  display: grid;
+  grid-template-columns: 1fr 42px 1.15fr 42px 1.3fr;
+  align-items: stretch;
+  gap: 12px;
+  margin-top: 2.2rem;
+}
+
+.cl-flow-card {
+  min-height: 220px;
+  padding: 22px 22px 24px;
+  border: 1px solid rgba(40, 42, 58, 0.12);
+  border-radius: 4px;
+  background: #fff;
+}
+
+.cl-flow-card img {
+  display: block;
+  width: 64px;
+  height: 64px;
+  margin-bottom: 18px;
+}
+
+.cl-flow-label {
+  margin-bottom: 10px;
+  color: var(--cl-blue);
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.cl-flow-card p {
+  margin: 0;
+  color: var(--cl-ink);
+  font-size: 1.12rem;
+  line-height: 1.45;
+}
+
+.cl-nowrap { white-space: nowrap; }
+
+.cl-flow-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--cl-blue);
+  font-size: 2rem;
+  font-weight: 300;
+}
+
+.cl-human-control {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin-top: 1.15rem;
+  padding: 13px 18px;
+  border-left: 6px solid var(--cl-blue);
+  background: var(--cl-sky);
+  color: var(--cl-ink);
+}
+
+.cl-human-control strong {
+  font-size: 0.96rem;
+  white-space: nowrap;
+}
+
+.cl-human-control span {
+  padding-left: 0.9rem;
+  border-left: 1px solid rgba(40, 42, 58, 0.2);
+  font-size: 0.95rem;
+}
+
 /*
  * The content-slide frame (eyebrow / footer / right brand band) is defined in
  * layouts/default.vue so it always ships with the layout. This sheet supplies the

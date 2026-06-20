@@ -57,19 +57,45 @@ That planning step usually takes expert consultation. This project is about supp
 
 # What it does
 
-- A web-based, **chat-driven** consultant for educational software teams
-- **Input:** an idea, a pain point, or a screenshot
-- **Output:** a concrete A/B test plan + an implementation-ready **markdown report** tailored to UpGrade
-- **Human-controlled** and **planning-focused** — the tool suggests, the user decides
+<div class="cl-consulting-flow">
+  <div class="cl-flow-card cl-flow-input">
+    <img src="./assets/icon/universal1.png" alt="" aria-hidden="true" />
+    <div class="cl-flow-label">Input</div>
+    <p>An idea, a pain point, or a screenshot</p>
+  </div>
+
+  <div class="cl-flow-arrow" aria-hidden="true">→</div>
+
+  <div class="cl-flow-card cl-flow-chat">
+    <img src="./assets/icon/universal4.png" alt="" aria-hidden="true" />
+    <div class="cl-flow-label">Guided consultation</div>
+    <p>A web-based, <strong class="cl-nowrap">chat-driven</strong> consultant for educational software teams</p>
+  </div>
+
+  <div class="cl-flow-arrow" aria-hidden="true">→</div>
+
+  <div class="cl-flow-card cl-flow-output">
+    <img src="./assets/icon/universal3.png" alt="" aria-hidden="true" />
+    <div class="cl-flow-label">Output</div>
+    <p>A concrete A/B test plan + an implementation-ready <strong>markdown report</strong> tailored to UpGrade</p>
+  </div>
+</div>
+
+<div class="cl-human-control">
+  <strong>Human-controlled and planning-focused</strong>
+  <span>The tool suggests; the user decides.</span>
+</div>
 
 <!--
 AI Experiment Consultant is a web-based, chat-driven consultant for educational software teams.
 
-The input can be an idea, a pain point, or a screenshot of a page or interaction the user wants to improve. The tool asks follow-up questions, suggests possible directions, and helps turn that input into a concrete UpGrade experiment design.
+The starting point can be an idea, a pain point, or a screenshot.
+
+Through a guided consultation, the tool asks follow-up questions, suggests possible directions, and helps turn that input into a concrete A/B test plan.
 
 The main output is an implementation-ready markdown report tailored to UpGrade, so the plan can be shared and acted on after the conversation.
 
-The tool is intentionally human-controlled and planning-focused. It suggests options and structures the plan, but the user decides what to approve or change. It stays at the planning layer; it does not run real experiments or change client app code.
+Throughout the process, the tool remains human-controlled and planning-focused: it suggests options and structures the plan, but the user decides what to approve or change.
 -->
 
 ---
