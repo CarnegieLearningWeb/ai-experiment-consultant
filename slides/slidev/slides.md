@@ -39,18 +39,41 @@ I'll start with the practical problem that motivated this work.
 
 # The onboarding problem
 
-- **UpGrade** is Carnegie Learning's open-source platform for educational A/B testing
-- It supports **running and managing** experiments — *once a team has a clear experiment plan*
-- The hard part often comes **earlier**: turning a rough idea, pain point, or specific interaction into that plan
-- <span class="cl-question-word">What</span> should we test? <span class="cl-question-word">Where</span> does condition assignment happen? <span class="cl-question-word">Which</span> conditions and metrics? <span class="cl-question-word">What</span> needs to change in the app?
-- Today, that planning gap often requires **expert consultation**
+<div class="cl-onboarding-flow">
+  <section class="cl-onboarding-stage cl-planning-stage">
+    <div class="cl-onboarding-label">Before the plan is clear</div>
+    <h2>The hard part often comes earlier.</h2>
+    <p>A rough idea, pain point, or specific interaction still has to become a clear experiment plan.</p>
+    <div class="cl-onboarding-questions">
+      <div><strong>What</strong> should we test?</div>
+      <div><strong>Where</strong> does condition assignment happen?</div>
+      <div><strong>Which</strong> conditions and metrics?</div>
+      <div><strong>What</strong> needs to change in the app?</div>
+    </div>
+  </section>
+
+  <div class="cl-onboarding-arrow" aria-hidden="true">→</div>
+
+  <section class="cl-onboarding-stage cl-upgrade-stage">
+    <div class="cl-onboarding-label">Once a clear plan exists</div>
+    <h2><span>UpGrade</span> runs and manages the experiment</h2>
+    <p>Carnegie Learning's open-source platform for educational A/B testing</p>
+  </section>
+</div>
+
+<div class="cl-onboarding-callout">
+  <span class="cl-callout-label">Planning gap</span>
+  <span class="cl-callout-copy">Today, turning an idea into that plan often requires <strong>expert consultation</strong>.</span>
+</div>
 
 <!--
-UpGrade is Carnegie Learning's open-source platform for A/B testing in educational software. It helps teams run and manage experiments once they have a clear experiment plan.
+The practical problem is that teams often need support before they have a clear experiment plan.
 
-But in recent onboarding work with external EdTech teams, we saw that the hard part often comes earlier. A team may have a rough idea, a pain point, or a specific interaction they want to improve, but they still need to decide what to test, where condition assignment should happen, what the conditions and metrics should be, and what needs to change in the app.
+In recent onboarding work with external EdTech teams, we saw that a team may have a rough idea, a pain point, or a specific interaction they want to improve, but still need to decide what to test, where condition assignment should happen, what the conditions and metrics should be, and what needs to change in the app.
 
-That planning step usually takes expert consultation. This project is about supporting that earlier planning layer.
+Once that plan exists, UpGrade — Carnegie Learning's open-source platform for educational A/B testing — helps teams run and manage the experiment.
+
+Today, that earlier planning step usually requires expert consultation. This project addresses that planning gap.
 -->
 
 ---

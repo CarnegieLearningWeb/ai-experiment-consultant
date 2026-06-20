@@ -102,6 +102,115 @@
 .slidev-layout ol li::marker { color: var(--cl-blue); font-weight: 500; }
 
 /* ----------------------------------------------------------------------------
+ * Slide 2 — the planning gap before UpGrade
+ * ------------------------------------------------------------------------- */
+.cl-onboarding-flow {
+  display: grid;
+  grid-template-columns: 1.45fr 46px 1fr;
+  align-items: stretch;
+  gap: 14px;
+  margin-top: var(--cl-card-row-gap);
+}
+
+.cl-onboarding-stage {
+  height: var(--cl-card-row-height);
+  box-sizing: border-box;
+  padding: 22px 24px 24px;
+  border: 1px solid rgba(40, 42, 58, 0.12);
+  border-top-width: 8px;
+}
+
+.cl-planning-stage {
+  border-color: rgba(109, 40, 217, 0.2);
+  border-top-color: var(--cl-lavender);
+  background: #faf6ff;
+}
+
+.cl-upgrade-stage {
+  border-color: rgba(66, 100, 217, 0.18);
+  border-top-color: var(--cl-blue);
+  background: #f3f5ff;
+}
+
+.cl-onboarding-label {
+  color: var(--cl-blue);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.cl-onboarding-stage h2 {
+  margin: 11px 0 0;
+  color: var(--cl-ink);
+  font-size: 1.34rem;
+  font-weight: 500;
+  line-height: 1.22;
+}
+
+.cl-upgrade-stage h2 {
+  font-size: 1.28rem;
+}
+
+.cl-upgrade-stage h2 span {
+  color: var(--cl-blue);
+}
+
+.cl-onboarding-stage > p {
+  margin: 11px 0 0;
+  color: var(--cl-ink);
+  font-size: 0.88rem;
+  line-height: 1.4;
+}
+
+.cl-onboarding-questions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.cl-onboarding-questions > div {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid rgba(109, 40, 217, 0.14);
+  background: #fff;
+  color: var(--cl-ink);
+  font-size: 0.76rem;
+  line-height: 1.3;
+}
+
+.cl-onboarding-questions strong {
+  margin-right: 0.25em;
+  color: var(--cl-blue);
+}
+
+.cl-onboarding-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--cl-blue);
+  font-size: 2rem;
+  font-weight: 300;
+}
+
+.cl-onboarding-callout {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 0.9rem;
+  height: 49.03125px;
+  box-sizing: border-box;
+  margin-top: 1.15rem;
+  padding: 13px 18px;
+  border-left: 6px solid var(--cl-blue);
+  background: var(--cl-sky);
+  color: var(--cl-ink);
+}
+
+/* ----------------------------------------------------------------------------
  * Slide 3 — input → guided consultation → report handoff
  * ------------------------------------------------------------------------- */
 .cl-consulting-flow {
