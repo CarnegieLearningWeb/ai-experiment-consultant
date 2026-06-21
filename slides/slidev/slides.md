@@ -19,7 +19,7 @@ layout: cover
 
 # AI Experiment Consultant
 
-#### From an idea, pain point, or screenshot to an implementation-ready UpGrade experiment plan
+#### From an idea, a pain point, or a screenshot to an implementation-ready UpGrade experiment plan
 
 PELE 2026 · Work-in-Progress / Demo
 
@@ -30,7 +30,7 @@ Carnegie Learning
 <!--
 Hi everyone, I'm Zack Lee, a software engineer on the Research team at Carnegie Learning. This is joint work with April Murphy.
 
-Today, I'll introduce AI Experiment Consultant, a prototype that helps educational software teams turn an app idea, a pain point, or a screenshot into an implementation-ready UpGrade experiment plan.
+Today, I'll introduce AI Experiment Consultant, a prototype that helps educational software teams turn an idea, a pain point, or a screenshot into an implementation-ready UpGrade experiment plan.
 
 I'll start with the practical problem that motivated this work.
 -->
