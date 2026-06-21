@@ -67,9 +67,9 @@ I'll start with the practical problem that motivated this work.
 </div>
 
 <!--
-The practical problem is that teams often need support before they have a clear experiment plan.
+Teams often need support before they have a clear experiment plan.
 
-In recent onboarding work with external EdTech teams, we saw that a team may have a rough idea, a pain point, or a specific interaction they want to improve, but still need to decide what to test, where condition assignment should happen, what the conditions and metrics should be, and what needs to change in the app.
+In recent onboarding work with external EdTech teams, we've seen them come in with a rough idea, a pain point, or a specific interaction they want to improve, but without clear answers about what to test, where condition assignment should happen, which conditions and metrics to use, or what needs to change in the app.
 
 Once that plan exists, UpGrade — Carnegie Learning's open-source platform for educational A/B testing — helps teams run and manage the experiment.
 
