@@ -62,8 +62,12 @@ const REGISTRY = {
       'up after itself. Returns structured result data plus warnings; the assistant ' +
       "should then format these into a markdown summary for the user and emphasize that " +
       'the numbers are preflight/synthetic, not predictive of real outcomes. ' +
-      'Use this tool when the user has approved an experiment design and wants to see ' +
-      'how assignment, enrollment, and metric logging would behave in UpGrade.',
+      'Use this tool only after the user has approved an experiment design, the ' +
+      'assistant has separately offered the optional simulation, and a later user ' +
+      'message explicitly accepts that offer or asks for the simulation. A bare yes ' +
+      'to the experiment-design approval question approves only the design and must ' +
+      'never trigger this tool; respond by offering the simulation and waiting instead. ' +
+      'Never call this tool in the same assistant turn as the first simulation offer.',
     input_schema: RUN_SIMULATION_SCHEMA,
     run: runSimulation,
   },
