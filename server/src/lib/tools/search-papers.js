@@ -1,5 +1,18 @@
 import { searchPapersSequential } from '../papers.js';
 import { log } from '../log.js';
+import {
+  MINIMATH_DEMO_CANDIDATES,
+  MINIMATH_DEMO_CONFIRMATION_QUESTION,
+  MINIMATH_DEMO_REFINEMENT,
+  MINIMATH_DEMO_SEARCH_INPUT,
+  MINIMATH_DEMO_SELECTED_PAPERS,
+} from '../minimath-paper-fixture.js';
+
+// This presentation branch only demonstrates the MiniMathApp scenario. Keep
+// the normal live-search implementation below for an easy post-demo revert,
+// but use the frozen successful result during the presentation.
+const USE_MINIMATH_DEMO_FIXTURE = true;
+const MINIMATH_DEMO_SEARCH_DELAY_MS = 900;
 
 // JSON Schema exposed to Anthropic. The tool owns throttling, per-query
 // retry, candidate de-duplication, deterministic pre-ranking, and caching.
@@ -191,6 +204,35 @@ function rankCandidates(candidates, rankingTokens) {
 // ============================================================================
 
 export async function searchPapersTool({ input, emit, signal }) {
+  if (USE_MINIMATH_DEMO_FIXTURE) {
+    emit({ type: 'tool_progress', message: 'Searching for related research papers…' });
+
+    // Keep the progress state visible long enough to read in the live demo.
+    await new Promise((resolve) => setTimeout(resolve, MINIMATH_DEMO_SEARCH_DELAY_MS));
+
+    const canonicalKey = canonicalKeyFromContext(MINIMATH_DEMO_SEARCH_INPUT.researchContext);
+    log.tool('search_papers result', {
+      source: 'minimath-demo-fixture',
+      canonicalKey,
+      specificQueries: MINIMATH_DEMO_SEARCH_INPUT.specificQueries.length,
+      domainQueries: MINIMATH_DEMO_SEARCH_INPUT.domainQueries.length,
+      candidatesRaw: MINIMATH_DEMO_CANDIDATES.length,
+      candidatesReturned: MINIMATH_DEMO_CANDIDATES.length,
+      selectedPapers: MINIMATH_DEMO_SELECTED_PAPERS.length,
+    });
+
+    emit({
+      type: 'tool_progress',
+      message: progressFor(MINIMATH_DEMO_CANDIDATES.length),
+    });
+    return {
+      candidates: structuredClone(MINIMATH_DEMO_CANDIDATES),
+      selectedPapers: structuredClone(MINIMATH_DEMO_SELECTED_PAPERS),
+      suggestedRefinement: MINIMATH_DEMO_REFINEMENT,
+      confirmationQuestion: MINIMATH_DEMO_CONFIRMATION_QUESTION,
+    };
+  }
+
   const specificQueries = (input.specificQueries || []).filter(
     (q) => typeof q === 'string' && q.trim().length >= 3,
   );

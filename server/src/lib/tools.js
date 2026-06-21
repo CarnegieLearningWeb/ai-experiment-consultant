@@ -27,8 +27,12 @@ const REGISTRY = {
       '`specificQueries` derived from the hypothesis, and 2–3 stable ' +
       '`domainQueries` for the experiment mechanism. The researchContext is ' +
       'used as the ranking signal — its segments drive the token-overlap ' +
-      'score that orders candidates. Every call runs a fresh Semantic Scholar ' +
-      'search (no candidate caching). The tool **always runs both query lists** ' +
+      'score that orders candidates. In the MiniMathApp presentation scenario, ' +
+      'the server uses a frozen successful Semantic Scholar result and also ' +
+      'returns `selectedPapers`, `suggestedRefinement`, and `confirmationQuestion`; ' +
+      'use those fields exactly and do not rescore the candidates. Outside that ' +
+      'demo override, every call runs a fresh Semantic Scholar search (no candidate ' +
+      'caching). The tool **always runs both query lists** ' +
       'together in a single throttled batch — every Semantic Scholar call ' +
       '(initial, retry, across concurrent users) is serialized through a ' +
       'single reservation queue and spaced >=1.5s apart. 429 responses honor ' +
@@ -38,10 +42,12 @@ const REGISTRY = {
       "**deterministically pre-ranked** by canonical-key token overlap, " +
       'abstract presence, recency, and citation count. Returns ' +
       '`{ candidates: [...] }` — each has title, authors, year, venue, ' +
-      'abstract (truncated), url, doi, citationCount. ' +
+      'abstract (truncated), url, doi, citationCount. The optional demo-specific ' +
+      '`selectedPapers` entries include title, url, authorsYear, relevance, and ' +
+      'designImplication. ' +
       'Call this only when the user has explicitly opted into research grounding ' +
-      'after the hypothesis is approved. After the tool returns, apply the 0–3 ' +
-      'relevance rubric and select only papers scoring >= 2 (see system prompt). ' +
+      'after the hypothesis is approved. When `selectedPapers` is absent, apply ' +
+      'the 0–3 relevance rubric and select only papers scoring >= 2 (see system prompt). ' +
       'Use ONLY the returned metadata/abstracts when summarizing — never invent ' +
       'findings, effect sizes, or claims not present in the data.',
     input_schema: SEARCH_PAPERS_SCHEMA,
