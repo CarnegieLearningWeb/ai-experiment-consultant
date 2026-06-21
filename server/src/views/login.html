@@ -143,6 +143,38 @@
 
         .signin { margin-top: var(--s7); display: flex; flex-direction: column; align-items: flex-start; }
         #g_id_signin { min-height: 44px; }
+        .demo-signin {
+            min-width: 250px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 6px 11px;
+            border: 1px solid #dadce0;
+            border-radius: 4px;
+            background: #fff;
+            color: #3c4043;
+            font: inherit;
+            text-align: left;
+            cursor: pointer;
+        }
+        .demo-signin[hidden] { display: none; }
+        .demo-signin:hover { background: #f8faff; border-color: #c8d3ed; }
+        .demo-signin:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+        .demo-signin:disabled { opacity: 0.65; cursor: wait; }
+        .demo-avatar {
+            width: 30px; height: 30px; flex: 0 0 auto;
+            display: grid; place-items: center;
+            border-radius: 50%;
+            background: #e8eefc;
+            color: var(--blue);
+            font-size: 0.72rem;
+            font-weight: 700;
+        }
+        .demo-account { display: flex; flex: 1; flex-direction: column; line-height: 1.2; }
+        .demo-account strong { font-size: 0.875rem; font-weight: 600; }
+        .demo-account small { margin-top: 2px; color: var(--ink-soft); font-size: 0.72rem; }
+        .demo-arrow { color: var(--blue); font-size: 1.1rem; }
         #error {
             color: #d32020;
             font-size: 0.8125rem;
@@ -245,24 +277,35 @@
                     <div class="auth-main">
                         <div class="auth-head">
                             <h2>Get started</h2>
-                            <p>Sign in with Google to start planning your experiment.</p>
+                            <p id="auth-description">Sign in with Google to start planning your experiment.</p>
                         </div>
 
                         <div class="signin">
-                            <div id="g_id_onload"
-                                 data-client_id="{{GOOGLE_CLIENT_ID}}"
-                                 data-callback="handleCredentialResponse"
-                                 data-auto_prompt="false">
+                            <div id="google-signin">
+                                <div id="g_id_onload"
+                                     data-client_id="{{GOOGLE_CLIENT_ID}}"
+                                     data-callback="handleCredentialResponse"
+                                     data-auto_prompt="false">
+                                </div>
+                                <div id="g_id_signin"
+                                     class="g_id_signin"
+                                     data-type="standard"
+                                     data-size="large"
+                                     data-theme="outline"
+                                     data-text="sign_in_with"
+                                     data-shape="rectangular"
+                                     data-logo_alignment="left">
+                                </div>
                             </div>
-                            <div id="g_id_signin"
-                                 class="g_id_signin"
-                                 data-type="standard"
-                                 data-size="large"
-                                 data-theme="outline"
-                                 data-text="sign_in_with"
-                                 data-shape="rectangular"
-                                 data-logo_alignment="left">
-                            </div>
+
+                            <button id="demo-signin" class="demo-signin" type="button" hidden>
+                                <span class="demo-avatar" aria-hidden="true">ZL</span>
+                                <span class="demo-account">
+                                    <strong>Sign in as Zack</strong>
+                                    <small>zlee@carnegielearning.com</small>
+                                </span>
+                                <span class="demo-arrow" aria-hidden="true">→</span>
+                            </button>
 
                             <div id="error" role="alert"></div>
                         </div>
@@ -284,6 +327,7 @@
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script>
         const appBase = "{{APP_BASE}}";
+        const demoAuthBypass = {{DEMO_AUTH_BYPASS}};
 
         function getErrorMessage(data) {
             if (typeof data?.error === "string") return data.error;
@@ -309,6 +353,36 @@
             } catch (err) {
                 errorEl.textContent = "Network error. Please try again.";
             }
+        }
+
+        async function handleDemoSignIn() {
+            const button = document.getElementById("demo-signin");
+            const errorEl = document.getElementById("error");
+            errorEl.textContent = "";
+            button.disabled = true;
+            try {
+                const res = await fetch(appBase + "/api/demo-login", {
+                    method: "POST",
+                    credentials: "same-origin"
+                });
+                const data = await res.json();
+                if (res.ok && data.ok) {
+                    window.location.href = appBase + "/";
+                    return;
+                }
+                errorEl.textContent = getErrorMessage(data);
+            } catch (err) {
+                errorEl.textContent = "Network error. Please try again.";
+            }
+            button.disabled = false;
+        }
+
+        if (demoAuthBypass) {
+            document.getElementById("google-signin").hidden = true;
+            document.getElementById("auth-description").textContent = "Start planning your experiment.";
+            const demoButton = document.getElementById("demo-signin");
+            demoButton.hidden = false;
+            demoButton.addEventListener("click", handleDemoSignIn);
         }
     </script>
 </body>

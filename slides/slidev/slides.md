@@ -268,7 +268,7 @@ Now let's make this concrete with a short demo. I'll use a fictional app called 
 
 The screen shows an area word problem about a rectangular garden, with a diagram, an answer box, and a "Check answer" button. The team noticed that many students get stuck or answer incorrectly on the first try.
 
-Notice that we haven't chosen an intervention yet. We'll start with the current screen and the pain point, and ask the consultant to help us plan an experiment.
+Notice that we haven't chosen an intervention yet. We'll start from this problem page and the pain point, and ask the consultant to help us plan an experiment.
 
 Let's switch to the live demo.
 -->
@@ -290,11 +290,13 @@ We have not chosen an intervention yet. Please suggest a few A/B test ideas and 
 
 ====================================
 
-So this is the login page. I'll sign in with my Google account. (Click "Sign in as Zack")
+So this is the login page. I'll sign in. (Click "Sign in as Zack")
 
-Now we're in the chat. I'll upload the MiniMathApp screenshot first. (Click +, choose minimath-screenshot.png, Open)
+Now we're in the chat. The consultant starts by asking about the learning app, so I'll share the MiniMathApp screenshot and a short description.
 
-I have a short description ready, so I'll paste it here and send both together. (Paste prompt and send)
+First, I'll upload the screenshot. (Click +, choose minimath-screenshot.png, Open)
+
+Then I'll paste the description and send both together. (Paste prompt and send)
 
 (After response) OK, it gave me three experiment ideas and recommended the first one: an optional hint button.
 

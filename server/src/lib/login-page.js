@@ -18,8 +18,9 @@ function escapeScriptString(value) {
   return JSON.stringify(String(value)).slice(1, -1);
 }
 
-export function renderLoginPage({ googleClientId, appBase }) {
+export function renderLoginPage({ googleClientId, appBase, demoAuthBypass = false }) {
   return template
     .replaceAll('{{GOOGLE_CLIENT_ID}}', escapeHtml(googleClientId || ''))
-    .replaceAll('{{APP_BASE}}', escapeScriptString(appBase));
+    .replaceAll('{{APP_BASE}}', escapeScriptString(appBase))
+    .replaceAll('{{DEMO_AUTH_BYPASS}}', demoAuthBypass ? 'true' : 'false');
 }

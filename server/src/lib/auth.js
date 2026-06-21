@@ -76,14 +76,28 @@ export function createAppAuth({
   googleClientId = process.env.GOOGLE_CLIENT_ID,
   sessionSecret = process.env.SESSION_SECRET,
   sessionCookieName = process.env.SESSION_COOKIE_NAME || DEFAULT_SESSION_COOKIE_NAME,
+  demoAuthBypass = process.env.DEMO_AUTH_BYPASS === 'true',
   mode = process.env.MODE,
   label = 'app',
 } = {}) {
   const client = new OAuth2Client(googleClientId)
-  const secureCookie = mode === 'PROD' || process.env.NODE_ENV === 'production'
+  const productionMode = mode === 'PROD' || process.env.NODE_ENV === 'production'
+  const demoBypassEnabled = Boolean(demoAuthBypass) && !productionMode
+  const secureCookie = productionMode
 
   const clearSession = (res) => {
     res.clearCookie(sessionCookieName, { path: '/' })
+  }
+
+  const setSession = (res, { email, name }) => {
+    const token = signToken({ email, name }, sessionSecret)
+    res.cookie(sessionCookieName, token, {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: secureCookie,
+      path: '/',
+      maxAge: SESSION_EXPIRY_MINUTES * 60 * 1000,
+    })
   }
 
   const fail = ({ req, res, loginPath }) => {
@@ -170,14 +184,26 @@ export function createAppAuth({
       })
     }
 
-    const token = signToken({ email: payload.email, name: payload.name }, sessionSecret)
-    res.cookie(sessionCookieName, token, {
-      httpOnly: true,
-      sameSite: 'lax',
-      secure: secureCookie,
-      path: '/',
-      maxAge: SESSION_EXPIRY_MINUTES * 60 * 1000,
-    })
+    setSession(res, { email: payload.email, name: payload.name })
+    return res.json({ ok: true })
+  }
+
+  const demoLoginHandler = (_req, res) => {
+    if (!demoBypassEnabled) {
+      return res.status(404).json({ error: { code: 'not_found', message: 'Not found' } })
+    }
+    if (!sessionSecret) {
+      return res.status(500).json({
+        error: { code: 'server_misconfigured', message: 'Server misconfigured: session secret not set' },
+      })
+    }
+
+    const user = {
+      email: process.env.DEMO_USER_EMAIL || 'zlee@carnegielearning.com',
+      name: process.env.DEMO_USER_NAME || 'Zack Lee',
+    }
+    console.log(`[${label} demo login] email=${user.email}`)
+    setSession(res, user)
     return res.json({ ok: true })
   }
 
@@ -188,6 +214,8 @@ export function createAppAuth({
 
   return {
     apiGuard,
+    demoAuthBypass: demoBypassEnabled,
+    demoLoginHandler,
     gatePath,
     guard,
     loginHandler,
@@ -204,8 +232,13 @@ export function createAuthRouter({
   const router = Router()
 
   router.get('/login', (_req, res) => {
-    res.type('html').send(renderLoginPage({ googleClientId, appBase: basePath }))
+    res.type('html').send(renderLoginPage({
+      googleClientId,
+      appBase: basePath,
+      demoAuthBypass: auth.demoAuthBypass,
+    }))
   })
+  router.post('/api/demo-login', auth.demoLoginHandler)
   router.post('/api/login', auth.loginHandler)
   router.get('/api/session', auth.sessionHandler)
   router.post('/api/logout', auth.logoutHandler)
