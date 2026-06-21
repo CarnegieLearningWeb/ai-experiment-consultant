@@ -190,7 +190,7 @@ Second, it asks about the specific page, problem, or interaction where an experi
 
 Third, it helps turn the starting point into a testable hypothesis. This is where it can suggest possible interventions and outcome metrics, and also offer optional related research grounding.
 
-Fourth, it translates the approved hypothesis into a concrete UpGrade experiment design, including the decision point, conditions, and metrics.
+Fourth, it translates the approved hypothesis into an UpGrade experiment design, including the decision point, conditions, and metrics.
 
 Fifth, it can run an optional synthetic preflight using simulated participants. This is mainly meant to show what enrollment and metric data look like in UpGrade, not to provide evidence of learning effects.
 
@@ -264,7 +264,7 @@ And because it's plain markdown, it can also serve as a concrete spec for later 
 </div>
 
 <!--
-Now let's make this concrete with a short demo. I'll use a fictional app called MiniMathApp — a simple math-practice app for middle-school students.
+Now let's see this in a short demo. I'll use a fictional app called MiniMathApp — a simple math-practice app for middle-school students.
 
 The screen shows an area word problem about a rectangular garden, with a diagram, an answer box, and a "Check answer" button. The team noticed that many students get stuck or answer incorrectly on the first try.
 
@@ -316,7 +316,7 @@ I'll say yes here. (Type "yes" and send)
 
 I'll continue to the UpGrade experiment design. (Type "yes" and send)
 
-(After response) Now it has turned the approved hypothesis into a concrete UpGrade experiment design: where the experiment runs, what the conditions are, and which metrics we will track.
+(After response) Now it has turned the approved hypothesis into an UpGrade experiment design: where the experiment runs, what the conditions are, and which metrics we will track.
 
 I could revise the details here, but for the demo, I'll accept this design. (Type "yes" and send)
 
@@ -363,7 +363,7 @@ The report can be copied or downloaded from here. (Point to copy/download button
   <div class="cl-scope-stage cl-scope-today">
     <div class="cl-stage-label">Today</div>
     <h2>Planning‑focused MVP</h2>
-    <div class="cl-stage-copy">Simple, concrete UpGrade experiment designs</div>
+    <div class="cl-stage-copy">Simple UpGrade experiment designs</div>
   </div>
   <div class="cl-scope-arrow" aria-hidden="true">→</div>
   <div class="cl-scope-stage cl-scope-evaluation">
@@ -387,7 +387,7 @@ The report can be copied or downloaded from here. (Point to copy/download button
 <!--
 Now I'll wrap up with the current scope and future direction.
 
-Today, this is a planning-focused MVP. It focuses on simple, concrete UpGrade experiment designs, such as one decision point with basic conditions and metrics. That's a deliberate choice for this prototype, not a limit of UpGrade.
+Today, this is a planning-focused MVP, designed for simple UpGrade experiments such as one decision point with basic conditions and metrics. That's a deliberate choice for this prototype, not a limit of UpGrade.
 
 One guardrail from the demo is that the synthetic preflight is mainly meant to show what enrollment and metric data look like in UpGrade, not to provide evidence of learning effects.
 
