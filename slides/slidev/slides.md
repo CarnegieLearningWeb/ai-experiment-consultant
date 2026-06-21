@@ -266,7 +266,7 @@ And because it's plain markdown, it can also serve as a concrete spec for later 
 <!--
 Now let's see this in a short demo. I'll use a fictional app called MiniMathApp — a simple math-practice app for middle-school students.
 
-The screen shows an area word problem about a rectangular garden, with a diagram, an answer box, and a "Check answer" button. The team noticed that many students get stuck or answer incorrectly on the first try.
+This page shows an area word problem about a rectangular garden, along with a diagram, an answer box, and a "Check answer" button. The team noticed that many students get stuck or answer incorrectly on the first try.
 
 Notice that we haven't chosen an intervention yet. We'll start from this problem page and the pain point, and ask the consultant to help us plan an experiment.
 
