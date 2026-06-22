@@ -92,7 +92,7 @@ Today, that earlier planning step usually requires expert consultation. This pro
   <div class="cl-flow-card cl-flow-chat">
     <img src="./assets/icon/universal4.png" alt="" aria-hidden="true" />
     <div class="cl-flow-label">Guided consultation</div>
-    <p>A web-based, <strong class="cl-nowrap">chat-driven</strong> consultant for educational software teams</p>
+    <p>A web-based, <strong class="cl-nowrap">chat-driven</strong> tool for educational software teams</p>
   </div>
 
   <div class="cl-flow-arrow" aria-hidden="true">→</div>
@@ -110,7 +110,7 @@ Today, that earlier planning step usually requires expert consultation. This pro
 </div>
 
 <!--
-AI Experiment Consultant is a web-based, chat-driven consultant for educational software teams.
+AI Experiment Consultant is a web-based, chat-driven tool for educational software teams.
 
 The starting point can be an idea, a pain point, or a screenshot.
 
