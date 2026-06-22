@@ -290,7 +290,7 @@ We have not chosen an intervention yet. Please suggest a few A/B test ideas and 
 
 ====================================
 
-So this is the login page. I'll sign in. (Click "Sign in as Zack")
+So this is the login page. It also gives a quick overview of what the tool does. I'll sign in. (Click "Sign in as Zack")
 
 Now we're in the chat. The consultant starts by asking about the learning app, so I'll share the MiniMathApp screenshot and a short description.
 
