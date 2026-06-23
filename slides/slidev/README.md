@@ -13,17 +13,18 @@ created to make the **live, iframe-based demo** easier to run from inside the de
 
 ## Slides
 
-Same 8 main slides as the Marp deck, plus 1 added live-demo iframe slide (9 total):
+Same 8 main slides as the Marp deck, plus an UpGrade introduction and 1 added live-demo iframe slide (10 total):
 
 1. AI Experiment Consultant (title)
-2. The onboarding problem
-3. What it does
-4. Six-phase consulting workflow
-5. Why the report matters
-6. Live demo — MiniMathApp (the screenshot / setup slide)
-7. **Live demo — embedded AI Experiment Consultant (iframe)** ← added
-8. Scope today, future direction
-9. Thank you / Questions
+2. **What is UpGrade?** ← added
+3. The onboarding problem
+4. What it does
+5. Six-phase consulting workflow
+6. Why the report matters
+7. Live demo — MiniMathApp (the screenshot / setup slide)
+8. **Live demo — embedded AI Experiment Consultant (iframe)** ← added
+9. Scope today, future direction
+10. Thank you / Questions
 
 Speaker notes are the trailing `<!-- ... -->` comment on each slide and appear in
 Slidev presenter mode.

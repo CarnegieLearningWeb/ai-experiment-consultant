@@ -32,7 +32,73 @@ Hi everyone, I'm Zack Lee, a software engineer on the Research team at Carnegie 
 
 Today, I'll introduce AI Experiment Consultant, a prototype that helps educational software teams turn an idea, a pain point, or a screenshot into an implementation-ready UpGrade experiment plan.
 
-I'll start with the practical problem that motivated this work.
+(Skip UpGrade intro) I'll start with the practical problem that motivated this work.
+
+(Do UpGrade intro) First, let me give a quick overview of UpGrade.
+-->
+
+---
+
+# What is UpGrade?
+
+<div class="cl-upgrade-intro">
+  <section class="cl-upgrade-identity">
+    <img src="./assets/upgrade/upgrade-logo.png" alt="UpGrade" />
+    <p>An <strong>open-source platform</strong> for configuring, deploying, and managing experiments in educational software.</p>
+    <div class="cl-upgrade-capabilities" aria-label="Core capabilities">
+      <span>Used by Carnegie Learning + EdTech partners</span>
+      <span>Hundreds of thousands of students</span>
+    </div>
+  </section>
+
+  <section class="cl-upgrade-platform">
+    <div class="cl-upgrade-config">
+      <div class="cl-upgrade-config-label">Experiment design in UpGrade</div>
+      <div class="cl-upgrade-config-fields" aria-label="Experiment configuration">
+        <span>Decision point</span>
+        <span>Conditions</span>
+        <span>Participants</span>
+        <span>Metrics</span>
+      </div>
+    </div>
+    <div class="cl-upgrade-runtime-label">Connected at runtime</div>
+    <div class="cl-upgrade-runtime">
+      <div class="cl-upgrade-runtime-card cl-upgrade-app-card">
+        <div class="cl-upgrade-runtime-kicker">Learning app</div>
+        <h2>Applies the experience</h2>
+        <p>Requests an assignment at the decision point and logs outcomes</p>
+      </div>
+      <div class="cl-upgrade-connection" aria-label="Data exchanged between the learning app and UpGrade">
+        <div class="cl-upgrade-link cl-upgrade-link-right"><span>assignment request</span><b>→</b></div>
+        <div class="cl-upgrade-link cl-upgrade-link-left"><b>←</b><span>condition</span></div>
+        <div class="cl-upgrade-link cl-upgrade-link-right"><span>enrollment + metrics</span><b>→</b></div>
+      </div>
+      <div class="cl-upgrade-runtime-card cl-upgrade-service-card">
+        <div class="cl-upgrade-runtime-kicker">UpGrade</div>
+        <h2>Orchestrates the experiment</h2>
+        <p>Manages assignment, enrollment, lifecycle, and data</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="cl-upgrade-takeaway">
+  <span class="cl-callout-label">Key boundary</span>
+  <span class="cl-callout-copy"><strong>UpGrade orchestrates the experiment;</strong> the learning app implements the condition-specific experience.</span>
+</div>
+
+<!--
+(Skip UpGrade intro) I'll skip this overview.
+
+(Do UpGrade intro) UpGrade is Carnegie Learning's open-source platform for configuring, deploying, and managing experiments in educational software.
+
+It's been used by Carnegie Learning and partner EdTech teams in experiments involving hundreds of thousands of students.
+
+Experimenters use UpGrade to specify where an experiment runs, which conditions it includes, who can participate, and what outcomes to track. That location in the app is the decision point.
+
+At runtime, the learning app sends an assignment request to UpGrade. UpGrade returns a condition, and the app applies the corresponding experience. The app then sends enrollment and outcome metrics back to UpGrade.
+
+So the key boundary is: UpGrade orchestrates the experiment, while the learning app implements the condition-specific experience.
 -->
 
 ---
@@ -67,11 +133,9 @@ I'll start with the practical problem that motivated this work.
 </div>
 
 <!--
-Teams often need support before they have a clear experiment plan.
+UpGrade helps educational software teams run and manage experiments once the plan is clear. But teams often need support before they have that clear experiment plan.
 
 In recent onboarding work with external EdTech teams, we've seen them come in with a rough idea, a pain point, or a specific interaction they want to improve, but without clear answers about what to test, where condition assignment should happen, which conditions and metrics to use, or what needs to change in the app.
-
-Once that plan exists, UpGrade — Carnegie Learning's open-source platform for educational A/B testing — helps teams run and manage the experiment.
 
 Today, that earlier planning step usually requires expert consultation. This project addresses that planning gap.
 -->

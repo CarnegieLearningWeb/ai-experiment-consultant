@@ -102,7 +102,203 @@
 .slidev-layout ol li::marker { color: var(--cl-blue); font-weight: 500; }
 
 /* ----------------------------------------------------------------------------
- * Slide 2 — the planning gap before UpGrade
+ * Slide 2 — What is UpGrade?
+ * ------------------------------------------------------------------------- */
+.cl-upgrade-intro {
+  display: grid;
+  grid-template-columns: 0.8fr 1.7fr;
+  align-items: stretch;
+  gap: 24px;
+  height: var(--cl-card-row-height);
+  margin-top: var(--cl-card-row-gap);
+}
+
+.cl-upgrade-identity {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  box-sizing: border-box;
+  padding: 19px 21px 17px;
+  overflow: hidden;
+  border: 1px solid rgba(109, 40, 217, 0.2);
+  border-top: 8px solid var(--cl-purple);
+  background: #faf6ff;
+}
+
+.cl-upgrade-identity > img {
+  display: block;
+  width: 168px;
+  max-width: 100%;
+  height: auto;
+}
+
+.cl-upgrade-identity > p {
+  margin: 15px 0 0;
+  color: var(--cl-ink);
+  font-size: 0.88rem;
+  line-height: 1.38;
+}
+
+.cl-upgrade-capabilities {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: auto;
+}
+
+.cl-upgrade-capabilities span {
+  padding: 4px 7px;
+  border: 1px solid rgba(66, 100, 217, 0.18);
+  background: #fff;
+  color: var(--cl-blue);
+  font-size: 0.61rem;
+  font-weight: 400;
+  line-height: 1.1;
+}
+
+.cl-upgrade-platform {
+  min-height: 0;
+  box-sizing: border-box;
+  padding: 17px 20px 19px;
+  overflow: hidden;
+  border: 1px solid rgba(66, 100, 217, 0.18);
+  border-top: 8px solid var(--cl-blue);
+  background: #f3f6ff;
+}
+
+.cl-upgrade-config {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 14px;
+  padding-bottom: 13px;
+  border-bottom: 1px solid rgba(66, 100, 217, 0.18);
+}
+
+.cl-upgrade-config-label,
+.cl-upgrade-runtime-label {
+  color: var(--cl-blue);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.cl-upgrade-config-fields {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+.cl-upgrade-config-fields span {
+  padding: 7px 7px;
+  border: 1px solid rgba(109, 40, 217, 0.2);
+  background: #fff;
+  color: var(--cl-ink);
+  font-size: 0.64rem;
+  font-weight: 400;
+  line-height: 1.15;
+  text-align: center;
+}
+
+.cl-upgrade-runtime-label {
+  margin-top: 12px;
+}
+
+.cl-upgrade-runtime {
+  display: grid;
+  grid-template-columns: 1fr 128px 1fr;
+  align-items: stretch;
+  gap: 10px;
+  height: 138px;
+  margin-top: 7px;
+}
+
+.cl-upgrade-runtime-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 13px 14px 12px;
+  border: 1px solid rgba(40, 42, 58, 0.13);
+  background: #fff;
+}
+
+.cl-upgrade-service-card {
+  border: 2px solid rgba(109, 40, 217, 0.45);
+  background: #faf6ff;
+}
+
+.cl-upgrade-runtime-kicker {
+  color: var(--cl-blue);
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.cl-upgrade-runtime-card h2 {
+  margin: 8px 0 0;
+  font-size: 0.82rem;
+  font-weight: 500;
+  line-height: 1.22;
+}
+
+.cl-upgrade-runtime-card p {
+  margin: auto 0 0;
+  color: var(--cl-muted);
+  font-size: 0.66rem;
+  line-height: 1.3;
+}
+
+.cl-upgrade-connection {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+}
+
+.cl-upgrade-link {
+  display: grid;
+  align-items: center;
+  gap: 5px;
+  color: var(--cl-blue);
+  font-size: 0.58rem;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.cl-upgrade-link-right {
+  grid-template-columns: 1fr auto;
+  text-align: right;
+}
+
+.cl-upgrade-link-left {
+  grid-template-columns: auto 1fr;
+  text-align: left;
+}
+
+.cl-upgrade-link b {
+  font-size: 1.02rem;
+  font-weight: 300;
+  line-height: 1;
+}
+
+.cl-upgrade-takeaway {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 0.9rem;
+  height: 49.03125px;
+  box-sizing: border-box;
+  margin-top: 1.15rem;
+  padding: 13px 18px;
+  border-left: 6px solid var(--cl-purple);
+  background: var(--cl-sky);
+  color: var(--cl-ink);
+}
+
+/* ----------------------------------------------------------------------------
+ * Slide 3 — the planning gap before UpGrade
  * ------------------------------------------------------------------------- */
 .cl-onboarding-flow {
   display: grid;
@@ -211,7 +407,7 @@
 }
 
 /* ----------------------------------------------------------------------------
- * Slide 3 — input → guided consultation → report handoff
+ * Slide 4 — input → guided consultation → report handoff
  * ------------------------------------------------------------------------- */
 .cl-consulting-flow {
   display: grid;
@@ -278,7 +474,7 @@
 }
 
 /* ----------------------------------------------------------------------------
- * Slide 5 — report as the central handoff artifact
+ * Slide 6 — report as the central handoff artifact
  * ------------------------------------------------------------------------- */
 .cl-report-layout {
   display: grid;
@@ -378,7 +574,7 @@
 }
 
 /* ----------------------------------------------------------------------------
- * Slide 6 — live-demo context with the product screen as the main visual
+ * Slide 7 — live-demo context with the product screen as the main visual
  * ------------------------------------------------------------------------- */
 .cl-demo-layout {
   display: grid;
@@ -468,7 +664,7 @@
 }
 
 /* ----------------------------------------------------------------------------
- * Slide 8 — present scope → evaluation → future vision
+ * Slide 9 — present scope → evaluation → future vision
  * ------------------------------------------------------------------------- */
 .cl-scope-timeline {
   display: grid;
@@ -543,7 +739,7 @@
 }
 
 /* ----------------------------------------------------------------------------
- * Slide 4 — six-phase consulting workflow
+ * Slide 5 — six-phase consulting workflow
  * ------------------------------------------------------------------------- */
 .cl-workflow-main {
   display: grid;
