@@ -133,9 +133,11 @@ So the key boundary is: UpGrade orchestrates the experiment, while the learning 
 </div>
 
 <!--
-UpGrade helps educational software teams run and manage experiments once the plan is clear. But teams often need support before they have that clear experiment plan.
+The hard part often comes before teams have a clear experiment plan.
 
 In recent onboarding work with external EdTech teams, we've seen them come in with a rough idea, a pain point, or a specific interaction they want to improve, but without clear answers about what to test, where condition assignment should happen, which conditions and metrics to use, or what needs to change in the app.
+
+Once that plan exists, UpGrade helps teams run and manage the experiment.
 
 Today, that earlier planning step usually requires expert consultation. This project addresses that planning gap.
 -->
