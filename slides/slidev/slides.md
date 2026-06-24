@@ -88,7 +88,7 @@ Today, I'll introduce AI Experiment Consultant, a prototype that helps education
 </div>
 
 <!--
-(Skip UpGrade intro) I'll skip this overview.
+(Skip UpGrade intro) I'll skip this UpGrade overview.
 
 (Do UpGrade intro) UpGrade is Carnegie Learning's open-source platform for configuring, deploying, and managing experiments in educational software.
 
