@@ -207,7 +207,7 @@ export const MINIMATH_DEMO_SELECTED_PAPERS = [
 ];
 
 export const MINIMATH_DEMO_REFINEMENT =
-  'Taken together, these papers suggest one practical refinement: add an overall hint-usage metric, such as the proportion of students who open the hint. This would show how often students use the feature, but it would not by itself tell us whether that use is productive. The core hint-button hypothesis can stay as-is.';
+  'Taken together, these papers suggest one practical refinement: add an overall hint-usage metric, such as the proportion of students who open the hint. This would show how often students use the feature, but not whether they use it well. The core hint-button hypothesis can stay as-is.';
 
 export const MINIMATH_DEMO_CONFIRMATION_QUESTION =
   'Should I add that overall hint-usage metric and continue to the UpGrade experiment design?';

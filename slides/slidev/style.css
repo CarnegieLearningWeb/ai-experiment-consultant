@@ -920,6 +920,88 @@
 
 .cl-callout-copy strong { font-weight: 500; }
 
+/* Single-line presenter-note prompt with one-click copying. */
+.slidev-note .cl-note-copy-box {
+  position: relative;
+  box-sizing: border-box;
+  margin: 1rem 0;
+  padding: 0.72em 3.6em 0.72em 1em;
+  border: 1px solid #cfd5e3;
+  border-radius: 0.5rem;
+  background: #f0f2f7;
+  color: #202634;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.72em;
+  line-height: 1.4;
+  overflow: hidden;
+}
+
+.slidev-note .cl-note-copy-text {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  line-height: inherit;
+  white-space: nowrap;
+}
+
+.slidev-note .cl-note-copy-button {
+  position: absolute;
+  top: 50%;
+  right: 0.5em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25em;
+  height: 2.25em;
+  padding: 0;
+  transform: translateY(-50%);
+  border: 1px solid #c5cbd9;
+  border-radius: 0.35rem;
+  background: #e2e5ed;
+  color: #41495a;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: 1.15em;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 1;
+  transition: opacity 120ms ease, background-color 120ms ease;
+}
+
+.slidev-note .cl-note-copy-button:hover,
+.slidev-note .cl-note-copy-button:focus-visible {
+  background: #d4d9e4;
+  color: #202634;
+}
+
+.slidev-note .cl-note-copy-button.is-copied {
+  border-color: #9bcdb7;
+  background: #dff3e9;
+  color: #176b48;
+}
+
+.slidev-note .cl-note-copy-icon {
+  line-height: 1;
+}
+
+.slidev-note .cl-note-copy-icon-copied {
+  display: none;
+}
+
+.slidev-note .cl-note-copy-button.is-copied .cl-note-copy-icon-default {
+  display: none;
+}
+
+.slidev-note .cl-note-copy-button.is-copied .cl-note-copy-icon-copied {
+  display: inline;
+}
+
 /*
  * The content-slide frame (eyebrow / footer / right brand band) is defined in
  * layouts/default.vue so it always ships with the layout. This sheet supplies the

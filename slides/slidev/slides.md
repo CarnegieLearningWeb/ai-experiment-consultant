@@ -346,77 +346,157 @@ scale: 0.8
 ---
 
 <!--
-====================================
-
-MiniMathApp is a math practice app for middle-school students.
-
-Many students get stuck or answer incorrectly on the first try on this area word-problem page.
-
-We have not chosen an intervention yet. Please suggest a few A/B test ideas and recommend a good starting experiment.
-
-====================================
-
 So this is the login page. It also gives a quick overview of what the tool does. I'll sign in. (Click "Sign in as Zack")
 
-Now we're in the chat. The consultant starts by asking about the learning app, so I'll share the MiniMathApp screenshot and a short description.
+Now we're in the chat. The consultant starts by asking about the learning app.
 
-First, I'll upload the screenshot. (Click +, choose minimath-screenshot.png, Open)
+(Read) "To start, tell...is it for?"
 
-Then I'll paste the description and send both together. (Paste prompt and send)
+There are also starter options if you're not sure where to begin.
 
-(After response) OK, it gave me three experiment ideas and recommended the first one: an optional hint button.
+I'll give it just the app-level context first.
 
-It also drafted a hypothesis about improving first-attempt correctness without substantially increasing time-on-task.
+(Paste/Read/Send)
+<div class="cl-note-copy-box">
+  <span class="cl-note-copy-text">
+MiniMathApp is a math practice app for middle-school students. Students work through one problem at a time in topic-based practice units.
+  </span>
+  <button type="button" class="cl-note-copy-button" title="Copy prompt" aria-label="Copy prompt" onclick="navigator.clipboard.writeText(this.previousElementSibling.innerText.trim()).then(() => { this.classList.add('is-copied'); this.title = 'Copied'; window.setTimeout(() => { this.classList.remove('is-copied'); this.title = 'Copy prompt'; }, 1000); })"><span class="cl-note-copy-icon cl-note-copy-icon-default" aria-hidden="true">⧉</span><span class="cl-note-copy-icon cl-note-copy-icon-copied" aria-hidden="true">✓</span></button>
+</div>
 
-I'll accept that and move forward. (Type "yes" and send)
+(After response) And it says:
 
-(After response) Now it asks whether I want to look for related research papers before creating the UpGrade experiment design.
+(Read) "Thanks. Which page...if you have one."
+
+So I'll upload the screenshot (Upload minimath-screenshot.png)
+
+Then I'll paste the page description and the pain point.
+
+(Paste/Read/Send)
+<div class="cl-note-copy-box">
+  <span class="cl-note-copy-text">
+This is an area word-problem page about a rectangular garden. Many students get stuck or answer incorrectly on the first try.<br><br>We have not chosen an intervention yet. Please suggest a few A/B test ideas and recommend a good starting experiment.
+  </span>
+  <button type="button" class="cl-note-copy-button" title="Copy prompt" aria-label="Copy prompt" onclick="navigator.clipboard.writeText(this.previousElementSibling.innerText.trim()).then(() => { this.classList.add('is-copied'); this.title = 'Copied'; window.setTimeout(() => { this.classList.remove('is-copied'); this.title = 'Copy prompt'; }, 1000); })"><span class="cl-note-copy-icon cl-note-copy-icon-default" aria-hidden="true">⧉</span><span class="cl-note-copy-icon cl-note-copy-icon-copied" aria-hidden="true">✓</span></button>
+</div>
+
+(After response) Okay, it gives me three experiment ideas:
+
+(Read) "Optional hint button...Scaffolded steps."
+
+Then it recommends starting with the optional hint button:
+
+(Read) "It is a small...who are stuck."
+
+It also proposes a hypothesis:
+
+(Read) "Adding an optional...the current page."
+
+This sounds reasonable, so I'll approve it and move forward by replying:
+
+(Paste/Read/Send)
+<div class="cl-note-copy-box">
+  <span class="cl-note-copy-text">
+Let's use the optional hint-button idea and the proposed hypothesis.
+  </span>
+  <button type="button" class="cl-note-copy-button" title="Copy prompt" aria-label="Copy prompt" onclick="navigator.clipboard.writeText(this.previousElementSibling.innerText.trim()).then(() => { this.classList.add('is-copied'); this.title = 'Copied'; window.setTimeout(() => { this.classList.remove('is-copied'); this.title = 'Copy prompt'; }, 1000); })"><span class="cl-note-copy-icon cl-note-copy-icon-default" aria-hidden="true">⧉</span><span class="cl-note-copy-icon cl-note-copy-icon-copied" aria-hidden="true">✓</span></button>
+</div>
+
+(After response) And it says:
+
+(Read) "Great. The hint-button...refine this hypothesis?"
 
 I'll say yes here. (Type "yes" and send)
 
-(While search_papers is running) Now it's looking for related research papers. Internally, it searches Semantic Scholar with a few different queries, collects up to 12 candidate papers, and then summarizes up to 3 relevant ones.
+(While `search_papers` is running)
 
-(After response) It found a few related papers with relevance notes and design implications.
+Now it's searching Semantic Scholar with a few related queries, narrowing the candidate papers, and then summarizing up to three of the most relevant papers for this experiment.
 
-(After reading suggested refinement) It also suggested a refinement. This sounds good to me, so I'll accept it.
+(After response) Okay, it says:
 
-I'll continue to the UpGrade experiment design. (Type "yes" and send)
+(Read) "These papers don't...the experiment design."
 
-(After response) Now it has turned the approved hypothesis into an UpGrade experiment design: where the experiment runs, what the conditions are, and which metrics we will track.
+(Scroll down) And it found three related papers, each with a relevance note and a design implication.
 
-I could revise the details here, but for the demo, I'll accept this design. (Type "yes" and send)
+(Scroll down) Then it says:
 
-(If it asks about the preflight simulation) Now it asks whether to run a preflight simulation with synthetic participants.
+(Read) "Taken together, these...UpGrade experiment design?"
 
-I'll say yes to run the simulation. (Type "yes" and send)
+As the AI notes, overall hint usage would show how often students open the hint, but not whether they use it well.
 
-(While run_simulation is running) Now it is running a synthetic preflight. It creates a temporary UpGrade experiment, simulates 200 students going through the decision point, logs synthetic metric events, and then cleans everything up.
+So I'll make the metric more specific: I want to track whether students open the hint before submitting a first answer.
 
-This is not testing real learners. It is a quick check of what assignment, enrollment, and metrics would look like in UpGrade.
+(Paste/Read/Send)
+<div class="cl-note-copy-box">
+  <span class="cl-note-copy-text">
+Please apply the research grounding, but track premature hint use instead of overall hint use. Measure whether a student opens the hint before submitting a first answer, so we can distinguish students who try first from those who go straight to the hint. Then continue to the experiment design.
+  </span>
+  <button type="button" class="cl-note-copy-button" title="Copy prompt" aria-label="Copy prompt" onclick="navigator.clipboard.writeText(this.previousElementSibling.innerText.trim()).then(() => { this.classList.add('is-copied'); this.title = 'Copied'; window.setTimeout(() => { this.classList.remove('is-copied'); this.title = 'Copy prompt'; }, 1000); })"><span class="cl-note-copy-icon cl-note-copy-icon-default" aria-hidden="true">⧉</span><span class="cl-note-copy-icon cl-note-copy-icon-copied" aria-hidden="true">✓</span></button>
+</div>
 
-(After response) Now we can see the preflight result: enrollment by condition, followed by metric summaries.
+(After response) Okay, it says:
 
-It also summarizes the synthetic result and reminds us that this is not evidence of a real learning effect.
+(Read) "That makes sense...of premature help-seeking."
 
-Now it asks whether to generate the final report. I'll say yes so we can see the shared handoff artifact. (Type "yes" and send)
+Then it turns that into a proposed UpGrade experiment design.
 
-(While generate_report is running) This usually takes about 20 seconds.
+(Scroll down) The design has one decision point, two conditions with a 50/50 split, and three metrics:
 
-The report pulls together the full plan: the app and page description, the hypothesis, the related research, the UpGrade experiment design, the simulation summary, and guidance for UpGrade setup, experiment creation, and client integration.
+(Read) "firstAttemptCorrect...prematureHintUse."
 
-Any section can be excluded from the report, but for this demo I'm keeping everything in.
+For the new metric, it says:
 
-(After report opens) Now the final report opens in the side panel.
+(Read) "At the first...and time-on-task."
 
-This is the main handoff artifact. It starts with the summary, the learning app, the page and problem, the experiment idea, and the hypothesis. (Scroll slowly)
+I could still change any of these details, but this is the design I want, so I'll approve it. (Type "yes" and send)
 
-It also includes the related research grounding, the UpGrade experiment design, and the simulation result summary. (Scroll)
+(After response) It says:
 
-Later sections are more implementation-focused. They give setup guidance, experiment creation steps, and client-integration guidance with code examples. (Scroll)
+(Read) "Design approved...of real outcomes."
 
-In practice, this report can be shared with the people who need to act on the plan. A researcher can review the design, a developer can use the integration guidance, and an AI coding tool could use the report as a starting spec, with a human still reviewing the work.
+I'll say yes to run the preflight. (Type "yes" and send)
 
-The report can be copied or downloaded from here. (Point to copy/download buttons)
+(While `run_simulation` is running)
+
+Now it's creating a temporary UpGrade experiment and simulating 200 synthetic participants, and then it will clean up the temporary data.
+
+This is just a preflight of the data flow, not a test with real students.
+
+(After response) Okay, it shows the enrollment and metric tables. I'll read the summary:
+
+(Read) "The assignment split...no hint button."
+
+And it reminds us:
+
+(Read) "These numbers are...real learning outcomes."
+
+Then it offers to generate the final report with all of these sections.
+
+(Scroll down) And it says:
+
+(Read) "Reply yes to...which ones instead."
+
+I'll keep everything in for this demo. (Type "yes" and send)
+
+(While `generate_report` is running)
+
+Now it's generating a Markdown report that combines the experiment plan with implementation guidance. This usually takes about 20 seconds.
+
+(After report panel opens) Now the report is ready in the side panel.
+
+(Scroll slowly) It starts with the high-level plan: the Summary, the Learning App Description, the Page / Problem Description, the Experiment Idea, and the Hypothesis.
+
+(Scroll slowly) It also includes the Related Research Grounding, the Proposed UpGrade Experiment Design, and the Simulation Result Summary.
+
+(Pause at Recommended Implementation Order) Here, the report turns the plan into a practical sequence: set up UpGrade, configure the experiment, integrate the client, and verify that the data appears.
+
+A team could follow these steps directly, or use the report as a starting spec for an AI coding tool, with a developer still reviewing the work.
+
+(Scroll slowly until the client code) Below that are the UpGrade Setup Guide, the UpGrade Experiment Creation Guide, and the Client Integration Guide, including code examples.
+
+So the final output is not just a chat transcript. It becomes a handoff artifact that a researcher, developer, or product team can share and build from.
+
+And because it's Markdown, it can be copied or downloaded from here. (Point to the copy/download buttons)
 
 (Return to the slides)
 -->
