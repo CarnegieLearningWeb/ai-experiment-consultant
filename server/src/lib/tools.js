@@ -22,66 +22,31 @@ const REGISTRY = {
   search_papers: {
     name: 'search_papers',
     description:
-      'Search Semantic Scholar for related academic papers. Takes a structured ' +
-      '`researchContext` ({subject, mechanism, setting, outcome}), 1–2 ' +
-      '`specificQueries` derived from the hypothesis, and 2–3 stable ' +
-      '`domainQueries` for the experiment mechanism. The researchContext is ' +
-      'used as the ranking signal — its segments drive the token-overlap ' +
-      'score that orders candidates. In the MiniMathApp presentation scenario, ' +
-      'the server uses a frozen successful Semantic Scholar result and also ' +
-      'returns `selectedPapers`, `suggestedRefinement`, and `confirmationQuestion`; ' +
-      'use those fields exactly and do not rescore the candidates. Outside that ' +
-      'demo override, every call runs a fresh Semantic Scholar search (no candidate ' +
-      'caching). The tool **always runs both query lists** ' +
-      'together in a single throttled batch — every Semantic Scholar call ' +
-      '(initial, retry, across concurrent users) is serialized through a ' +
-      'single reservation queue and spaced >=1.5s apart. 429 responses honor ' +
-      '`Retry-After` when present, else wait an extra 2s before retry. The ' +
-      'queue is scoped to Semantic Scholar fetches only — unrelated chat, ' +
-      'simulation, and report requests run normally. De-duped candidates are ' +
-      "**deterministically pre-ranked** by canonical-key token overlap, " +
-      'abstract presence, recency, and citation count. Returns ' +
-      '`{ candidates: [...] }` — each has title, authors, year, venue, ' +
-      'abstract (truncated), url, doi, citationCount. The optional demo-specific ' +
-      '`selectedPapers` entries include title, url, authorsYear, relevance, and ' +
-      'designImplication. ' +
-      'Call this only when the user has explicitly opted into research grounding ' +
-      'after the hypothesis is approved. When `selectedPapers` is absent, apply ' +
-      'the 0–3 relevance rubric and select only papers scoring >= 2 (see system prompt). ' +
-      'Use ONLY the returned metadata/abstracts when summarizing — never invent ' +
-      'findings, effect sizes, or claims not present in the data.',
+      'PELE 2026 MiniMathApp demo Step 4 only. Call once with the exact input in ' +
+      'the system prompt after the user accepts research grounding. The server ' +
+      'returns a frozen result containing `selectedPapers`, `suggestedRefinement`, ' +
+      'and `confirmationQuestion`. Present those fields exactly as instructed; ' +
+      'do not rescore candidates or invent claims.',
     input_schema: SEARCH_PAPERS_SCHEMA,
     run: searchPapersTool,
   },
   run_simulation: {
     name: 'run_simulation',
     description:
-      'Run a synthetic preflight experiment against the demo UpGrade backend. ' +
-      'Creates a temporary experiment, simulates the requested cohort of synthetic ' +
-      'participants (no real users), retrieves enrollment + metric results, and cleans ' +
-      'up after itself. Returns structured result data plus warnings; the assistant ' +
-      "should then format these into a markdown summary for the user and emphasize that " +
-      'the numbers are preflight/synthetic, not predictive of real outcomes. ' +
-      'Use this tool only after the user has approved an experiment design, the ' +
-      'assistant has separately offered the optional simulation, and a later user ' +
-      'message explicitly accepts that offer or asks for the simulation. A bare yes ' +
-      'to the experiment-design approval question approves only the design and must ' +
-      'never trigger this tool; respond by offering the simulation and waiting instead. ' +
-      'Never call this tool in the same assistant turn as the first simulation offer.',
+      'PELE 2026 MiniMathApp demo Step 7 only. Call once after the separate ' +
+      'simulation offer and the user\'s following yes. Use the exact experiment, ' +
+      'cohort size, and syntheticSpecs from the system prompt. Summarize the ' +
+      'completed structured result without guessing or changing values.',
     input_schema: RUN_SIMULATION_SCHEMA,
     run: runSimulation,
   },
   generate_report: {
     name: 'generate_report',
     description:
-      'Compose the final markdown experiment-plan report and open it in the side panel ' +
-      'on the right. The server composes the report by combining your dynamic prose ' +
-      '(app description, hypothesis, etc.) with deterministic templates for the setup / ' +
-      'experiment-creation / client-integration / notes sections. You do NOT need to write ' +
-      "the full report — pass the structured pieces and the templates fill in the rest. " +
-      'After the tool returns, reply with one short sentence acknowledging the panel is ' +
-      "ready (don't repeat the report content in chat). Call this tool only after the user " +
-      'has approved the sections to include.',
+      'PELE 2026 MiniMathApp demo Step 8 only. Call once after the report offer ' +
+      'and the user\'s following yes. Use the exact report fields, experiment, saved ' +
+      'research papers, and simulation result from the system prompt and conversation. ' +
+      'Afterward send only the fixed acknowledgement from the system prompt.',
     input_schema: GENERATE_REPORT_SCHEMA,
     run: generateReport,
   },

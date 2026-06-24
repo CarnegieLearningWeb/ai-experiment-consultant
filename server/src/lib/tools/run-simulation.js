@@ -33,10 +33,15 @@ export const RUN_SIMULATION_SCHEMA = {
   properties: {
     experiment: {
       type: 'object',
-      description: 'The approved experiment design.',
+      description: 'Copy the exact fixed Step 5 experiment from the system prompt without changes.',
       properties: {
-        name: { type: 'string', description: 'Short human-readable experiment name.' },
-        description: { type: 'string', description: 'One-paragraph experiment description.' },
+        name: { type: 'string', description: 'Use exactly "Hint Button Experiment".' },
+        description: { type: 'string', description: 'Copy the fixed Step 5 experiment description.' },
+        appContext: {
+          type: 'string',
+          description:
+            'Use exactly "minimath-app". The simulation backend privately overrides this context.',
+        },
         decisionPoint: {
           type: 'object',
           properties: {
@@ -72,7 +77,7 @@ export const RUN_SIMULATION_SCHEMA = {
           items: {
             type: 'object',
             properties: {
-              key: { type: 'string', description: 'Metric identifier, e.g. completionRate.' },
+              key: { type: 'string', description: 'Use the fixed Step 5 metric key in the fixed order.' },
               datatype: { type: 'string', enum: ['categorical', 'continuous'] },
               allowedValues: {
                 type: 'array',
@@ -97,7 +102,7 @@ export const RUN_SIMULATION_SCHEMA = {
           },
         },
       },
-      required: ['name', 'description', 'decisionPoint', 'conditions', 'metrics'],
+      required: ['name', 'description', 'appContext', 'decisionPoint', 'conditions', 'metrics'],
     },
     cohortSize: {
       type: 'integer',
@@ -111,8 +116,7 @@ export const RUN_SIMULATION_SCHEMA = {
         "Per-metric per-condition synthetic value specs. Keyed by metric `key`, then by condition `code`. " +
         'For categorical metrics: an object mapping each allowedValue to a non-negative weight (will be normalized). ' +
         'For continuous metrics: {min: number, max: number}. ' +
-        'You generate these implicitly based on a realistic prediction of how the intervention should behave. ' +
-        'You do NOT need to surface these to the user unless they explicitly ask.',
+        'For the PELE 2026 MiniMathApp demo, copy the exact fixed object from the system prompt.',
       additionalProperties: true,
     },
   },

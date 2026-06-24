@@ -24,41 +24,24 @@ export const SEARCH_PAPERS_SCHEMA = {
     researchContext: {
       type: 'object',
       description:
-        'Structured, stable summary of the research idea. The tool builds the ' +
-        'ranking signal deterministically from these four fields, so the ' +
-        'returned candidates rank in the same order for semantically ' +
-        'equivalent inputs (different wording of the same idea). Use ' +
-        '**canonical academic vocabulary**, not product wording. See the ' +
-        'prompt for canonical vocabulary hints per mechanism.',
+        'PELE 2026 MiniMathApp demo: copy the exact fixed researchContext ' +
+        'object from Step 4 of the system prompt.',
       properties: {
         subject: {
           type: 'string',
-          description:
-            'Subject / domain. e.g. "mathematics education", "reading apps", ' +
-            '"second language learning". Lowercase, short noun phrase.',
+          description: 'Use exactly "mathematics education".',
         },
         mechanism: {
           type: 'string',
-          description:
-            'Intervention mechanism in canonical terms. Examples: ' +
-            '"optional on-demand hints", "scaffolding", "help-seeking", ' +
-            '"streak rewards / gamification", "progress feedback", ' +
-            '"worked examples", "concrete vs abstract representations". ' +
-            'Translate product wording (e.g. "hint button") to the canonical ' +
-            'mechanism (e.g. "optional on-demand hints").',
+          description: 'Use exactly "optional on-demand hints".',
         },
         setting: {
           type: 'string',
-          description:
-            'Learning setting. e.g. "online learning / intelligent tutoring", ' +
-            '"mobile learning", "classroom / blended", "self-paced MOOC".',
+          description: 'Use exactly "online learning / intelligent tutoring".',
         },
         outcome: {
           type: 'string',
-          description:
-            'Primary outcome the experiment cares about. e.g. ' +
-            '"problem completion", "session frequency", "persistence", ' +
-            '"time on task", "transfer / retention".',
+          description: 'Use exactly "problem completion".',
         },
       },
       required: ['subject', 'mechanism', 'setting', 'outcome'],
@@ -69,9 +52,7 @@ export const SEARCH_PAPERS_SCHEMA = {
       maxItems: 2,
       items: { type: 'string', minLength: 3 },
       description:
-        '1–2 academic queries derived from the hypothesis itself. ' +
-        'Natural-language phrases (not Boolean), no quoted brand/app names. ' +
-        'Keep short — more specific queries mean more variance across runs.',
+        'Copy the two exact specificQueries from Step 4 of the system prompt.',
     },
     domainQueries: {
       type: 'array',
@@ -79,18 +60,13 @@ export const SEARCH_PAPERS_SCHEMA = {
       maxItems: 3,
       items: { type: 'string', minLength: 3 },
       description:
-        '2–3 stable, domain-oriented queries based on the experiment ' +
-        'mechanism. The tool **always** runs these in addition to ' +
-        '`specificQueries` (not just on empty results) so the candidate pool ' +
-        'is robust regardless of how specific queries are phrased. Pick ' +
-        'queries appropriate for the mechanism in play (see prompt for ' +
-        'canonical examples per mechanism).',
+        'Copy the three exact domainQueries from Step 4 of the system prompt.',
     },
     resultsPerQuery: {
       type: 'integer',
       minimum: 1,
       maximum: 10,
-      description: 'Optional. Max candidates per query. Default 5.',
+      description: 'Use exactly 5 for this demo.',
     },
   },
   required: ['researchContext', 'specificQueries', 'domainQueries'],
