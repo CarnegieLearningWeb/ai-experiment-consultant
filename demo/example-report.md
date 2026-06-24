@@ -2,47 +2,47 @@
 
 ## 1. Summary
 
-This plan proposes an A/B test in MiniMathApp to evaluate whether adding an optional "Show hint" button on an area-of-rectangles word-problem page improves students' first-attempt correctness without substantially increasing time-on-task. It targets a single decision point with two equally-weighted conditions (control vs. hint_button), uses three metrics including a research-grounded hint-usage metric, and was validated for data flow with a synthetic preflight simulation.
+This plan proposes a 50/50 experiment in MiniMathApp comparing the current area word-problem page with a version that adds an optional hint button. It measures first-attempt correctness and total time-on-task while monitoring whether students open the hint before their first answer submission.
 
 ## 2. Learning App Description
 
-MiniMathApp is a math practice app for middle-school students. It presents units of practice problems (e.g. Unit 6 · Area & Perimeter) with progress tracking and streaks, guiding students through sequences of word problems one at a time.
+MiniMathApp is a math practice app for middle-school students who work through one problem at a time in topic-based practice units.
 
 ## 3. Page / Problem Description
 
-The candidate page is an "Area of Rectangles" word problem (Problem 3 of 8 in Unit 6). It shows a word problem about Maria's rectangular vegetable garden (8 meters long, 5 meters wide) with a labeled diagram of the rectangle, a numeric answer field (in m²), a "Check answer" button, an attempt counter, and a "Skip for now" option. Many students get stuck or answer incorrectly on the first try here.
+The target is an area word-problem page about a rectangular garden. The page presents the problem, a labeled rectangle diagram, an answer field, and a Check answer button. Many students get stuck or answer incorrectly on the first try.
 
 ## 4. Experiment Idea
 
-Add an optional "Show hint" button to the area word-problem page so students who are stuck can request help on demand, rather than guessing or skipping. The hint targets students who need support without changing the experience for those who don't.
+Add an optional Show hint button to the existing area word-problem page while leaving the control experience unchanged. At the first answer submission, record first-attempt correctness and whether the hint was opened before that submission. Record total time-on-task when the student completes or exits the problem.
 
 ## 5. Hypothesis
 
-Adding an optional hint button will improve first-attempt correctness without substantially increasing time-on-task compared with the current page. Hint usage is tracked to determine whether any correctness gains are driven by productive help-seeking.
+Adding an optional hint button will improve first-attempt correctness without substantially increasing time-on-task compared with the current page. Premature hint use is a diagnostic measure used to interpret how students engage with the intervention, not an additional predicted outcome.
 
 ## 6. Related Research Grounding
 
 The papers below were selected as related background for this experiment idea. They do not verify that the proposed intervention will work, but they may help refine the hypothesis, condition design, and metrics.
 
 1. **[Revisiting the Hint Button: Consistent Negative Associations Between Unproductive Hint Use and Learning Outcomes in Intelligent Tutoring Systems](https://www.semanticscholar.org/paper/71eb7a29ba027978057bec9018a054fa383bacef)** — An et al., 2026
-   - Relevance: A multi-semester study of 999 K–12 math students that directly examines on-demand hint buttons in tutoring systems — the same mechanism and population as our experiment.
-   - Design implication: Suggests tracking how hints are used, so include a hint-usage metric alongside first-attempt correctness rather than assuming hints are always productive.
+   - Relevance: A multi-semester study of 999 K-12 math students that directly examines on-demand hint buttons in tutoring systems. This is the same mechanism in a closely related school-age population.
+   - Design implication: Suggests tracking how hints are used (e.g. premature requests, superficial reading), so consider a hint-usage metric alongside first-attempt correctness rather than assuming hints are always productive.
 
 2. **[Designing for Metacognition — Applying Cognitive Tutor Principles to the Tutoring of Help Seeking](https://www.semanticscholar.org/paper/722b988491e01647ac2827ec010de4f24196d0ae)** — Roll, Aleven, McLaren & Koedinger, 2007
    - Relevance: A foundational, heavily-cited study on help-seeking and on-demand help in math cognitive tutors, directly relevant to how students engage an optional hint.
-   - Design implication: Reinforces measuring whether students use help appropriately, supporting a hint-engagement metric and caution against interpreting raw completion gains in isolation.
+   - Design implication: Reinforces measuring whether students use help appropriately, supporting a hint-engagement metric and caution against interpreting correctness gains in isolation.
 
 3. **[Typifying Students' Help-Seeking Behavior in an Intelligent Tutoring System for Mathematics](https://www.semanticscholar.org/paper/fcc06aae6014ac5f6702f016bf1853b3b680e4fb)** — Meléndez-Armenta et al., 2021
-   - Relevance: Studies help-seeking behavior among secondary math students in an ITS — the same mechanism, subject, and age range as MiniMathApp.
-   - Design implication: Indicates help-seeking varies by student type, so monitoring hint usage could help interpret first-attempt correctness results.
+   - Relevance: Studies help-seeking behavior among secondary math students in an ITS, matching MiniMathApp's mechanism, subject, and age range.
+   - Design implication: Indicates that help-seeking varies across students, reinforcing the need to monitor hint use rather than interpret it as a uniform behavior.
 
 ## 7. Proposed UpGrade Experiment Design
 
 **Name:** Hint Button Experiment
 
-**Description:** Tests whether adding an optional Show hint button on the area word-problem page improves first-attempt correctness without substantially increasing time-on-task, while tracking how often students use the hint.
+**Description:** Tests whether adding an optional Show hint button on the area word-problem page improves first-attempt correctness without substantially increasing time-on-task, while monitoring whether students open the hint before submitting a first answer.
 
-**App context:** `example-math-app`
+**App context:** `minimath-app`
 
 **Decision point:**
 - **Site:** `problem_page`
@@ -59,7 +59,7 @@ The papers below were selected as related background for this experiment idea. T
 
 - **firstAttemptCorrect (Percent = CORRECT)** — categorical, allowed values: `CORRECT`, `INCORRECT`
 - **timeOnTask (Mean)** — continuous
-- **hintUsed (Percent = USED)** — categorical, allowed values: `USED`, `NOT_USED`
+- **prematureHintUse (Percent = PREMATURE)** — categorical, allowed values: `PREMATURE`, `NOT_PREMATURE`
 
 **Participants:** Include All  ·  **Assignment:** Individual, between-subject
 
@@ -73,8 +73,8 @@ The papers below were selected as related background for this experiment idea. T
 
 | Condition | Participants |
 |---|---|
-| `control` | 111 |
-| `hint_button` | 89 |
+| `control` | 98 |
+| `hint_button` | 102 |
 
 **Metric results**
 
@@ -82,24 +82,24 @@ The papers below were selected as related background for this experiment idea. T
 
 | Condition | Statistic value |
 |---|---|
-| `control` | 52.25 |
-| `hint_button` | 64.04 |
+| `control` | 48.98 |
+| `hint_button` | 61.76 |
 
 **timeOnTask (Mean)**
 
 | Condition | Statistic value |
 |---|---|
-| `control` | 29.55 |
-| `hint_button` | 36.79 |
+| `control` | 29.85 |
+| `hint_button` | 32.76 |
 
-**hintUsed (Percent = USED)**
+**prematureHintUse (Percent = PREMATURE)**
 
 | Condition | Statistic value |
 |---|---|
 | `control` | 0 |
-| `hint_button` | 59.55 |
+| `hint_button` | 30.39 |
 
-In this synthetic run, the hint_button arm showed higher first-attempt correctness (~64% vs ~52%) with somewhat higher time-on-task (~37s vs ~30s), and about 60% of hint-button students opened the hint, while the control's hint usage was a structural zero (no hint to open). The enrollment split came out slightly uneven (111/89) from random assignment at this cohort size. These numbers demonstrate how UpGrade collects assignment, enrollment, and metric data and are not a prediction of real learning outcomes.
+In this synthetic run, the assignment split was close to the configured 50/50, with 98 participants in control and 102 in hint_button. First-attempt correctness was higher in hint_button (61.76%) than in control (48.98%), while mean time-on-task rose modestly from 29.85 seconds in control to 32.76 seconds in hint_button. Premature hint use was 30.39% in hint_button and a structural zero in control, since control has no hint button. These numbers are a preflight demonstration of how UpGrade collects and reports data. They are synthetic and not a prediction of real learning outcomes.
 
 ## 9. Recommended Implementation Order
 
@@ -185,8 +185,8 @@ cp packages/backend/.env.docker.local.example packages/backend/.env.docker.local
 Open `packages/backend/.env.docker.local` and update the local app context and metric configuration:
 
 ```env
-CONTEXT_METADATA={"example-math-app":{"CONDITIONS":["control","hint_button"],"GROUP_TYPES":[],"EXP_POINTS":["problem_page"],"EXP_IDS":["area_rectangle_hint_support"]}}
-METRICS=[{"metrics":[{"metric":"firstAttemptCorrect","datatype":"categorical","allowedValues":["CORRECT","INCORRECT"]},{"metric":"timeOnTask","datatype":"continuous"},{"metric":"hintUsed","datatype":"categorical","allowedValues":["USED","NOT_USED"]}],"contexts":["example-math-app"]}]
+CONTEXT_METADATA={"minimath-app":{"CONDITIONS":["control","hint_button"],"GROUP_TYPES":[],"EXP_POINTS":["problem_page"],"EXP_IDS":["area_rectangle_hint_support"]}}
+METRICS=[{"metrics":[{"metric":"firstAttemptCorrect","datatype":"categorical","allowedValues":["CORRECT","INCORRECT"]},{"metric":"timeOnTask","datatype":"continuous"},{"metric":"prematureHintUse","datatype":"categorical","allowedValues":["PREMATURE","NOT_PREMATURE"]}],"contexts":["minimath-app"]}]
 ```
 
 ### 5. Configure the frontend environment
@@ -246,8 +246,8 @@ On the **Experiments** page, click **Add Experiment**.
 In the **Add Experiment** modal, enter the following values:
 
 - **Name:** `Hint Button Experiment`
-- **Description:** `Tests whether adding an optional Show hint button on the area word-problem page improves first-attempt correctness without substantially increasing time-on-task, while tracking how often students use the hint.`
-- **App Context:** `example-math-app`
+- **Description:** `Tests whether adding an optional Show hint button on the area word-problem page improves first-attempt correctness without substantially increasing time-on-task, while monitoring whether students open the hint before submitting a first answer.`
+- **App Context:** `minimath-app`
 
 Leave the remaining settings unchanged:
 
@@ -321,13 +321,13 @@ For each metric:
 - **Aggregate Statistic:** Mean
 - **Display Name:** `timeOnTask (Mean)`
 
-**Metric: `hintUsed`**
+**Metric: `prematureHintUse`**
 
-- **Metric ID:** `hintUsed`
+- **Metric ID:** `prematureHintUse`
 - **Aggregate Statistic:** Percent
 - **Comparison:** Equal
-- **Value:** `USED`
-- **Display Name:** `hintUsed (Percent = USED)`
+- **Value:** `PREMATURE`
+- **Display Name:** `prematureHintUse (Percent = PREMATURE)`
 
 ### 6. Start the experiment
 
@@ -428,7 +428,7 @@ Call the helper from the part of your app where the user reaches the decision po
 const { upClient, condition, markStatus } = await visitDecisionPoint({
   userId: userIdFromYourApp(),
   hostUrl: "http://localhost:3030",
-  appContext: "example-math-app",
+  appContext: "minimath-app",
   site: "problem_page",
   target: "area_rectangle_hint_support",
   conditionHandlers: {
@@ -451,7 +451,7 @@ When the metric outcomes are known, log them with the same UpGrade client instan
 await logMetrics(upClient, {
   firstAttemptCorrect: firstAttemptCorrectFromYourApp(), // "CORRECT" or "INCORRECT"
   timeOnTask: timeOnTaskFromYourApp(),
-  hintUsed: hintUsedFromYourApp(), // "USED" or "NOT_USED"
+  prematureHintUse: prematureHintUseFromYourApp(), // "PREMATURE" or "NOT_PREMATURE"
 });
 ```
 
@@ -559,7 +559,7 @@ Call the helper from the part of your app where the user reaches the decision po
 const { upClient, condition, markStatus } = await visitDecisionPoint({
   userId: userIdFromYourApp(),
   hostUrl: "http://localhost:3030",
-  appContext: "example-math-app",
+  appContext: "minimath-app",
   site: "problem_page",
   target: "area_rectangle_hint_support",
   conditionHandlers: {
@@ -582,7 +582,7 @@ When the metric outcomes are known, log them with the same UpGrade client instan
 await logMetrics(upClient, {
   firstAttemptCorrect: firstAttemptCorrectFromYourApp(), // "CORRECT" or "INCORRECT"
   timeOnTask: timeOnTaskFromYourApp(),
-  hintUsed: hintUsedFromYourApp(), // "USED" or "NOT_USED"
+  prematureHintUse: prematureHintUseFromYourApp(), // "PREMATURE" or "NOT_PREMATURE"
 });
 ```
 

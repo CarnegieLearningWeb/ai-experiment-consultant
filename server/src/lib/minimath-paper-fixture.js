@@ -182,7 +182,7 @@ export const MINIMATH_DEMO_SELECTED_PAPERS = [
     url: 'https://www.semanticscholar.org/paper/71eb7a29ba027978057bec9018a054fa383bacef',
     authorsYear: 'An et al., 2026',
     relevance:
-      'A multi-semester study of 999 K–12 math students that directly examines on-demand hint buttons in tutoring systems — the same mechanism and population as our experiment.',
+      'A multi-semester study of 999 K–12 math students that directly examines on-demand hint buttons in tutoring systems. This is the same mechanism in a closely related school-age population.',
     designImplication:
       'Suggests tracking how hints are used (e.g. premature requests, superficial reading), so consider a hint-usage metric alongside first-attempt correctness rather than assuming hints are always productive.',
   },
@@ -193,21 +193,21 @@ export const MINIMATH_DEMO_SELECTED_PAPERS = [
     relevance:
       'A foundational, heavily-cited study on help-seeking and on-demand help in math cognitive tutors, directly relevant to how students engage an optional hint.',
     designImplication:
-      'Reinforces measuring whether students use help appropriately, supporting a hint-engagement metric and caution against interpreting raw completion gains in isolation.',
+      'Reinforces measuring whether students use help appropriately, supporting a hint-engagement metric and caution against interpreting correctness gains in isolation.',
   },
   {
     title: "Typifying Students' Help-Seeking Behavior in an Intelligent Tutoring System for Mathematics",
     url: 'https://www.semanticscholar.org/paper/fcc06aae6014ac5f6702f016bf1853b3b680e4fb',
     authorsYear: 'Meléndez-Armenta et al., 2021',
     relevance:
-      'Studies help-seeking behavior among secondary math students in an ITS — the same mechanism, subject, and age range as MiniMathApp.',
+      "Studies help-seeking behavior among secondary math students in an ITS, matching MiniMathApp's mechanism, subject, and age range.",
     designImplication:
-      'Indicates help-seeking varies by student type, so segmenting or at least monitoring hint usage could help interpret first-attempt correctness results.',
+      'Indicates that help-seeking varies across students, reinforcing the need to monitor hint use rather than interpret it as a uniform behavior.',
   },
 ];
 
 export const MINIMATH_DEMO_REFINEMENT =
-  'These papers consistently point to one refinement: add a hint-usage metric (e.g. proportion of students who open the hint) so we can tell whether correctness changes are driven by productive help-seeking, and read completion gains with that caution in mind. The core hint-button hypothesis itself can stay as-is.';
+  'Taken together, these papers suggest one practical refinement: add an overall hint-usage metric, such as the proportion of students who open the hint. This would show how often students use the feature, but it would not by itself tell us whether that use is productive. The core hint-button hypothesis can stay as-is.';
 
 export const MINIMATH_DEMO_CONFIRMATION_QUESTION =
-  'Should I apply that refinement (add a hint-usage metric) and continue to the UpGrade experiment design?';
+  'Should I add that overall hint-usage metric and continue to the UpGrade experiment design?';

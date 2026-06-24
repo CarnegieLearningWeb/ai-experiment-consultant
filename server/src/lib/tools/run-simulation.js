@@ -398,7 +398,7 @@ function formatQueryResults({ analyseData, metrics, queryIdToMetric, conditionId
 function buildWarnings({ enrollment, queries, counters, cohortSize }) {
   const warnings = [];
   for (const [code, n] of Object.entries(enrollment)) {
-    if (n === 0) warnings.push(`Condition "${code}" got 0 participants — consider a larger cohort.`);
+    if (n === 0) warnings.push(`Condition "${code}" got 0 participants. Consider a larger cohort.`);
   }
   const enrolledSum = Object.values(enrollment).reduce((a, b) => a + b, 0);
   if (enrolledSum < cohortSize) {
@@ -510,7 +510,7 @@ export async function runSimulation({ input, emit, signal }) {
     // down the temporary experiment + metrics.
     if (signal?.aborted) {
       log.sim('aborted', { runId, completed });
-      return { runId, experimentName: experiment.name, cohortSize, aborted: true };
+      return { cohortSize, aborted: true };
     }
 
     emit({ type: 'tool_progress', message: 'Fetching enrollment + metric results…' });
@@ -534,12 +534,9 @@ export async function runSimulation({ input, emit, signal }) {
     }
 
     return {
-      runId,
-      experimentName: experiment.name,
       cohortSize,
       enrollment,
       queries,
-      failures: counters,
       warnings,
     };
   } finally {

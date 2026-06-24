@@ -4,7 +4,7 @@ import { showToast } from './toast.js';
 
 marked.setOptions({ gfm: true, breaks: true });
 
-const SEED_GREETING = `Hi, I'm your AI experiment consultant for learning apps. I can help you turn an idea, pain point, or screenshot into a concrete A/B test plan and implementation-ready report.
+const SEED_GREETING = `Hi, I'm your AI experiment consultant for learning apps. I can help you turn an idea, a pain point, or a screenshot into a concrete A/B test plan and implementation-ready report.
 
 To start, tell me about your learning app. What does it do, and who is it for?`;
 
